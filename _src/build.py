@@ -29,13 +29,13 @@ HOST = "humanizing.ai.kr"
 BRAND = "한국휴머나이징"
 BRAND_SP = "한국 휴머나이징"          # 로고에 적힌 띄어 쓴 이름
 BRAND_EN = "Korean Humanizing"
-VER = "20261121a"
+VER = "20261121b"
 TODAY = "2026-11-21"
 # 한국휴머나이징 배포(AIMarker 서버 프로젝트 버전 36, 엔진은 AIMarker 와 같음 · 2026.11.21 22:38)
 API = "https://script.google.com/macros/s/AKfycbzLgl7l-cOndrkq5n0SdKLMaSy7_MCcymbFtt590_KCYByazHlQU2G6ynA4lbrUOODOmg/exec"
 SHOP = "https://skkc.co.kr/shop_view?idx=%s&kaiec_buy=1"
 # 성균관컨설팅(아임웹) 한국휴머나이징 전용 상품 번호. 서버는 스크립트 속성 HG_IDX 로 같은 번호를 hg1~hg4 로 봄
-SHOP_IDX = {"lt": "", "pl": "", "pr": "", "mx": ""}
+SHOP_IDX = {"lt": "162", "pl": "163", "pr": "164", "mx": "165"}   # 2026.11.21 등록(아임웹 상품 162 라이트 · 163 플러스 · 164 프로 · 165 맥스, 카테고리 한국휴머나이징)
 NAVER_VERIFY = ""
 GOOGLE_VERIFY = ""
 BING_VERIFY = ""

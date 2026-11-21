@@ -1423,7 +1423,7 @@
       var req = { orderId: p.payOrderId, orderName: p.orderName, successUrl: U.successUrl, failUrl: U.failUrl, customerEmail: mail };
       if (mode === 'widget') {
         var w = tp.widgets({ customerKey: TP.ANONYMOUS });
-        buyBody.innerHTML = '<h2>결제 수단 고르기</h2><p class="hz7-dlg-n">' + esc(r.name) + ' · ' + n2(p.amount) + '원(부가세 포함) · 주문 번호 ' + esc(r.id) + '</p><div id="hzPayMethods"></div><div id="hzPayAgree"></div><button class="btn btn-p btn-l" type="button" id="hzPayGo">' + ico('card') + '<span>' + n2(p.amount) + '원 결제하기</span></button><p class="msg" role="status"></p><p class="hz7-dlg-n">결제는 토스페이먼츠 결제 화면에서 이루어지며, 한국휴머나이징는 카드 번호 등 결제 수단 정보를 받지 않습니다.</p>';
+        buyBody.innerHTML = '<h2>결제 수단 고르기</h2><p class="hz7-dlg-n">' + esc(r.name) + ' · ' + n2(p.amount) + '원(부가세 포함) · 주문 번호 ' + esc(r.id) + '</p><div id="hzPayMethods"></div><div id="hzPayAgree"></div><button class="btn btn-p btn-l" type="button" id="hzPayGo">' + ico('card') + '<span>' + n2(p.amount) + '원 결제하기</span></button><p class="msg" role="status"></p><p class="hz7-dlg-n">결제는 토스페이먼츠 결제 화면에서 이루어지며, 한국휴머나이징은 카드 번호 등 결제 수단 정보를 받지 않습니다.</p>';
         return w.setAmount({ currency: 'KRW', value: p.amount }).then(function () { return Promise.all([w.renderPaymentMethods({ selector: '#hzPayMethods', variantKey: 'DEFAULT' }), w.renderAgreement({ selector: '#hzPayAgree', variantKey: 'AGREEMENT' })]); }).then(function () {
           var go = $('#hzPayGo'), m2 = buyBody.querySelector('.msg');
           go.addEventListener('click', function () { go.disabled = true; say(m2, '결제 창으로 이동합니다…', 'ok'); Promise.resolve(w.requestPayment(req)).catch(function (e) { go.disabled = false; say(m2, payErr(e)); }); });
