@@ -1,235 +1,144 @@
-# 한국휴머나이저 아임웹 상품 이미지 만들기 (성균관컨설팅 skkc.co.kr 상품용)
-# python3 render.py  ->  out/hz-<id>-1x1.jpg (1200x1200), out/hz-tokens-guide.png (1080x1350)
-import os, asyncio
+# -*- coding: utf-8 -*-
+"""한국휴머나이징 아임웹 상품 이미지 만들기(성균관컨설팅 skkc.co.kr 상품용)
+python3 _src/shop/render.py
+  -> _src/shop/out/hg-<id>-1x1.jpg (1200x1200), hg-tokens-guide.png (1080x1350)
+  -> docs/assets/product/ 에도 복사(사이트 Product 구조화 데이터 · 아임웹 상세 그림에서 씀)
+정가 표시 없이(대표 2026.11.21 밤: AIMarker 처럼 간단 · 깔끔하게). 전후 AI 작성률은 _src/demo.json(한국휴머나이징 엔진 실측값) 논문 예시 그대로"""
+import asyncio, json, os, shutil
 from playwright.async_api import async_playwright
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+SRC = os.path.dirname(HERE)
+ROOT = os.path.dirname(SRC)
 OUT = os.path.join(HERE, "out")
+PROD = os.path.join(ROOT, "docs", "assets", "product")
 os.makedirs(OUT, exist_ok=True)
+os.makedirs(PROD, exist_ok=True)
+FONT = "file://" + os.path.join(HERE, "pretendard.css")
+LOGO = "file://" + os.path.join(SRC, "brand", "logo-full.png")
+KMARK = "file://" + os.path.join(SRC, "brand", "logo-k.png")
+
+DEMO = json.load(open(os.path.join(SRC, "demo.json"), encoding="utf-8"))
+T = DEMO["samples"][0]
+B_RATE, A_RATE, T_LABEL = T["before"]["rate"], T["after"]["rate"], T["label"]
 
 PACKS = [
-    {"id": "lt", "name": "라이트", "tok": "100", "price": "9,900원", "list": "19,800원", "per": "토큰당 99원", "save": "", "badge": ""},
-    {"id": "pl", "name": "플러스", "tok": "300", "price": "19,900원", "list": "39,800원", "per": "토큰당 약 66원", "save": "", "badge": ""},
-    {"id": "pr", "name": "프로", "tok": "750", "price": "39,900원", "list": "79,800원", "per": "토큰당 약 53원", "save": "플러스 대비 토큰당 약 20% 절약", "badge": "BEST 추천"},
-    {"id": "mx", "name": "맥스", "tok": "1,500", "price": "69,900원", "list": "139,800원", "per": "토큰당 약 47원", "save": "플러스 대비 토큰당 약 30% 절약", "badge": "최고 혜택"},
+    {"id": "lt", "name": "라이트", "tok": "100", "price": "9,900원", "per": "토큰당 99원", "save": "", "badge": "", "fit": "자기소개서 · 짧은 과제", "pg": "레포트 약 5페이지"},
+    {"id": "pl", "name": "플러스", "tok": "300", "price": "19,900원", "per": "토큰당 약 66원", "save": "", "badge": "", "fit": "레포트 · 과제 여러 편", "pg": "레포트 약 15페이지"},
+    {"id": "pr", "name": "프로", "tok": "750", "price": "39,900원", "per": "토큰당 약 53원", "save": "플러스보다 토큰당 약 20% 절약", "badge": "BEST 추천", "fit": "논문 · 학위논문", "pg": "논문 약 40페이지"},
+    {"id": "mx", "name": "맥스", "tok": "1,500", "price": "69,900원", "per": "토큰당 약 47원", "save": "플러스보다 토큰당 약 30% 절약", "badge": "최고 혜택", "fit": "논문 전체 · 여러 편", "pg": "논문 약 100페이지"},
 ]
 
-LOGO = ('<svg viewBox="0 0 40 40" width="%d" height="%d"><defs><linearGradient id="lg%s" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b1730"/><stop offset="1" stop-color="#13254a"/></linearGradient></defs>'
-        '<rect width="40" height="40" rx="11" fill="url(#lg%s)"/><path d="M12 11v18M28 11v18M12 20h16" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/>'
-        '<circle cx="31.5" cy="31.5" r="5.5" fill="#10b981" stroke="#0b1730" stroke-width="2"/><path d="m29.2 31.6 1.6 1.6 3-3.2" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>')
-GLYPH = ('<svg viewBox="0 0 24 24" width="34" height="34"><rect x="1.5" y="1.5" width="21" height="21" rx="6.5" fill="none" stroke="#fff" stroke-opacity=".9" stroke-width="1.8"/>'
-         '<path d="M8 7v10M16 7v10M8 12h8" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>')
+CHECK = ('<svg viewBox="0 0 24 24" width="30" height="30" fill="none"><circle cx="12" cy="12" r="11" fill="#ebf2ff"/>'
+         '<path d="m7.5 12.3 3 3 6-6.3" stroke="#1463e3" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>')
 
-BASE_CSS = """
-@import url('pretendard.css');
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{font-family:'Pretendard Variable',Pretendard,sans-serif;-webkit-font-smoothing:antialiased;letter-spacing:-.02em;color:#0b1730}
+BASE = ("<!doctype html><html><head><meta charset='utf-8'><link rel='stylesheet' href='%s'><style>"
+        "*{box-sizing:border-box;margin:0;padding:0}html,body{font-family:'Pretendard Variable',Pretendard,sans-serif;-webkit-font-smoothing:antialiased;letter-spacing:-.02em;color:#0c1730;word-break:keep-all}"
+        "%%s</style></head><body>%%s</body></html>") % FONT
+
+THUMB_CSS = """
+body{width:1200px;height:1200px;position:relative;overflow:hidden;background:linear-gradient(180deg,#ffffff 0%,#f2f5fb 100%)}
+.lg{position:absolute;left:92px;top:76px;height:92px}
+.card{position:absolute;left:92px;top:212px;width:1016px;height:600px;border-radius:46px;overflow:hidden;color:#fff;
+ background:radial-gradient(560px 380px at 100% 0%,rgba(28,111,209,.75),transparent 70%),radial-gradient(520px 360px at 0% 108%,rgba(227,38,45,.42),transparent 64%),linear-gradient(150deg,#00245a 0%,#001a44 58%,#00122f 100%);
+ box-shadow:0 40px 70px -30px rgba(0,36,90,.6)}
+.card:before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:56px 56px}
+.km{position:absolute;right:-40px;bottom:-56px;height:420px;opacity:.13;filter:grayscale(1) brightness(3)}
+.hdr{position:absolute;left:58px;top:54px;display:flex;align-items:center;gap:14px;font-size:30px;font-weight:700;color:#cfe0ff;z-index:2}
+.badge{position:absolute;right:56px;top:46px;height:56px;padding:0 26px;border-radius:28px;display:flex;align-items:center;font-size:27px;font-weight:850;z-index:2}
+.badge.best{background:linear-gradient(180deg,#fcd34d,#fbbf24);color:#1a1205}
+.badge.top{background:#fff;color:#00245a}
+.pills{position:absolute;left:56px;top:128px;display:flex;gap:14px;z-index:2}
+.pill{height:58px;padding:0 26px;border-radius:29px;display:flex;align-items:center;font-size:29px;font-weight:850}
+.pill.n{background:#1463e3;color:#fff;box-shadow:0 10px 22px -10px rgba(20,99,227,.9)}
+.pill.o{border:2px solid rgba(255,255,255,.36);color:#fff;font-weight:700}
+.big{position:absolute;left:48px;top:206px;display:flex;align-items:flex-end;z-index:2}
+.big b{font-size:@BIG@px;font-weight:880;letter-spacing:-.06em;line-height:.8;text-shadow:0 18px 40px rgba(0,0,0,.35)}
+.big span{font-size:60px;font-weight:850;margin:0 0 6px 16px}
+.fit{position:absolute;left:58px;bottom:124px;font-size:27px;font-weight:650;color:rgba(255,255,255,.86);z-index:2}
+.save{position:absolute;left:56px;bottom:50px;height:54px;padding:0 20px;border-radius:12px;border:2px solid rgba(252,211,77,.75);background:rgba(252,211,77,.1);color:#fcd34d;font-size:25px;font-weight:800;display:flex;align-items:center;z-index:2}
+.note{position:absolute;left:58px;bottom:58px;font-size:25px;font-weight:650;color:#9ec2ff;z-index:2}
+.price{position:absolute;right:56px;bottom:44px;text-align:right;z-index:2}
+.price b{display:block;font-size:78px;font-weight:880;letter-spacing:-.04em;line-height:1}
+.price small{display:block;font-size:25px;font-weight:650;color:rgba(255,255,255,.75);margin-top:10px}
+.feat{position:absolute;left:92px;right:92px;top:852px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.feat div{display:flex;align-items:center;gap:12px;height:96px;padding:0 22px;border-radius:22px;background:#fff;border:1.5px solid #e1e6ef;font-size:27px;font-weight:750;color:#0c1730}
+.proof{position:absolute;left:92px;right:92px;bottom:76px;height:120px;border-radius:24px;background:#fff;border:1.5px solid #e1e6ef;display:flex;align-items:center;gap:26px;padding:0 34px}
+.proof .k{font-size:24px;font-weight:800;color:#69738a;letter-spacing:-.01em}
+.proof .v{display:flex;align-items:baseline;gap:14px;font-weight:880;letter-spacing:-.04em}
+.proof .v s{font-size:50px;color:#e5154f;text-decoration-thickness:4px}
+.proof .v i{font-style:normal;font-size:38px;color:#98a2b3}
+.proof .v b{font-size:62px;color:#0b8f63}
+.proof .t{margin-left:auto;text-align:right;font-size:23px;font-weight:650;color:#38435b;line-height:1.45}
 """
+
 
 def thumb_html(p):
-    lg = LOGO % (64, 64, "a", "a")
-    badge = ""
-    if p["badge"] == "BEST 추천":
-        badge = '<div class="badge best">BEST 추천</div>'
-    elif p["badge"]:
-        badge = '<div class="badge top">%s</div>' % p["badge"]
-    save = ('<div class="save">%s</div>' % p["save"]) if p["save"] else '<div class="note">AI 작성률 검사 · 휴머나이징</div>'
-    small = len(p["tok"]) > 3
-    return """<!doctype html><html><head><meta charset="utf-8"><style>%s
-body{width:1200px;height:1200px;background:#fff;position:relative;overflow:hidden}
-.brand{position:absolute;left:96px;top:84px;display:flex;align-items:center;gap:18px}
-.brand b{font-size:44px;font-weight:800;letter-spacing:-.035em;color:#0b1730}
-.brand small{display:block;font-size:15px;font-weight:700;letter-spacing:.24em;color:#64748b;margin-top:2px}
-.card{position:absolute;left:96px;top:206px;width:1008px;height:560px;border-radius:44px;overflow:hidden;
- background:radial-gradient(120%% 140%% at 100%% 100%%,#10b981 0%%,rgba(16,185,129,.0) 46%%),linear-gradient(135deg,#0a1530 0%%,#0d2346 52%%,#0b4b55 100%%);
- box-shadow:0 34px 60px -24px rgba(11,23,48,.55)}
-.card:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.035) 0 1px,transparent 1px 56px),repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 56px);pointer-events:none}
-.hd{position:absolute;left:54px;top:52px;display:flex;align-items:center;gap:14px;color:#fff;font-size:30px;font-weight:700}
-.badge{position:absolute;right:52px;top:46px;height:52px;padding:0 24px;border-radius:26px;display:flex;align-items:center;font-size:26px;font-weight:800;z-index:2}
-.badge.best{background:#fbbf24;color:#1a1a1a}
-.badge.top{background:#fff;color:#0b1730}
-.pills{position:absolute;left:52px;top:126px;display:flex;gap:14px;z-index:2}
-.pill{height:54px;padding:0 24px;border-radius:27px;display:flex;align-items:center;font-size:27px;font-weight:800}
-.pill.n{background:#10b981;color:#fff}
-.pill.o{border:2px solid rgba(255,255,255,.32);color:#fff;font-weight:700}
-.big{position:absolute;left:46px;top:196px;display:flex;align-items:flex-end;color:#fff;z-index:2}
-.big b{font-size:%dpx;font-weight:850;letter-spacing:-.06em;line-height:1}
-.big span{font-size:62px;font-weight:800;margin:0 0 22px 16px}
-.save{position:absolute;left:52px;bottom:50px;height:52px;padding:0 20px;border-radius:12px;border:2px solid rgba(251,191,36,.75);background:rgba(251,191,36,.08);color:#fcd34d;font-size:24px;font-weight:800;display:flex;align-items:center;z-index:2}
-.note{position:absolute;left:54px;bottom:60px;color:rgba(255,255,255,.82);font-size:24px;font-weight:600;z-index:2}
-.price{position:absolute;right:52px;bottom:40px;text-align:right;color:#fff;z-index:2}
-.price del{display:block;font-size:28px;font-weight:600;color:rgba(255,255,255,.55);text-decoration-thickness:2px;margin-bottom:2px}
-.price .row{display:flex;align-items:baseline;gap:14px;justify-content:flex-end}
-.price .off{font-size:44px;font-weight:850;color:#ff5c8a}
-.price b{font-size:62px;font-weight:850;letter-spacing:-.04em}
-.meter{position:absolute;right:52px;top:136px;width:300px;padding:22px 24px 20px;border-radius:24px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.18);color:#fff;z-index:2}
-.meter .t{font-size:19px;font-weight:700;color:rgba(255,255,255,.75)}
-.meter .v{display:flex;align-items:baseline;gap:10px;margin:6px 0 14px}
-.meter .v s{font-size:40px;font-weight:850;color:#c4b5fd;text-decoration-thickness:3px}
-.meter .v i{font-style:normal;font-size:26px;color:rgba(255,255,255,.6)}
-.meter .v b{font-size:52px;font-weight:850;color:#34d399}
-.bar{height:10px;border-radius:5px;background:rgba(255,255,255,.12);margin:7px 0;position:relative;overflow:hidden}
-.bar i{position:absolute;left:0;top:0;bottom:0;border-radius:5px}
-.bar.a i{width:92%%;background:linear-gradient(90deg,#7c50f0,#a78bfa)}
-.bar.b i{width:7%%;background:#34d399}
-.meter .c{font-size:15px;color:rgba(255,255,255,.55);margin-top:10px;font-weight:600}
-.ttl{position:absolute;left:96px;top:818px;font-size:46px;font-weight:800;line-height:1.32;letter-spacing:-.035em;color:#0b1730}
-.sub{position:absolute;left:96px;top:962px;font-size:27px;line-height:1.68;color:#64748b;font-weight:500}
-.dom{position:absolute;left:96px;top:1078px;font-size:30px;font-weight:800;color:#0e9f6e}
-</style></head><body>
-<div class="brand">%s<div><b>한국휴머나이저</b><small>KOREA HUMANIZER</small></div></div>
-<div class="card">
- <div class="hd">%s AI 휴머나이징 토큰</div>%s
- <div class="pills"><div class="pill n">%s</div><div class="pill o">%s</div></div>
- <div class="big"><b>%s</b><span>토큰</span></div>
- <div class="meter"><div class="t">휴머나이징 전 → 후 AI 작성률</div><div class="v"><s>92%%</s><i>→</i><b>7%%</b></div>
-  <div class="bar a"><i></i></div><div class="bar b"><i></i></div><div class="c">실측 예시 · 학위논문 결론 1회</div></div>
- %s
- <div class="price"><del>정가 %s</del><div class="row"><span class="off">50%%</span><b>%s</b></div></div>
-</div>
-<div class="ttl">AI 작성률 낮추기 · AI 휴머나이징<br>(AI 글 인간화) 토큰</div>
-<div class="sub">월 구독 없이 한 번 충전 · 쓴 만큼만 빠짐 · 5년 사용<br>검사 1,000자 4토큰 · 휴머나이징 1,000자 8토큰</div>
-<div class="dom">humanizer.co.kr</div>
-</body></html>""" % (BASE_CSS, 168 if small else 196, lg, GLYPH, badge, p["name"], p["per"], p["tok"], save, p["list"], p["price"])
+    badge = ('<div class="badge best">%s</div>' % p["badge"]) if p["badge"] == "BEST 추천" else (('<div class="badge top">%s</div>' % p["badge"]) if p["badge"] else "")
+    low = ('<div class="save">%s</div>' % p["save"]) if p["save"] else '<div class="note">AI 작성률 검사 · AI 휴머나이징 서비스</div>'
+    big = 250 if len(p["tok"]) <= 3 else 205
+    css = THUMB_CSS.replace("@BIG@", str(big))
+    body = ('<img class="lg" src="%s" alt="">'
+            '<div class="card"><img class="km" src="%s" alt=""><div class="hdr">AI 작성률 낮추기 · AI 휴머나이징</div>%s'
+            '<div class="pills"><span class="pill n">%s</span><span class="pill o">토큰 충전</span></div>'
+            '<div class="big"><b>%s</b><span>토큰</span></div><div class="fit">%s · %s</div>%s'
+            '<div class="price"><b>%s</b><small>%s · 부가세 포함</small></div></div>'
+            '<div class="feat"><div>%s월 구독 없음</div><div>%s남은 토큰 5년</div><div>%s메일로 바로 코드</div></div>'
+            '<div class="proof"><span class="k">실측 예시</span><span class="v"><s>%d%%</s><i>→</i><b>%d%%</b></span><span class="t">%s · 한 번의 휴머나이징<br>AIMarker 엔진 그대로 · 글마다 다릅니다</span></div>') % (
+        LOGO, KMARK, badge, p["name"], p["tok"], p["fit"], p["pg"], low, p["price"], p["per"], CHECK, CHECK, CHECK, B_RATE, A_RATE, T_LABEL)
+    return BASE % (css, body)
 
 
-GUIDE_STEPS = [
-    ("메일로 토큰 코드가 갑니다", "결제가 확인되면 보통 5분 안에 주문서의 이메일로 보내 드립니다. 보내는 이름은 '한국휴머나이저'이고, 메일이 안 보이면 스팸함도 확인해 주세요."),
-    ("메일의 <em>바로 이어서 하기</em>를 누르면 끝", "코드가 저절로 들어간 채로 열립니다. 다른 기기에서는 위쪽 '토큰 코드'에 코드를 넣으면 됩니다."),
-    ("쓴 만큼만 빠집니다", "검사 요약은 0토큰, 전체 결과는 1,000자 4토큰, 휴머나이징은 1,000자 8토큰. 남은 토큰은 위쪽 토큰 단추에서 봅니다."),
-    ("남은 토큰은 이어서 씁니다", "충전일부터 5년, 같은 코드에 더 충전할 수 있고 여러 기기에서 같은 코드를 씁니다. 코드를 아는 사람은 누구나 쓸 수 있으니 잘 보관해 주세요."),
-]
+GUIDE_CSS = """
+body{width:1080px;height:1350px;position:relative;overflow:hidden;background:linear-gradient(180deg,#ffffff,#f2f5fb)}
+.lg{position:absolute;left:72px;top:64px;height:74px}
+h1{position:absolute;left:72px;top:176px;font-size:56px;line-height:1.22;font-weight:850;letter-spacing:-.045em;color:#00245a}
+h1 em{font-style:normal;color:#1463e3}
+.sub{position:absolute;left:74px;top:328px;font-size:26px;color:#38435b;font-weight:550;line-height:1.6}
+.steps{position:absolute;left:72px;right:72px;top:410px;display:grid;gap:14px}
+.st{display:flex;gap:22px;align-items:flex-start;padding:22px 26px;border-radius:24px;background:#fff;border:1.5px solid #e1e6ef}
+.st i{flex:none;width:58px;height:58px;border-radius:50%;background:#00245a;color:#fff;font-style:normal;font-weight:850;font-size:28px;display:grid;place-items:center}
+.st b{display:block;font-size:31px;font-weight:850;letter-spacing:-.03em;color:#0c1730}
+.st p{margin-top:4px;font-size:22.5px;line-height:1.5;color:#38435b}
+.cost{position:absolute;left:72px;right:72px;bottom:56px;padding:30px 34px;border-radius:26px;color:#fff;background:radial-gradient(420px 260px at 100% 0%,rgba(28,111,209,.7),transparent 70%),linear-gradient(150deg,#00245a,#00122f)}
+.cost h2{font-size:30px;font-weight:850;letter-spacing:-.03em}
+.cost ul{list-style:none;margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px 26px;font-size:24px;color:#dbe6fb}
+.cost b{color:#fff}
+"""
+
 
 def guide_html():
-    lg = LOGO % (60, 60, "g", "g")
-    steps = "".join('<div class="st"><div class="n">%d</div><div><h3>%s</h3><p>%s</p></div></div>' % (i + 1, h, t) for i, (h, t) in enumerate(GUIDE_STEPS))
-    return """<!doctype html><html><head><meta charset="utf-8"><style>%s
-body{width:1080px;height:1350px;position:relative;overflow:hidden;background:radial-gradient(70%% 50%% at 100%% 0%%,rgba(16,185,129,.16),transparent 70%%),#f6f8fb}
-.brand{position:absolute;left:84px;top:80px;display:flex;align-items:center;gap:16px}
-.brand b{font-size:40px;font-weight:800;letter-spacing:-.035em}
-.brand small{display:block;font-size:14px;font-weight:700;letter-spacing:.24em;color:#64748b;margin-top:2px}
-h1{position:absolute;left:84px;top:196px;font-size:84px;font-weight:850;letter-spacing:-.05em}
-.lead{position:absolute;left:86px;top:306px;font-size:29px;color:#475569;font-weight:600}
-.list{position:absolute;left:84px;top:390px;width:912px;display:flex;flex-direction:column;gap:22px}
-.st{display:flex;gap:26px;background:#fff;border:1px solid #e6ebf2;border-radius:26px;padding:30px 32px;box-shadow:0 8px 24px -16px rgba(11,23,48,.25)}
-.n{flex:none;width:58px;height:58px;border-radius:50%%;background:#0e9f6e;color:#fff;font-size:28px;font-weight:800;display:flex;align-items:center;justify-content:center}
-h3{font-size:34px;font-weight:800;letter-spacing:-.035em;margin:4px 0 10px}
-h3 em{font-style:normal;color:#0e9f6e}
-p{font-size:23.5px;line-height:1.6;color:#475569;font-weight:500}
-.ft{position:absolute;left:84px;right:84px;bottom:56px;border-top:1px solid #e2e8f0;padding-top:24px;display:flex;justify-content:space-between;align-items:flex-end;color:#64748b;font-size:22px;line-height:1.6}
-.ft b{color:#0e9f6e;font-size:28px;font-weight:800}
-</style></head><body>
-<div class="brand">%s<div><b>한국휴머나이저</b><small>KOREA HUMANIZER</small></div></div>
-<h1>토큰 이용 안내</h1><div class="lead">월 구독 없이 한 번 충전, 쓴 만큼만 빠집니다</div>
-<div class="list">%s</div>
-<div class="ft"><div>문의 contact@skkc.co.kr<br>운영 성균관컨설팅</div><b>humanizer.co.kr</b></div>
-</body></html>""" % (BASE_CSS, lg, steps)
+    steps = [("결제", "토큰을 고르고 성균관컨설팅 결제 페이지에서 결제합니다. 회원가입 없이 카드 · 간편결제로 끝납니다."),
+             ("메일로 코드", "결제가 확인되면 보통 1분 안에 주문서의 이메일로 16자리 토큰 코드가 갑니다. 보내는 이름은 '한국휴머나이징'입니다."),
+             ("바로 이어서", "메일의 '바로 이어서 하기'를 누르면 코드가 들어간 채로 humanizing.ai.kr 이 열리고, 하던 글을 그대로 이어 갑니다."),
+             ("쓴 만큼만", "글을 넣고 검사 · 휴머나이징을 누르면 글자 수만큼만 빠집니다. 남은 토큰은 5년 동안 그대로입니다.")]
+    s = "".join('<div class="st"><i>%d</i><div><b>%s</b><p>%s</p></div></div>' % (i + 1, a, b) for i, (a, b) in enumerate(steps))
+    body = ('<img class="lg" src="%s" alt=""><h1>결제하고 <em>1분</em>,<br>메일로 받은 코드로 바로</h1><p class="sub">AI 작성률 검사 · AI 휴머나이징 서비스에 쓰는 토큰 이용 안내</p><div class="steps">%s</div>'
+            '<div class="cost"><h2>토큰은 이렇게 빠집니다</h2><ul><li>검사 요약 <b>무료</b></li><li>전체 결과 <b>1,000자 4토큰</b></li><li>휴머나이징 <b>1,000자 8토큰</b></li><li>1토큰 <b>100원</b> · 구독 없음</li></ul></div>') % (LOGO, s)
+    return BASE % (GUIDE_CSS, body)
 
-
-
-# ---------- 2026.11.21 밤 대표: 로봇 로고, 'AIMarker 처럼 간단 · 깔끔', 정가 · 50% · 전후 막대(92% → 7%) 상자는 뺌 ----------
-ROBOT = "file://" + os.path.join(os.path.dirname(HERE), "brand", "robot_green.png")
-LOCKUP = ('<div class="brand"><img src="%s" alt=""><div><b>한국휴머나이저</b><i>%s</i></div></div>'
-          % (ROBOT, "".join("<span>%s</span>" % c for c in "HUMANIZER")))
-LOCKUP_CSS = """
-.brand{position:absolute;left:96px;top:78px;display:flex;align-items:center;gap:18px}
-.brand img{height:84px}
-.brand b{display:block;font-size:44px;font-weight:800;letter-spacing:-.035em;color:#0b1730;line-height:1}
-.brand i{display:flex;justify-content:space-between;margin-top:9px;font-style:normal;font-size:25px;font-weight:800;color:#0b8a5e;line-height:1}
-"""
-
-
-def thumb2_html(p):
-    badge = ""
-    if p["badge"] == "BEST 추천":
-        badge = '<div class="badge best">BEST 추천</div>'
-    elif p["badge"]:
-        badge = '<div class="badge top">%s</div>' % p["badge"]
-    save = ('<div class="save">%s</div>' % p["save"]) if p["save"] else '<div class="note">AI 작성률 검사 · 휴머나이징 서비스</div>'
-    small = len(p["tok"]) > 3
-    return """<!doctype html><html><head><meta charset="utf-8"><style>%s%s
-body{width:1200px;height:1200px;background:#fff;position:relative;overflow:hidden}
-.card{position:absolute;left:96px;top:214px;width:1008px;height:560px;border-radius:44px;overflow:hidden;
- background:radial-gradient(120%% 140%% at 100%% 100%%,#10b981 0%%,rgba(16,185,129,0) 46%%),linear-gradient(135deg,#0a1530 0%%,#0d2346 52%%,#0b4b55 100%%);
- box-shadow:0 34px 60px -24px rgba(11,23,48,.55)}
-.hd{position:absolute;left:54px;top:50px;display:flex;align-items:center;gap:14px;color:#fff;font-size:30px;font-weight:700}
-.badge{position:absolute;right:52px;top:46px;height:52px;padding:0 24px;border-radius:26px;display:flex;align-items:center;font-size:26px;font-weight:800;z-index:2}
-.badge.best{background:#fbbf24;color:#1a1a1a}
-.badge.top{background:#fff;color:#0b1730}
-.pills{position:absolute;left:52px;top:126px;display:flex;gap:14px;z-index:2}
-.pill{height:54px;padding:0 24px;border-radius:27px;display:flex;align-items:center;font-size:27px;font-weight:800}
-.pill.n{background:#0e9f6e;color:#fff}
-.pill.o{border:2px solid rgba(255,255,255,.32);color:#fff;font-weight:700}
-.big{position:absolute;left:46px;top:196px;display:flex;align-items:flex-end;color:#fff;z-index:2}
-.big b{font-size:%dpx;font-weight:850;letter-spacing:-.06em;line-height:1}
-.big span{font-size:62px;font-weight:800;margin:0 0 22px 16px}
-.save{position:absolute;left:52px;bottom:50px;height:52px;padding:0 20px;border-radius:12px;border:2px solid rgba(251,191,36,.75);background:rgba(251,191,36,.08);color:#fcd34d;font-size:24px;font-weight:800;display:flex;align-items:center;z-index:2}
-.note{position:absolute;left:54px;bottom:62px;color:rgba(255,255,255,.82);font-size:24px;font-weight:600;z-index:2}
-.price{position:absolute;right:52px;bottom:44px;color:#fff;z-index:2;font-size:66px;font-weight:850;letter-spacing:-.04em}
-.ttl{position:absolute;left:96px;top:826px;font-size:46px;font-weight:800;line-height:1.32;letter-spacing:-.035em;color:#0b1730}
-.sub{position:absolute;left:96px;top:970px;font-size:27px;line-height:1.68;color:#64748b;font-weight:500}
-.dom{position:absolute;left:96px;top:1086px;font-size:30px;font-weight:800;color:#0e9f6e}
-</style></head><body>
-%s
-<div class="card">
- <div class="hd">AI 휴머나이징 토큰</div>%s
- <div class="pills"><div class="pill n">%s</div><div class="pill o">%s</div></div>
- <div class="big"><b>%s</b><span>토큰</span></div>
- %s
- <div class="price">%s</div>
-</div>
-<div class="ttl">AI 작성률 낮추기 · AI 휴머나이징<br>(AI 글 인간화) 서비스 토큰</div>
-<div class="sub">월 구독 없이 한 번 충전 · 쓴 만큼만 빠짐 · 5년 사용<br>검사 1,000자 4토큰 · 휴머나이징 1,000자 8토큰</div>
-<div class="dom">humanizer.co.kr</div>
-</body></html>""" % (BASE_CSS, LOCKUP_CSS, 168 if small else 196, LOCKUP, badge, p["name"], p["per"], p["tok"], save, p["price"])
-
-
-def guide2_html():
-    h = guide_html()
-    # 로고만 로봇으로(내용은 그대로)
-    lg = LOGO % (60, 60, "g", "g")
-    old_brand = '<div class="brand">%s<div><b>한국휴머나이저</b><small>KOREA HUMANIZER</small></div></div>' % lg
-    new_brand = ('<div class="brand"><img src="%s" alt="" style="height:76px"><div><b>한국휴머나이저</b>'
-                 '<small style="display:flex;justify-content:space-between;letter-spacing:0;font-size:21px;font-weight:800;color:#0b8a5e;margin-top:7px">%s</small></div></div>'
-                 % (ROBOT, "".join("<span>%s</span>" % c for c in "HUMANIZER")))
-    assert old_brand in h
-    return h.replace(old_brand, new_brand)
-
-
-# ---------- 2026.11.21 22:00 대표: 새 로고(K 표지 + 한국휴머나이저 / HUMANIZER)로. 그림 짜임은 그대로 ----------
-FULL = "file://" + os.path.join(os.path.dirname(HERE), "brand", "logo-full.png")
-LOCKUP = '<div class="brand"><img src="%s" alt="" style="height:92px"></div>' % FULL
-LOCKUP_CSS = """
-.brand{position:absolute;left:92px;top:76px}
-"""
-
-
-def guide3_html():
-    h = guide_html()
-    lg = LOGO % (60, 60, "g", "g")
-    old_brand = '<div class="brand">%s<div><b>한국휴머나이저</b><small>KOREA HUMANIZER</small></div></div>' % lg
-    assert old_brand in h
-    return h.replace(old_brand, '<div class="brand"><img src="%s" alt="" style="height:80px"></div>' % FULL)
 
 async def main():
     async with async_playwright() as pw:
-        br = await pw.chromium.launch(executable_path="/usr/bin/google-chrome", args=["--allow-file-access-from-files"])
-        pg = await br.new_page(viewport={"width": 1200, "height": 1200}, device_scale_factor=1)
+        b = await pw.chromium.launch(executable_path="/usr/bin/google-chrome", args=["--no-sandbox", "--allow-file-access-from-files"])
         for p in PACKS:
-            f = os.path.join(HERE, "_t_%s.html" % p["id"])
-            open(f, "w").write(thumb2_html(p))
-            await pg.goto("file://" + f)
-            await pg.evaluate("document.fonts.ready")
-            await pg.wait_for_timeout(250)
-            await pg.screenshot(path=os.path.join(OUT, "hz-%s-1x1.jpg" % p["id"]), type="jpeg", quality=92)
-        await pg.set_viewport_size({"width": 1080, "height": 1350})
-        f = os.path.join(HERE, "_t_guide.html")
-        open(f, "w").write(guide3_html())
-        await pg.goto("file://" + f)
-        await pg.evaluate("document.fonts.ready")
-        await pg.wait_for_timeout(250)
-        await pg.screenshot(path=os.path.join(OUT, "hz-tokens-guide.png"))
-        await br.close()
+            path = os.path.join(HERE, "_t_%s.html" % p["id"])
+            open(path, "w", encoding="utf-8").write(thumb_html(p))
+            pg = await b.new_page(viewport={"width": 1200, "height": 1200})
+            await pg.goto("file://" + path); await pg.evaluate("document.fonts.ready"); await pg.wait_for_timeout(250)
+            fp = os.path.join(OUT, "hg-%s-1x1.jpg" % p["id"])
+            await pg.screenshot(path=fp, type="jpeg", quality=90)
+            shutil.copy(fp, os.path.join(PROD, os.path.basename(fp)))
+            await pg.close(); os.remove(path)
+        path = os.path.join(HERE, "_t_guide.html")
+        open(path, "w", encoding="utf-8").write(guide_html())
+        pg = await b.new_page(viewport={"width": 1080, "height": 1350})
+        await pg.goto("file://" + path); await pg.evaluate("document.fonts.ready"); await pg.wait_for_timeout(250)
+        fp = os.path.join(OUT, "hg-tokens-guide.png")
+        await pg.screenshot(path=fp)
+        shutil.copy(fp, os.path.join(PROD, os.path.basename(fp)))
+        await pg.close(); os.remove(path)
+        await b.close()
+    print("ok", sorted(os.listdir(OUT)))
 
 asyncio.run(main())
-print("ok", sorted(os.listdir(OUT)))
