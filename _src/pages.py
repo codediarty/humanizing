@@ -1,0 +1,285 @@
+# -*- coding: utf-8 -*-
+"""한국휴머나이징 페이지 글(홈 · 공통 구역 · 자주 묻는 질문 · 안내). build.py 가 읽음.
+한국휴머나이저(humanizer.co.kr)와 겹치지 않게 새로 쓴 글. 줄표(—)는 쓰지 않음(대표 지시)"""
+
+# ---------------- 검사 도구 화면(humanize.js 가 쓰는 id 그대로) ----------------
+TOOL_TPL = """<div class="hz12" id="hz">
+  <ol class="hz12-steps" id="hzSteps" aria-label="진행 순서">
+    <li class="on" data-step="1"><i>1</i><span>글 넣기</span></li>
+    <li data-step="2"><i>2</i><span class="f">AI 작성률 확인</span><span class="s">검사</span></li>
+    <li data-step="3"><i>3</i><span class="f">휴머나이징</span><span class="s">다듬기</span></li>
+  </ol>
+  <div class="hz12-card">
+    <div class="hz12-in" id="hzIn">
+      <div class="hz12-drop" id="hzDrop">
+        <label class="k-sr" for="hzText">검사할 글</label>
+        <textarea id="hzText" maxlength="50000" spellcheck="false" placeholder="AI로 쓴 글, 과제 · 논문 · 자기소개서를 붙여 넣으세요"></textarea>
+        <div class="hz12-empty" id="hzEmpty">
+          <button type="button" class="hz12-up" id="hzPick">{ico_upload}<span>파일 올리기</span></button>
+          <p class="dnd">또는 여기로 끌어다 놓으세요</p>
+          <p class="fmt">한글(HWP, HWPX), 워드(DOCX), PDF, 텍스트</p>
+        </div>
+        <div class="hz12-over" aria-hidden="true">{ico_upload}<span>놓으면 글을 꺼내 옵니다</span></div>
+        <div class="hz12-busy" id="hzBusy" hidden><span class="ds-spin" aria-hidden="true"></span><span id="hzBusyT">파일에서 글을 꺼내는 중</span></div>
+      </div>
+      <input type="file" id="hzFile" class="k-sr" tabindex="-1" aria-hidden="true" aria-label="파일 올리기" accept=".hwp,.hwpx,.docx,.pdf,.txt,.md,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+      <div class="hz12-bar">
+        <div class="hz12-file" id="hzFileChip" hidden></div>
+        <div class="hz12-ex" id="hzEx" role="group" aria-label="예시 글로 해 보기"><span>예시</span><button type="button" data-ex="thesis">논문</button><button type="button" data-ex="journal">학술지</button><button type="button" data-ex="report">대학 과제</button><button type="button" data-ex="grad">대학원 과제</button><button type="button" data-ex="essay">자기소개서</button></div>
+        <span class="hz12-cnt"><b id="hzCount">0</b>자<span class="lim" id="hzLimit"> / 무료 검사 5만 자까지</span></span>
+      </div>
+    </div>
+    <div class="hz12-sum" id="hzSum" hidden></div>
+    <div class="hz12-go" id="hzGo">
+      <button class="k-btn k-btn-p k-btn-lg hz12-run" type="button" id="hzCheck">{ico_search}<span id="hzChkL">AI 작성률 무료 검사</span><em class="hz7-pill" id="hzChkTag" hidden></em></button>
+      <button class="k-btn k-btn-l k-btn-lg hz12-run2" type="button" id="hzPro" hidden>{ico_pen}<span>휴머나이징</span><em class="hz7-pill" id="hzProTag"></em></button>
+      <p class="hz12-note" id="hzNote">{ico_lock}<span>가입 없이 무료 · 글과 파일은 저장하지 않습니다</span></p>
+      <div class="hz7-pass hz12-pass" id="hzPass" aria-live="polite"></div>
+    </div>
+  </div>
+  <p class="k-sr" id="hzStat" role="status" aria-live="polite"></p>
+  <div class="hz12-out" id="hzOut"></div>
+</div>
+<dialog class="hz7-dlg hz18-dlg" id="hzBuy" aria-labelledby="hzBuyT">
+  <form method="dialog" class="hz7-dlg-x"><button type="submit" aria-label="닫기">{ico_x}</button></form>
+  <div class="hz7-dlg-b" id="hzBuyBody">
+    <p class="hz18-k">{ico_spark}{brand} 토큰 충전</p>
+    <h2 id="hzBuyT">AI 휴머나이징 토큰 충전</h2>
+    <p class="hz13-unit"><b>월 구독 없이 한 번 충전</b><span>많이 충전할수록 토큰당 가격이 낮아지고, 남은 토큰은 5년 동안 사라지지 않습니다</span></p>
+    <p class="hz12-need" id="hzBuyNeed" hidden></p>
+    <form id="hzBuyForm" novalidate>
+      <fieldset class="hz7-to" hidden></fieldset>
+      <fieldset class="hz7-prod hz18-packs"><legend class="sr">충전할 토큰</legend>{packs}<p class="hz20-pg">글자 수는 AI 작성률 검사와 휴머나이징을 한 번씩 했을 때 기준</p></fieldset>
+      <div class="hz19-gate" id="hzBuyPay"></div>
+      <div class="hz19-fb" id="hzBuyFb" hidden>
+        <div class="field"><label for="hzBuyMail">토큰 코드와 결제 안내를 받을 이메일 <em>필수</em></label><input class="inp" id="hzBuyMail" name="contact" type="email" inputmode="email" autocomplete="email" maxlength="80" placeholder="name@example.com"></div>
+        <p class="hz7-dlg-n" id="hzBuyNote"></p>
+        <p class="hz7-dlg-n">이메일은 주문 처리와 코드 · 결제 안내에만 씁니다(<a href="/privacy/" target="_blank" rel="noopener">개인정보처리방침</a>).</p>
+      </div>
+      <input class="hp" name="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button class="btn btn-p btn-l hz19-go" type="submit"><span>성균관컨설팅에서 결제하기</span>{ico_arrow}</button>
+      <p class="msg" role="status"></p>
+      <p class="hz7-dlg-n hz19-legal"><span id="hzBuyAmt"></span>운영 성균관컨설팅(사업자등록번호 {biz_no}) · <a href="/terms/#pass" target="_blank" rel="noopener">이용약관</a> · 문의 {mail}</p>
+    </form>
+  </div>
+</dialog>
+<dialog class="hz7-dlg" id="hzCode" aria-labelledby="hzCodeT">
+  <form method="dialog" class="hz7-dlg-x"><button type="submit" aria-label="닫기">{ico_x}</button></form>
+  <div class="hz7-dlg-b">
+    <h2 id="hzCodeT">토큰 코드 넣기</h2>
+    <form id="hzCodeForm" novalidate>
+      <div class="field"><label for="hzCodeIn">메일로 받은 16자리 코드</label><input class="inp hz7-code-in" id="hzCodeIn" name="code" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="24" placeholder="XXXX-XXXX-XXXX-XXXX"></div>
+      <button class="btn btn-p btn-l" type="submit">코드 넣기</button>
+      <p class="msg" role="status"></p>
+      <p class="hz7-dlg-n">코드는 이 브라우저에만 저장됩니다. 다른 기기에서는 코드를 다시 넣어 주세요.<span class="twa-hide"> 코드가 없나요? <button type="button" class="hz7-link" data-buy="best">토큰 충전</button></span></p>
+    </form>
+  </div>
+</dialog>"""
+
+# ---------------- 홈 ----------------
+HOME = {
+    "title": "한국휴머나이징 · AI 휴머나이저 · AI 작성률 낮추기 | 한국어 전용 AI 휴머나이징",
+    "desc": "한국어 전용 AI 휴머나이징. AI 탐지기가 보라색으로 표시하는 문장만 골라 사람이 쓴 한국어로 바꾸고, AI 작성률을 같은 기준으로 다시 재서 보여 드립니다. 가입 없이 무료 검사, 한글 · 워드 · PDF 그대로.",
+    "eyebrow": "<b>무료</b> 가입 없이 AI 작성률 바로 검사",
+    "h1": 'AI 티는 지우고,<br><em>내 글의 뜻</em>은 그대로.',
+    "lead": "AI 탐지기에 걸리는 문장만 찾아 사람이 쓴 한국어 문장으로 바꿉니다. 숫자와 인용은 손대지 않고, 바꾼 뒤에는 AI 작성률을 같은 기준으로 다시 재서 얼마나 내려갔는지 바로 보여 드립니다.",
+    "faq": [
+        ("한국휴머나이징은 어떤 서비스인가요?", "AI가 쓴 한국어 글에 남는 말버릇(번역투, 틀에 박힌 연결어, 내용 없는 꾸밈말, 똑같은 문장 리듬)을 찾아 사람이 쓴 문장처럼 바꾸는 AI 휴머나이징 서비스입니다. 먼저 AI 작성률을 무료로 재고, 걸리는 문장만 고친 뒤 같은 기준으로 다시 잽니다."),
+        ("정말 무료로 검사할 수 있나요?", "네. 가입 없이 한 번에 5만 자까지 무료로 검사합니다. 글 전체 AI 작성률, 판정(안전 · 고위험 · 부적합), 가장 뚜렷하게 걸린 문장을 바로 보여 드립니다. 모든 문장 표시와 휴머나이징은 토큰으로 이용합니다."),
+        ("AI 탐지기의 AI 작성률도 내려가나요?", "AI 탐지기는 문장마다 AI 글과 얼마나 닮았는지 점수를 매겨 표시합니다. 한국휴머나이징은 그 판별에 걸리는 말버릇을 문장 단위로 고치고, 실제 탐지기 결과와 대조해 맞춘 엄격한 기준으로 다시 잽니다. 예시 글들은 한 번의 휴머나이징으로 91~92%에서 7~11%까지 내려갔습니다. 다만 검사기마다 기준이 달라 숫자가 똑같지는 않습니다."),
+        ("휴머나이징하면 내용이 바뀌지 않나요?", "뜻은 바꾸지 않습니다. 숫자, 이름, 인용, 전문 용어는 그대로 두고 문장의 짜임과 말투만 바꿉니다. 출시 기준 시험(583만 자)에서 사실과 부정 표현은 100% 그대로 남았습니다. 그래도 제출 전에는 한 번 읽어 보시길 권합니다."),
+        ("한글 · 워드 파일을 그대로 올려도 되나요?", "네. 한글(HWP · HWPX), 워드(DOCX), PDF, 텍스트 파일을 올리면 글을 꺼내 바로 검사합니다. 다듬은 글은 올린 파일 형식 그대로 받을 수 있고, 한글 · 워드 파일은 바뀐 문단만 고쳐 원래 서식을 지킵니다."),
+        ("넣은 글이 저장되나요?", "저장하지 않습니다. 넣은 글과 파일은 검사와 휴머나이징에만 쓰고 서버에 남기지 않습니다. 파일에서 글을 꺼내는 일도 이용자의 브라우저 안에서 하며, 가입이 없어 개인정보를 남기지 않습니다."),
+        ("생성 AI로 다시 써 주는 건가요?", "아닙니다. 한국휴머나이징 엔진은 생성 AI를 쓰지 않습니다. 사람 글로 만든 한국어 용언 사전과 문장 규칙으로 바꾸기 때문에 없는 내용을 지어내지 않고, AI 말버릇이 새로 생기지도 않습니다."),
+        ("결제는 어떻게 하고, 코드는 언제 오나요?", "토큰을 고르면 운영사 성균관컨설팅의 결제 페이지가 열립니다. 회원가입 없이 카드 · 간편결제로 결제하면 보통 1분 안에 적은 이메일로 16자리 토큰 코드가 가고, 메일의 단추를 누르면 하던 글 그대로 이어서 휴머나이징됩니다."),
+        ("다른 AI 탐지기에도 대비가 되나요?", "AI 탐지기는 이름이 달라도 문장의 AI 패턴을 본다는 점은 같습니다. 한국휴머나이징은 특정 검사기 하나를 겨냥하지 않고 AI 문장 패턴 자체를 고치기 때문에, 문장 단위로 판별하는 여러 탐지기에 함께 대비할 수 있습니다."),
+    ],
+}
+HOW_STEPS = [
+    ("글 넣기", "글을 붙여 넣거나 한글 · 워드 · PDF 파일을 올립니다. 파일 속 글은 브라우저 안에서 꺼내고 저장하지 않습니다."),
+    ("AI 작성률 확인", "문장마다 앞뒤 문맥과 함께 판별해 AI 작성률과 판정(안전 · 고위험 · 부적합), AI로 검출된 문장을 보여 줍니다. 무료입니다."),
+    ("휴머나이징", "번역투 · 상투적 연결어 · 빈말 같은 AI 말버릇을 사람 문장으로 바꾸고, 같은 기준으로 다시 재서 내려간 AI 작성률을 보여 줍니다."),
+]
+
+
+def metrics_strip(ico):
+    items = [("89억 개", "AI 문장 패턴 데이터로 만든 판별 엔진"), ("15,659개", "사람 글 10억 자로 만든 한국어 용언 사전"), ("100%", "숫자 · 사실 · 부정 표현 보존(583만 자 시험)"), ("1분 안", "결제하면 메일로 토큰 코드 발급")]
+    return '<section class="metrics"><div class="wrap"><div class="grid4">%s</div></div></section>' % "".join('<div class="mt rv"><b>%s</b><span>%s</span></div>' % (a, b) for a, b in items)
+
+
+def alarm_section(ico):
+    stats = [("D<small>학점</small>", "과제에 AI 사용이 확인된 학생들이 받은 성적입니다. 서울대 한 전공과목에서는 수강생 62명 가운데 36명이 확인됐습니다.", "세계일보 2026.7.30"),
+             ("64.4<small>%</small>", "AI 작성이 의심된 자기소개서의 비율입니다. 한 채용 서비스에 낸 서류 기준으로, 1년 전에는 48.5%였습니다.", "전자신문 2026.1.9"),
+             ("+75.9<small>%</small>", "교수자가 과제를 AI 검사한 문서량이 1년 사이 늘어난 비율입니다. 한 달에 57만 7천 건이 검사됐습니다.", "유니콘팩토리 2026.5.26")]
+    pats = [("번역투", '학생들의 참여를 높이는 데 <span class="s ai">있어서</span> 중요한 역할을 <span class="s ai">수행한다</span>', "~에 있어서, ~을 통해, ~함으로써"),
+            ("상투적 연결어", '<span class="s ai">또한,</span> 지역 경제에도 도움이 된다. <span class="s ai">결론적으로,</span> 정책이 필요하다', "또한, 따라서, 결론적으로"),
+            ("빈말 · 과장 수식", '<span class="s ai">다양한</span> 방법으로 <span class="s ai">효과적인</span> 결과를 얻을 수 있다', "다양한, 효과적인, 체계적인"),
+            ("틀에 박힌 도입 · 마무리", '<span class="s ai">오늘날</span> 환경 문제는 매우 중요한 과제<span class="s ai">라고 할 수 있다</span>', "현대 사회에서, ~라고 할 수 있다")]
+    return ('<section class="sec dark" id="why"><div class="wrap"><p class="kick">%s제출 전에 꼭 알아야 할 것</p><h2 class="h2">학교도 회사도 이미<br>AI 탐지기로 글을 거르고 있습니다</h2>'
+            '<p class="sub">부적합 판정이 한 번 나면 해명할 기회가 없을 수도 있습니다. 내기 전에 확인하고, 걸리는 문장만 고치는 것이 가장 안전합니다.</p>'
+            '<div class="grid3">%s</div>'
+            '<h3 class="pt">내 글에도 있을까요? AI 작성률을 올리는 말버릇 네 가지</h3>'
+            '<p class="ps">보라색이 AI 탐지기에 걸리는 부분입니다. 글을 붙여 넣으면 어느 문장에 남아 있는지 바로 보여 드립니다.</p>'
+            '<div class="pats">%s</div><p class="src">출처: 세계일보 2026.7.30 · 전자신문 2026.1.9(채용 서비스 공동 리포트, 2025년 제출 자기소개서) · 유니콘팩토리 2026.5.26(국내 한 교수자 평가용 서비스의 2026년 4월 검사 문서량)</p></div></section>') % (
+        ico("alert"),
+        "".join('<div class="stat rv"><b>%s</b><p>%s</p><cite>%s</cite></div>' % s for s in stats),
+        "".join('<div class="pat rv"><b>%sAI 작성률 ↑ %s</b><p>%s</p><span>%s</span></div>' % (ico("flag"), a, b, c) for a, b, c in pats))
+
+
+def scale_section(ico):
+    """판정 기준 띠(새로 더함): 숫자를 어떻게 읽는지 한눈에"""
+    return ('<section class="sec-s"><div class="wrap"><div class="center"><p class="kick">%s판정 기준</p><h2 class="h2">AI 작성률, 몇 %%면 괜찮을까요</h2>'
+            '<p class="sub">문장마다 AI 점수를 매기고 글자 수만큼 반영해 글 전체 AI 작성률을 냅니다. 같은 글은 언제 넣어도 같은 값이 나옵니다.</p></div>'
+            '<div class="scale rv"><div class="g"><b><i></i>안전 · 20%% 미만</b><p>AI 패턴이 거의 없습니다. 많은 학교 · 기관이 기준선으로 보는 구간입니다.</p></div>'
+            '<div class="w"><b><i></i>고위험 · 20~40%%</b><p>걸리는 문장이 섞여 있습니다. 표시된 문장만 다듬으면 대개 안전 구간으로 내려갑니다.</p></div>'
+            '<div class="r"><b><i></i>부적합 · 40%% 이상</b><p>AI가 쓴 글로 볼 가능성이 높습니다. 제출 전에 휴머나이징을 권합니다.</p></div></div>'
+            '<p class="center measured">제출처마다 기준이 다를 수 있으니 학교 · 기관의 AI 사용 규정을 함께 확인하세요.</p></div></section>') % ico("gauge")
+
+
+def how_section(ico):
+    steps = "".join('<div class="step rv"><h3>%s%s</h3><p>%s</p></div>' % (a, '<span class="tg">무료</span>' if i < 2 else "", b) for i, (a, b) in enumerate(HOW_STEPS))
+    return ('<section class="sec alt" id="how"><div class="wrap"><div class="center"><p class="kick">%s이용 방법</p><h2 class="h2">세 단계면 끝납니다</h2><p class="sub">가입도, 설치도 없습니다. 결제가 필요할 때만 성균관컨설팅 결제 페이지에서 바로 결제합니다.</p></div>'
+            '<div class="steps">%s</div><div class="flow" aria-label="결제 흐름"><span>토큰 고르기</span>%s<span>성균관컨설팅 결제(가입 없이)</span>%s<span>메일로 16자리 코드(보통 1분 안)</span>%s<span class="k">하던 글 그대로 이어서</span></div></div></section>') % (
+        ico("zap"), steps, ico("arrow"), ico("arrow"), ico("arrow"))
+
+
+def features_section(ico, brand):
+    F = [("cpu", "한국어 문장을 아는 엔진", "사람 글 10억 자로 만든 용언 15,659개의 활용 규칙으로 어미와 조사까지 고칩니다. 번역기를 두 번 돌린 듯한 어색함이 남지 않습니다."),
+         ("target", "걸리는 문장 위주로 정확하게", "문장마다 AI 점수를 먼저 보고 검출된 문장 위주로 고칩니다. 멀쩡한 문장까지 바꾸다가 오히려 작성률이 오르는 일을 막습니다."),
+         ("shield", "숫자 · 이름 · 인용은 그대로", "사실을 담은 말은 손대지 않습니다. 출시 기준 시험 583만 자에서 사실과 부정 표현 보존 100%, 깨진 문장 0%였습니다."),
+         ("sliders", "말투 자동 맞춤", "논문 · 레포트는 한다체, 자기소개서는 습니다체처럼 원문 말투를 읽고 맞춥니다. 섞여 있던 말투도 하나로 정리합니다."),
+         ("file", "파일 그대로 받기", "한글 · 워드 파일은 바뀐 문단만 고쳐 원래 서식 그대로 돌려 드립니다. 복사하고 붙여 넣는 수고가 없습니다."),
+         ("lock", "글은 남기지 않습니다", "넣은 글과 파일은 검사와 휴머나이징에만 쓰고 저장하지 않습니다. 가입이 없어 개인정보도 남지 않습니다.")]
+    cards = "".join('<div class="card rv"><span class="ic">%s</span><h3>%s</h3><p>%s</p></div>' % (ico(i), a, b) for i, a, b in F)
+    return '<section class="sec" id="features"><div class="wrap"><div class="center"><p class="kick">%s왜 %s인가</p><h2 class="h2">직접 고치기, 번역기 돌리기와는<br>결과가 다릅니다</h2></div><div class="grid3">%s</div></div></section>' % (ico("sparkle"), brand, cards)
+
+
+def compare_table(ico, brand):
+    rows = [("한국어 문장 자연스러움", "사람마다 다름", "어색해짐", "번역투가 남음", "한국어 전용 규칙"),
+            ("AI로 걸리는 문장 표시", '<span class="no">없음</span>', '<span class="no">없음</span>', "일부", '<span class="yes">문장마다</span>'),
+            ("숫자 · 이름 · 인용 보존", '<span class="yes">보존</span>', "자주 틀림", "자주 틀림", '<span class="yes">100% 보존</span>'),
+            ("바꾼 뒤 AI 작성률 다시 측정", '<span class="no">못 함</span>', '<span class="no">못 함</span>', "영어 기준", '<span class="yes">같은 기준으로</span>'),
+            ("한글(HWP) 파일", "-", '<span class="no">안 됨</span>', '<span class="no">안 됨</span>', '<span class="yes">서식 그대로</span>'),
+            ("걸리는 시간", "몇 시간", "몇 분", "몇 분", '<span class="yes">몇 초</span>')]
+    body = "".join("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td class=\"me\">%s</td></tr>" % r for r in rows)
+    return ('<section class="sec alt"><div class="wrap"><div class="center"><p class="kick">%s비교</p><h2 class="h2">AI 티를 지우는 방법, 무엇이 다를까요</h2></div>'
+            '<div class="tbl-w rv"><table class="tbl"><thead><tr><th>기준</th><th>직접 고치기</th><th>번역기 두 번 돌리기</th><th>해외 휴머나이저</th><th class="me">%s</th></tr></thead><tbody>%s</tbody></table></div></div></section>') % (ico("scale"), brand, body)
+
+
+def usecases_section(ico):
+    U = [("cap", "논문 · 학위논문", "심사나 투고 전에 AI 작성률을 점검하세요. '본 연구는' 같은 학술 표현은 지키고 AI 말버릇만 덜어 냅니다.", "/thesis/"),
+         ("file", "과제 · 레포트", "AI 검사로 과제를 거르는 수업이 늘었습니다. 레포트 한 편은 1분이면 검사와 휴머나이징이 끝납니다.", "/report/"),
+         ("users", "자기소개서", "채용 서류의 AI 작성 의심 비율은 60%를 넘습니다. 습니다체는 그대로, 내 경험이 드러나는 문장으로 다듬습니다.", "/resume/"),
+         ("chat", "블로그 · 마케팅 글", "AI 티가 나는 글은 독자도 검색도 알아챕니다. 사람이 쓴 듯 자연스러운 문장으로 바꿉니다.", "/natural/")]
+    cards = "".join('<a class="card rv" href="%s"><span class="ic">%s</span><h3>%s</h3><p>%s</p><p class="more">자세히 보기 →</p></a>' % (u, ico(i), a, b) for i, a, b, u in U)
+    return '<section class="sec"><div class="wrap"><div class="center"><p class="kick">%s이런 글에 씁니다</p><h2 class="h2">제출하는 모든 한국어 글을 위해</h2></div><div class="grid4">%s</div></div></section>' % (ico("layers"), cards)
+
+
+def pricing_detail(ico):
+    rows = [("자기소개서 1문항(1,500자)", "6토큰", "12토큰", "18토큰 · 약 1,800원"), ("대학 레포트(5,000자)", "20토큰", "40토큰", "60토큰 · 약 6,000원"),
+            ("논문 한 장(15,000자)", "60토큰", "120토큰", "180토큰 · 약 18,000원"), ("학위논문 본문(80,000자)", "320토큰", "640토큰", "960토큰 · 약 96,000원")]
+    t = "".join("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>" % r for r in rows)
+    return ('<section class="sec-s"><div class="wrap-n"><h2 class="h2">토큰은 이렇게 빠집니다</h2><p class="sub">AI 작성률 검사 1,000자 4토큰(최소 2토큰), AI 휴머나이징 1,000자 8토큰(최소 4토큰). 1토큰은 100원입니다. 빠질 토큰은 누르기 전에 화면에 먼저 보여 드립니다.</p>'
+            '<div class="tbl-w"><table class="tbl"><thead><tr><th>글</th><th>검사</th><th>휴머나이징</th><th>합계</th></tr></thead><tbody>%s</tbody></table></div>'
+            '<div class="grid3" style="margin-top:28px"><div class="card"><span class="ic">%s</span><h3>월 구독 없음</h3><p>한 번 충전하고 쓴 만큼만 빠집니다. 자동 결제도 없습니다.</p></div>'
+            '<div class="card"><span class="ic">%s</span><h3>5년 동안 그대로</h3><p>남은 토큰은 사라지지 않고 충전한 날부터 5년 동안 씁니다.</p></div>'
+            '<div class="card"><span class="ic">%s</span><h3>1분 안에 코드</h3><p>결제가 확인되면 보통 1분 안에 이메일로 16자리 토큰 코드가 갑니다.</p></div></div></div></section>') % (t, ico("card"), ico("clock"), ico("mail"))
+
+
+PRICE_FAQ = [
+    ("토큰은 어떻게 빠지나요?", "검사나 휴머나이징을 누르면 글자 수만큼 토큰이 빠집니다. AI 작성률 검사는 1,000자에 4토큰, AI 휴머나이징은 1,000자에 8토큰이며, 빠질 토큰은 누르기 전에 화면에 먼저 보여 드립니다."),
+    ("결제하면 코드는 언제 오나요?", "결제가 확인되면 보통 1분 안에 결제할 때 적은 이메일로 16자리 토큰 코드가 갑니다. 메일의 단추를 누르면 코드가 자동으로 들어가고, 결제하러 가기 전에 넣어 둔 글을 그대로 이어서 휴머나이징합니다. 메일이 안 보이면 스팸함도 확인해 주세요."),
+    ("카드 명세서에는 무엇으로 찍히나요?", "한국휴머나이징 운영사인 성균관컨설팅으로 표시됩니다. 결제는 성균관컨설팅 결제 페이지에서 회원가입 없이 카드 · 간편결제로 합니다."),
+    ("남은 토큰은 사라지나요?", "사라지지 않습니다. 충전한 날부터 5년 동안 쓸 수 있고, 같은 코드에 더 충전해 이어서 쓸 수 있습니다."),
+    ("다른 기기에서도 쓸 수 있나요?", "네. 메일로 받은 16자리 코드를 다른 기기에서 넣으면 남은 토큰을 그대로 씁니다. 코드를 아는 사람은 누구나 쓸 수 있으니 잘 보관해 주세요."),
+]
+MORE_FAQ = [
+    ("AI 작성률은 어떻게 계산하나요?", "문장마다 판별 모델이 AI 점수를 매기고, 그 점수를 문장의 글자 수만큼 반영해 글 전체의 AI 작성률을 냅니다. 20% 미만은 안전, 20~40%는 고위험, 40% 이상은 부적합으로 판정합니다. 같은 글은 언제나 같은 값이 나옵니다."),
+    ("내가 직접 쓴 글도 AI로 나올 수 있나요?", "그럴 수 있습니다. 놓치는 AI 글을 줄이려고 기준을 엄격하게 잡았기 때문에, 딱딱한 보고서체로 쓴 사람 글도 높게 나올 수 있습니다. 이럴 때도 AI처럼 읽히는 문장만 휴머나이징하면 오해를 줄일 수 있습니다."),
+    ("한 번 휴머나이징했는데 아직 높으면요?", "다듬은 글을 다시 검사해 보라색 문장이 남았다면 그 글로 한 번 더 휴머나이징하세요. 바뀌는 곳이 줄어들수록 토큰도 덜 듭니다. 숫자보다 중요한 것은 표시된 문장이 남지 않는 것입니다."),
+    ("문장 하나만 고칠 수도 있나요?", "네. 결과 화면에서 문장을 누르면 600자 이하의 짧은 글은 문장 고쳐 쓰기 도우미가 후보 문장을 보여 드립니다(토큰이 있을 때 0토큰)."),
+    ("표절률도 함께 내려가나요?", "휴머나이징은 표현과 말투를 바꾸므로 표절 검사의 문장 일치도 함께 줄어드는 경우가 많습니다. 다만 인용이 필요한 부분은 출처를 꼭 밝혀 주세요."),
+    ("어떤 브라우저에서 되나요?", "크롬, 엣지, 웨일, 사파리 등 최신 브라우저와 휴대폰에서 모두 됩니다. 설치할 프로그램은 없습니다."),
+]
+
+from landings import LANDINGS  # noqa: E402,F401
+from guides import GUIDES  # noqa: E402,F401
+
+# ---------------- 안내(회사 · 약관 · 개인정보) ----------------
+TERMS = """<p class="meta">시행일 2026년 11월 21일</p>
+<h2>제1조 목적</h2><p>이 약관은 성균관컨설팅(이하 '운영사')이 humanizing.ai.kr에서 제공하는 한국휴머나이징 서비스(이하 '서비스')의 이용 조건과 절차, 운영사와 이용자의 권리 · 의무를 정합니다.</p>
+<h2>제2조 서비스 내용</h2><ul><li>AI 작성률 검사: 이용자가 넣은 글의 AI 작성률과 판정(안전 · 고위험 · 부적합)을 정해진 판정 기준으로 보여 주고, 문장 단위로 AI 패턴이 검출된 곳을 표시합니다.</li><li>AI 휴머나이징: 생성 AI를 사용하지 않는 인간화 엔진으로 표현 · 말투 · 문장 리듬을 사람 말투로 바꿉니다.</li><li>파일 처리: 한글 · 워드 · PDF · 텍스트 파일에서 글을 꺼내고, 다듬은 글을 파일로 돌려 드립니다. 파일에서 글을 꺼내는 일은 이용자의 브라우저 안에서 합니다.</li><li>무료 검사와 토큰(제7조의3)으로 제공하며, 그 밖에 운영사가 정해 알리는 유료 · 무료 기능을 포함합니다.</li></ul>
+<h2>제3조 결과의 성격</h2><p>AI 작성률과 판정은 판별 모델의 추정값을 정해진 판정 기준에 넣어 낸 결과이며 증명이 아닙니다. 휴머나이징의 결과는 문체를 바꾸는 제안이므로 제출하기 전에 이용자가 뜻과 사실을 확인해야 합니다.</p>
+<h2>제4조 전문 자문이 아님</h2><p>검사 결과와 안내 글은 일반 정보이며 학업 · 법률 · 채용에 관한 전문 자문을 대신하지 않습니다. 과제 · 시험 · 공모전 · 채용의 AI 사용 규정은 이용자가 확인해 따라야 합니다.</p>
+<h2>제5조 판별의 한계</h2><p>판별 모델은 놓치는 AI 글을 줄이도록 엄격하게 잡아 사람이 쓴 글도 높게 나올 수 있고, AI가 쓴 글도 낮게 나올 수 있습니다. 운영사는 다른 검사 서비스나 학교 · 기관 · 기업이 이용하는 검사의 결과를 약속하지 않습니다. 같은 글은 언제나 같은 값과 판정이 나오도록 설계합니다.</p>
+<h2>제6조 이용자의 의무</h2><ul><li>남의 권리를 침해하는 글을 넣거나 결과를 사람을 속이는 데 쓰지 않습니다.</li><li>서비스를 정상적인 범위를 넘어 자동으로 대량 호출하거나 운영을 방해하지 않습니다.</li><li>'한국휴머나이징' 이름을 운영사가 인증한 것처럼 꾸며 쓰지 않습니다.</li><li>결과와 다듬은 글을 모아 검사 · 인간화 방식을 알아내거나 비슷한 서비스를 만드는 데 쓰지 않습니다.</li></ul>
+<h2>제7조 유료 서비스</h2><p>결제는 공식 결제처인 운영사 성균관컨설팅의 결제 페이지(skkc.co.kr) 또는 결제 링크로 하며, 결제 정보는 humanizing.ai.kr에서 받지 않습니다. 유료 서비스는 「전자상거래 등에서의 소비자보호에 관한 법률」 등 관계 법령을 지킵니다.</p>
+<h2>제7조의2 보관 기간</h2><p>이용자가 넣은 글과 파일은 검사와 휴머나이징에만 쓰고 저장하지 않습니다. 결제하러 가는 동안 하던 글은 이용자의 브라우저에만 24시간 맡겨 둡니다.</p>
+<h2 id="pass">제7조의3 토큰</h2><ul><li>토큰은 AI 작성률 검사 · AI 휴머나이징 같은 유료 기능을 쓴 만큼 이용하도록 미리 충전하는 디지털콘텐츠 이용 단위입니다. 충전 상품마다 정한 가격으로 충전하며(많이 충전할수록 토큰당 가격이 낮아짐), 가격은 부가세를 포함합니다. 충전 상품의 종류 · 가격 · 토큰 수와 기능마다 빠지는 토큰은 요금 안내에 적은 대로입니다.</li>
+<li>충전: 결제가 확인되면 토큰 코드를 이메일로 보내거나 이용자가 고른 기존 코드에 더합니다. 영수증과 카드 명세서에는 운영사 성균관컨설팅으로 표시됩니다.</li>
+<li>빠지는 방법: 토큰은 요청한 글의 글자 수에 따라 빠지며, 빠질 토큰은 요청 전에 화면에 표시하고 10토큰(1,000원) 이상인 요청은 한 번 더 확인합니다. 서버 오류 등으로 끝나지 않은 요청은 빠지지 않습니다. 운영사가 기능마다 빠지는 토큰을 늘릴 때는 30일 전에 사이트에 알리며, 이용자는 그 기간 안에 남은 유료 토큰을 공제 없이 환불받을 수 있습니다.</li>
+<li>유효기간: 토큰은 처음 발급한 날 또는 마지막으로 충전한 날부터 5년 동안 쓸 수 있으며, 유효기간이 지난 토큰은 쓰거나 환불할 수 없습니다.</li>
+<li>시험 사용: 운영사는 토큰을 충전하기 전에 무료 검사로 같은 엔진이 낸 실제 AI 작성률 · 판정과 가장 뚜렷한 문장, 휴머나이징 맛보기를 제공합니다. 이는 전자상거래법 제17조 제6항의 시험 사용 상품 제공에 해당합니다.</li>
+<li>청약철회: 충전한 날부터 7일 안에는 그 충전분의 유료 토큰 가운데 쓰고 남은 만큼을 공제 없이 돌려 드립니다(하나도 쓰지 않았다면 전액). 이미 쓴 부분은 전자상거래법 제17조 제2항 제5호에 따라 청약철회가 제한됩니다.</li>
+<li>남은 토큰 환불: 충전한 날부터 7일이 지나면 그 충전분의 남은 유료 토큰 금액(남은 유료 토큰 × 충전 금액 ÷ 그 충전분의 유료 토큰)에서 10%를 뺀 금액을 돌려 드립니다(10원 미만은 버림).</li>
+<li>무료 · 이벤트 토큰은 환불하지 않고 다른 사람에게 넘길 수 없습니다.</li>
+<li>운영사의 사정으로 토큰을 쓰지 못한 경우에는 쓰지 못한 토큰을 되돌리거나 유효기간을 늘리고, 그래도 쓰지 못한 부분은 환불합니다. 미성년자가 법정대리인의 동의 없이 충전한 경우에는 본인 또는 법정대리인이 구매를 취소할 수 있습니다.</li>
+<li>코드 보관: 코드는 운영사 서버에 해시로만 저장하므로 운영사도 원래 코드를 볼 수 없습니다. 코드를 아는 사람은 누구나 그 토큰을 쓸 수 있으니 잘 보관해 주세요. 잃어버렸다면 주문 번호와 함께 문의해 주시면 확인 뒤 남은 토큰을 새 코드로 옮깁니다.</li>
+<li>코드를 되파는 행위, 자동 프로그램으로 대량 호출하는 행위, 쓴 토큰의 결제를 부당하게 취소하는 행위를 하면 운영사는 이메일로 사유를 알리고 소명할 기회를 드린 뒤 토큰 사용을 정지할 수 있으며, 이런 행위로 정지된 토큰은 환불하지 않을 수 있습니다.</li>
+<li>결과를 활용한 제출 · 평가 · 채용의 결과는 이용자가 책임집니다. 토큰과 관련해 운영사의 책임 있는 사유로 손해가 생긴 경우, 고의 또는 중대한 과실이 아니면 배상할 금액은 그 충전분의 결제 금액을 넘지 않습니다.</li>
+<li>환불 요청: 결제한 사람이 주문 번호와 결제 이메일을 적어 contact@skkc.co.kr로 요청하며, 운영사는 결제 확인 뒤 결제한 수단으로 돌려 드립니다.</li></ul>
+<h2>제8조 서비스 변경 · 중단</h2><p>운영사는 기능을 바꾸거나 중단할 수 있으며, 이용자에게 중요한 변경은 사이트에 미리 알립니다.</p>
+<h2>제9조 책임의 제한</h2><ul><li>운영사는 무료로 제공하는 기능에 대해 고의 또는 중대한 과실이 없는 한 책임을 지지 않습니다.</li><li>유료 기능에 대해서도 고의 또는 중대한 과실이 없는 한 간접 손해, 특별 손해, 기대 이익의 손실, 그리고 학교 · 기관 · 기업 등 제3자가 내린 평가 · 판정 · 성적 · 채용 결정으로 생긴 손해를 배상하지 않으며, 배상할 금액은 관련 상품의 결제 금액을 넘지 않습니다.</li><li>천재지변, 통신 · 클라우드 · 결제 사업자의 장애처럼 운영사가 막을 수 없는 사유로 생긴 장애에는 책임을 지지 않습니다. 이 경우 쓰지 못한 토큰은 제7조의3에 따라 되돌리거나 유효기간을 늘립니다.</li><li>이 조의 책임 제한은 운영사의 고의 또는 중대한 과실로 생긴 손해와, 관계 법령이 책임 제한을 허용하지 않는 손해에는 적용하지 않습니다.</li></ul>
+<h2>제10조 문의 · 관할</h2><p>문의는 contact@skkc.co.kr로 받습니다. 분쟁은 대한민국 법을 따르며, 관할 법원은 민사소송법에 따릅니다.</p>
+<h2>제11조 약관의 변경</h2><p>운영사는 관계 법령을 어기지 않는 범위에서 이 약관을 바꿀 수 있으며, 바꾼 내용과 적용일을 적용일 7일 전부터(이용자에게 불리하거나 중요한 변경은 30일 전부터) 이 페이지에 알립니다. 바뀐 약관에 동의하지 않는 이용자는 적용일 전까지 이용을 그만두고, 바뀌기 전 약관에 따라 남은 유료 토큰의 환불을 요청할 수 있습니다.</p>"""
+
+PRIVACY = """<p class="meta">시행일 2026년 11월 21일 · 운영 성균관컨설팅</p>
+<h2>1. 처리하지 않는 정보</h2><p>한국휴머나이징은 회원가입이 없습니다. 이용자가 넣은 글과 올린 파일은 검사와 휴머나이징에만 쓰고 저장하지 않으며, 파일에서 글을 꺼내는 일은 이용자의 브라우저 안에서 합니다. 결제 수단 정보는 받지 않습니다.</p>
+<h2>2. 처리하는 정보와 목적</h2><ul><li>토큰 결제 · 코드 발송: 결제할 때 결제처(성균관컨설팅 결제 페이지)에 적은 이름 · 이메일 · 주문 정보를 토큰 코드 발송과 결제 확인, 환불 처리에 씁니다. 거래 기록은 전자상거래법에 따라 5년 보관합니다.</li><li>토큰 코드: 운영사 서버에는 코드의 해시와 남은 토큰 · 사용 기록만 남깁니다. 원래 코드는 저장하지 않습니다.</li><li>서비스 안정: 요청 횟수를 제한하려고 이용자의 브라우저가 만든 임의 식별값과 요청 시각을 잠시 처리합니다.</li><li>이 브라우저 저장: 토큰 코드와 결제하러 가는 동안 하던 글은 이용자의 브라우저(로컬 저장소)에만 저장되며, 하던 글은 24시간 뒤 지워집니다.</li></ul>
+<h2>3. 처리 위탁 · 국외 이전</h2><p>서버 운영에 Google Workspace(Apps Script · Gmail, 미국)를 이용하며, 결제는 성균관컨설팅 결제 페이지와 결제 대행사가 처리합니다. 사이트는 GitHub Pages(미국)로 서빙합니다.</p>
+<h2>4. 이용자의 권리</h2><p>이용자는 자기 정보의 열람 · 정정 · 삭제 · 처리 정지를 contact@skkc.co.kr로 요청할 수 있으며, 운영사는 지체 없이 처리합니다.</p>
+<h2>5. 파기</h2><p>보관 기간이 끝난 정보는 지체 없이 복구할 수 없는 방법으로 지웁니다.</p>
+<h2>6. 개인정보 보호책임자</h2><p>성균관컨설팅 대표 이채연 · contact@skkc.co.kr</p>
+<h2>7. 고지</h2><p>이 방침이 바뀌면 적용 7일 전부터 이 페이지에 알립니다.</p>"""
+
+ABOUT = """<h2>한국어 문장을 아는 AI 휴머나이징</h2><p>한국휴머나이징은 AI가 쓴 한국어 글을 사람이 쓴 글로 바꾸는 서비스입니다. 영어를 기준으로 만든 휴머나이저는 한국어 어미와 조사를 어색하게 바꾸거나 번역투를 오히려 늘리기 쉽습니다. 그래서 한국어 문장의 짜임과 말투를 읽는 엔진으로, 걸리는 문장만 정확하게 고치는 데 집중합니다.</p>
+<h2>엔진</h2><ul><li><b>판별</b>: 문장마다 앞뒤 문맥과 함께 AI 점수를 매기는 결정적 판별 모델입니다. 같은 글은 언제나 같은 값이 나옵니다. 실제 AI 탐지기 결과와 문장마다 대조해 맞춘 엄격한 판정 기준(안전 20% 미만 · 고위험 20~40% · 부적합 40% 이상)을 씁니다.</li><li><b>인간화</b>: 생성 AI를 쓰지 않는 규칙 기반 엔진입니다. 사람 글 약 10억 2,600만 자로 만든 용언 사전 15,659개와 실제 쓰임 통계, 번역투 · 상투어 · 말투 · 리듬 규칙으로 바꿉니다.</li><li><b>보존</b>: 출시 기준 시험(사람 · AI 글 1,837편 × 6가지 설정, 583만 자)에서 사실 · 부정 보존 100%, 깨진 문장 0.00%였습니다.</li><li><b>속도</b>: 1,000자당 약 4ms로 바꾸고, 결제가 확인되면 보통 1분 안에 토큰 코드를 보냅니다.</li></ul>
+<h2>개인정보를 남기지 않습니다</h2><p>회원가입이 없고, 넣은 글과 파일은 저장하지 않습니다. 파일에서 글을 꺼내는 일도 이용자의 브라우저 안에서 합니다.</p>
+<h2>운영</h2><table><tr><th>서비스</th><td>한국휴머나이징(humanizing.ai.kr)</td></tr><tr><th>운영사</th><td>성균관컨설팅</td></tr><tr><th>대표</th><td>이채연</td></tr><tr><th>사업자등록번호</th><td>272-32-01885</td></tr><tr><th>통신판매업 신고</th><td>제2026-경기송탄-0622</td></tr><tr><th>연구실</th><td>경기도 수원시 장안구 서부로 2066 성균관대학교 브릿지팩토리</td></tr><tr><th>문의</th><td><a href="mailto:contact@skkc.co.kr">contact@skkc.co.kr</a></td></tr></table>"""
+
+STATIC = [
+    {"path": "about/", "crumb": "회사 소개", "h1": "한국휴머나이징 소개", "lead": "AI 작성률을 무료로 검사하고, 걸리는 문장만 사람 문장으로 바꾸는 한국어 전용 AI 휴머나이징 서비스입니다.", "body": ABOUT,
+     "title": "회사 소개 · 엔진 | 한국휴머나이징", "desc": "한국휴머나이징은 한국어 문장을 아는 AI 휴머나이징 서비스입니다. 판별 엔진, 인간화 엔진, 보존 시험 결과와 운영사 정보를 안내합니다.", "prio": "0.5"},
+    {"path": "terms/", "crumb": "이용약관", "h1": "이용약관", "body": TERMS, "title": "이용약관 | 한국휴머나이징", "desc": "한국휴머나이징 서비스 이용약관(토큰 · 환불 · 책임의 제한).", "prio": "0.3"},
+    {"path": "privacy/", "crumb": "개인정보처리방침", "h1": "개인정보처리방침", "body": PRIVACY, "title": "개인정보처리방침 | 한국휴머나이징", "desc": "한국휴머나이징 개인정보처리방침. 넣은 글과 파일은 저장하지 않습니다.", "prio": "0.3"},
+]
+
+
+# ---------------- AI 검색용(llms.txt) ----------------
+def llms_txt(site, pages, packs, samples):
+    ex = ", ".join("%s %d%% → %d%%" % (s["label"], s["before"]["rate"], s["after"]["rate"]) for s in samples)
+    L = ["# 한국휴머나이징 (Korean Humanizing)", "",
+         "> 한국어 전용 AI 휴머나이징 서비스. AI 탐지기에 걸리는 AI 문장을 문장 단위로 찾아 사람 문장으로 바꾸고, 같은 기준으로 AI 작성률을 다시 잽니다. AI 작성률 검사는 가입 없이 무료(5만 자).", "",
+         "- 사이트: %s/" % site, "- 운영: 성균관컨설팅(사업자등록번호 272-32-01885) · 문의 contact@skkc.co.kr",
+         "- 엔진: 생성 AI 없이 규칙 기반 한국어 인간화 엔진(용언 사전 15,659개) · 문장 단위 결정적 판별 모델(같은 글은 같은 값)",
+         "- 판정 기준: AI 작성률 20% 미만 안전 · 20~40% 고위험 · 40% 이상 부적합",
+         "- 요금: " + " · ".join("%s %d토큰 %s원" % (p["name"], p["tok"], "{:,}".format(p["price"])) for p in packs) + " (월 구독 없음, 남은 토큰 5년 유지)",
+         "- 토큰 단가: AI 작성률 검사 1,000자 4토큰 · AI 휴머나이징 1,000자 8토큰 · 1토큰 100원",
+         "- 실측 예시(2026.11.21, 한 번의 휴머나이징): " + ex, "", "## 페이지", ""]
+    for path, title, desc, lm, pr in pages:
+        L.append("- [%s](%s/%s): %s" % (title.split(" | ")[0], site, path, desc))
+    return "\n".join(L) + "\n"
+
+
+def llms_full(site, packs, samples):
+    out = [llms_txt(site, [], packs, samples), "## 자주 묻는 질문", ""]
+    for q, a in HOME["faq"] + PRICE_FAQ + MORE_FAQ:
+        out.append("### " + q + "\n" + a + "\n")
+    import re as _re
+    for L in LANDINGS:
+        out.append("## " + L["crumb"] + "\n" + _re.sub(r"<[^>]+>", "", L["answer"]) + "\n")
+        for q, a in L["faq"]:
+            out.append("### " + q + "\n" + _re.sub(r"<[^>]+>", "", a) + "\n")
+    for g in GUIDES:
+        out.append("## " + g["h1"] + "\n" + _re.sub(r"<[^>]+>", "", g["answer"]) + "\n" + _re.sub(r"<[^>]+>", " ", g["body"]) + "\n")
+    return "\n".join(out)

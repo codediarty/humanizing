@@ -1,0 +1,8 @@
+__pycache__/
+_src/server/
+_src/shop/out/
+_src/shop/pretendard/
+_src/shop/pretendard.css
+_src/shop/_t_*.html
+_src/demo_raw_*.json
+.DS_Store
