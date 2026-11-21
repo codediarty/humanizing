@@ -345,12 +345,12 @@
      조각마다 보내는 값(글 · 말투 · 버전 · 코드)은 하나씩 보낼 때와 똑같음. ready() 가 거짓인 동안(말투 '자동'이 아직 안 정해짐)은
      하나씩 보내 첫 조각이 정한 말투를 나머지에 그대로 씀. 실제 서버로 잰 값: 5,900자 6조각 하나씩 약 20초 → 3개씩 7.7초 · 6개씩 4.5초, 결과 같음 */
   var PAR = 4;
-  function par(list, fn, ready) {
-    var res = new Array(list.length), next = 0;
-    function one() { var i = next++; return fn(list[i], i).then(function (r) { res[i] = r; }); }
-    function solo() { return next < list.length && ready && !ready() ? one().then(solo) : Promise.resolve(); }
-    function lane() { return next < list.length ? one().then(lane) : Promise.resolve(); }
-    return solo().then(function () { var ls = [], k = Math.min(PAR, list.length - next); while (k-- > 0) ls.push(lane()); return Promise.all(ls); }).then(function () { return res; });
+  function par(list, fn, ready) {   // 2026.11.22 한 조각이 실패하면 새 조각은 더 보내지 않고(남은 토큰을 쓰지 않게), 이미 보낸 조각이 끝난 뒤 실패를 알림(진행 표시가 실패 안내를 덮지 않게)
+    var res = new Array(list.length), next = 0, err = null;
+    function one() { var i = next++; return fn(list[i], i).then(function (r) { res[i] = r; }, function (e) { if (!err) err = e || { message: '' }; }); }
+    function solo() { return !err && next < list.length && ready && !ready() ? one().then(solo) : Promise.resolve(); }
+    function lane() { return !err && next < list.length ? one().then(lane) : Promise.resolve(); }
+    return solo().then(function () { var ls = [], k = Math.min(PAR, list.length - next); while (k-- > 0) ls.push(lane()); return Promise.all(ls); }).then(function () { if (err) throw err; return res; });
   }
   function sha(s) {
     try { return crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)).then(function (b) { return Array.prototype.map.call(new Uint8Array(b), function (x) { return ('0' + x.toString(16)).slice(-2); }).join(''); }); } catch (e) { return Promise.resolve(''); }
