@@ -11,7 +11,7 @@
   'use strict';
   var ROOT = (document.body && document.body.getAttribute('data-root')) || '/';
   var VER = (function () { var s = document.querySelector('script[src*="textin.js"]'); var m = s && /[?&]v=([\w.-]+)/.exec(s.getAttribute('src') || ''); return m ? m[1] : ''; })();
-  var MAXB = 30 * 1024 * 1024, MAXC = 50000, MAXPDF = 300;
+  var MAXB = 30 * 1024 * 1024, MAXC = 200000, MAXPDF = 300;
   var ACCEPT = '.hwp,.hwpx,.docx,.pdf,.txt,.md,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
   var W = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
   var MC = 'http://schemas.openxmlformats.org/markup-compatibility/2006';

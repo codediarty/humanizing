@@ -29,7 +29,7 @@ HOST = "humanizing.ai.kr"
 BRAND = "한국휴머나이징"
 BRAND_SP = "한국 휴머나이징"          # 로고에 적힌 띄어 쓴 이름
 BRAND_EN = "Korean Humanizing"
-VER = "20261121c"
+VER = "20261122a"
 TODAY = "2026-11-21"
 # 한국휴머나이징 배포(AIMarker 서버 프로젝트 버전 36, 엔진은 AIMarker 와 같음 · 2026.11.21 22:38)
 API = "https://script.google.com/macros/s/AKfycbzLgl7l-cOndrkq5n0SdKLMaSy7_MCcymbFtt590_KCYByazHlQU2G6ynA4lbrUOODOmg/exec"
@@ -46,12 +46,12 @@ BIZ = {"name": "성균관컨설팅", "ceo": "이채연", "no": "272-32-01885", "
 # 가격 · 토큰은 AIMarker 개인 토큰과 같음(서버 hg1~hg4). 요금 카드는 정가 없이 간단 · 깔끔하게(대표 2026.11.21 밤)
 # pg = 검사와 휴머나이징 약 몇 페이지(도구 충전 창 humanize.js PRODS 와 같게)
 PACKS = [
-    {"id": "lt", "name": "라이트", "tok": 100, "price": 9900, "per": "99원", "who": "자기소개서 · 짧은 과제", "chars": "약 8,000자", "pg": "약 5페이지", "sub": "간단한 문장 수정", "doc": "레포트"},
-    {"id": "pl", "name": "플러스", "tok": 300, "price": 19900, "per": "약 66원", "who": "레포트 · 과제 여러 편", "chars": "약 25,000자", "pg": "약 15페이지", "sub": "일반적인 문서 작업", "doc": "레포트"},
-    {"id": "pr", "name": "프로", "tok": 750, "price": 39900, "per": "약 53원", "who": "논문 · 학위논문", "chars": "약 62,000자", "pg": "약 40페이지", "best": "BEST 추천", "save": "플러스보다 토큰당 약 20% 절약", "sub": "넉넉한 토큰, 더 높은 가성비", "doc": "논문"},
-    {"id": "mx", "name": "맥스", "tok": 1500, "price": 69900, "per": "약 47원", "who": "논문 전체 · 여러 편", "chars": "약 125,000자", "pg": "약 100페이지", "top": "최고 혜택", "save": "플러스보다 토큰당 약 30% 절약", "sub": "최대 토큰 제공", "doc": "논문"},
+    {"id": "lt", "name": "라이트", "tok": 100, "price": 9900, "per": "99원", "who": "자기소개서 · 짧은 과제", "chars": "약 25,000자", "pg": "약 10페이지", "sub": "간단한 문장 수정", "doc": "레포트"},
+    {"id": "pl", "name": "플러스", "tok": 300, "price": 19900, "per": "약 66원", "who": "레포트 · 과제 여러 편", "chars": "약 75,000자", "pg": "약 30페이지", "sub": "일반적인 문서 작업", "doc": "레포트"},
+    {"id": "pr", "name": "프로", "tok": 750, "price": 39900, "per": "약 53원", "who": "논문 · 학위논문", "chars": "약 187,000자", "pg": "약 80페이지", "best": "BEST 추천", "save": "플러스보다 토큰당 약 20% 절약", "sub": "넉넉한 토큰, 더 높은 가성비", "doc": "논문"},
+    {"id": "mx", "name": "맥스", "tok": 1500, "price": 69900, "per": "약 47원", "who": "논문 전체 · 여러 편", "chars": "약 375,000자", "pg": "약 200페이지", "top": "최고 혜택", "save": "플러스보다 토큰당 약 30% 절약", "sub": "최대 토큰 제공", "doc": "논문"},
 ]
-COST = {"check": (4, 2), "hum": (8, 4)}   # 1,000자당 토큰 · 최소 토큰(서버 AM서버.gs 1.3.0 과 같게)
+COST = {"check": (0, 0), "hum": (4, 2)}   # 1,000자당 토큰 · 최소 토큰(서버 AM서버.gs 1.3.1 과 같게: AI 작성률 검사 무료, 휴머나이징 1,000자 4토큰)
 
 
 def esc(s):
@@ -118,7 +118,7 @@ ORG = {"@type": "Organization", "@id": SITE + "/#org", "name": BRAND, "alternate
 WEBSITE = {"@type": "WebSite", "@id": SITE + "/#website", "name": BRAND, "alternateName": [BRAND_SP, BRAND_EN, BRAND + " AI 휴머나이저"], "url": SITE + "/", "inLanguage": "ko-KR", "publisher": {"@id": SITE + "/#org"}}
 APP = {"@type": "WebApplication", "@id": SITE + "/#app", "name": BRAND + " AI 휴머나이저", "url": SITE + "/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Web",
        "inLanguage": "ko-KR", "description": "한국어 AI 작성률 검사와 AI 휴머나이징. AI 탐지기에 걸리는 문장만 골라 사람 문장으로 바꾸고, 같은 기준으로 AI 작성률을 다시 잽니다.",
-       "featureList": ["AI 작성률 무료 검사(5만 자)", "문장 단위 AI 검출 표시", "AI 휴머나이징(한국어 전용 엔진, 생성 AI 없음)", "한글 HWP · HWPX · 워드 DOCX · PDF 파일 지원", "말투 자동 맞춤", "숫자 · 이름 · 인용 보존"],
+       "featureList": ["AI 작성률 무료 검사(20만 자)", "문장 단위 AI 검출 표시", "AI 휴머나이징(한국어 전용 엔진, 생성 AI 없음)", "한글 HWP · HWPX · 워드 DOCX · PDF 파일 지원", "말투 자동 맞춤", "숫자 · 이름 · 인용 보존"],
        "offers": {"@type": "AggregateOffer", "priceCurrency": "KRW", "lowPrice": "0", "highPrice": "69900", "offerCount": "5"}, "publisher": {"@id": SITE + "/#org"}}
 
 
@@ -349,10 +349,10 @@ def calc_block():
     data = json.dumps({"cost": COST, "packs": [{"id": p["id"], "name": p["name"], "tok": p["tok"], "price": p["price"], "link": shop(p["id"])} for p in PACKS]}, ensure_ascii=False)
     return ('<div class="calc rv" id="calc"><div class="calc-in"><h3>내 글에는 토큰이 얼마나 들까요?</h3><p>글 종류를 고르거나 글자 수를 맞춰 보세요. 서버가 실제로 빼는 값과 같은 셈입니다.</p>'
             '<div class="calc-docs" role="group" aria-label="글 종류">%s</div>'
-            '<div class="calc-row"><label class="sr" for="calcN">글자 수</label><input type="range" id="calcN" min="500" max="120000" step="500" value="5000"><output id="calcO" for="calcN">5,000자</output></div>'
+            '<div class="calc-row"><label class="sr" for="calcN">글자 수</label><input type="range" id="calcN" min="500" max="200000" step="500" value="5000"><output id="calcO" for="calcN">5,000자</output></div>'
             '<div class="calc-opt"><label><input type="checkbox" id="calcC" checked>AI 작성률 검사</label><label><input type="checkbox" id="calcH" checked>AI 휴머나이징</label><label><input type="checkbox" id="calcT">한 번 더 다듬기</label></div></div>'
-            '<div class="calc-out" aria-live="polite"><dl><div><dt>AI 작성률 검사</dt><dd id="calcCc">20토큰</dd></div><div><dt>AI 휴머나이징</dt><dd id="calcHc">40토큰</dd></div>'
-            '<div class="sum"><dt>합계</dt><dd id="calcS">60토큰</dd></div></dl><p class="calc-rec" id="calcR"></p><a class="btn btn-p" id="calcB" href="/pricing/">충전하기</a></div>'
+            '<div class="calc-out" aria-live="polite"><dl><div><dt>AI 작성률 검사</dt><dd id="calcCc">무료</dd></div><div><dt>AI 휴머나이징</dt><dd id="calcHc">20토큰</dd></div>'
+            '<div class="sum"><dt>합계</dt><dd id="calcS">20토큰</dd></div></dl><p class="calc-rec" id="calcR"></p><a class="btn btn-p" id="calcB" href="/pricing/">충전하기</a></div>'
             '<script type="application/json" id="calcData">%s</script></div>') % (btns, data)
 
 
@@ -395,7 +395,7 @@ def example_section(h2="보라색 문장이 사라질 때까지,<br>뜻은 그�
 
 def price_section(alt=True):
     return ('<section class="sec%s" id="price"><div class="wrap"><div class="center"><p class="kick">%s요금</p><h2 class="h2">월 구독 없이, 쓴 만큼만</h2><p class="sub">한 번 충전하면 글자 수만큼만 빠지고, 남은 토큰은 5년 동안 사라지지 않습니다. 검사는 언제나 무료로 먼저 해 보세요.</p></div>%s'
-            '<p class="price-note">AI 작성률 검사 1,000자 4토큰 · AI 휴머나이징 1,000자 8토큰 · 1토큰 100원 · 부가세 포함 · 결제는 운영사 성균관컨설팅 결제 페이지(가입 없이 카드 · 간편결제)</p>%s</div></section>') % (
+            '<p class="price-note">AI 작성률 검사 무료 · AI 휴머나이징 1,000자 4토큰 · 1토큰 100원 · 부가세 포함 · 결제는 운영사 성균관컨설팅 결제 페이지(가입 없이 카드 · 간편결제)</p>%s</div></section>') % (
         " alt" if alt else "", ico("card"), pricing_cards(), calc_block())
 
 
@@ -434,7 +434,7 @@ def build_pricing():
     body += P.pricing_detail(ico)
     body += '<section class="sec alt"><div class="wrap-n"><h2 class="h2 center">결제 · 토큰 자주 묻는 질문</h2>%s</div></section>' % faq_html(P.PRICE_FAQ)
     body += cta_band("먼저 무료로 검사해 보세요", "AI 작성률이 높게 나온 문장만 휴머나이징하면 토큰을 아낄 수 있습니다.")
-    page("pricing/", "AI 휴머나이징 요금 · 가격 · 토큰 충전 | " + BRAND, BRAND + " 요금. 라이트 100토큰 9,900원부터 맥스 1,500토큰 69,900원까지. 월 구독 없이 한 번 충전, AI 작성률 검사 1,000자 4토큰 · 휴머나이징 1,000자 8토큰.",
+    page("pricing/", "AI 휴머나이징 요금 · 가격 · 토큰 충전 | " + BRAND, BRAND + " 요금. 라이트 100토큰 9,900원부터 맥스 1,500토큰 69,900원까지. 월 구독 없이 한 번 충전, AI 작성률 검사 무료 · 휴머나이징 1,000자 4토큰.",
          body, ld=[ld_offers(), ld_faq(P.PRICE_FAQ), ld_crumbs(trail)], priority="0.9")
 
 

@@ -442,3 +442,10 @@ a.card:hover{transform:translateY(-3px);box-shadow:var(--sh-l);border-color:var(
 .faq-h{font-size:20px;font-weight:800;color:var(--ink);letter-spacing:-.01em;margin:44px 0 14px}.faq-h:first-child{margin-top:0}
 /* 바닥글 링크는 목록 메뉴라 밑줄 없이(도구 쪽 tool.css 의 문장 속 링크 밑줄 규칙이 바닥글까지 닿던 것), 올리면 밑줄 */
 .ft li a{text-decoration:none!important}.ft li a:hover{text-decoration:underline!important;text-underline-offset:3px}
+
+/* 2026.11.22 토큰 코드가 있으면(두 단추) 휴머나이징이 메인(브랜드 색), AI 작성률 결과서는 흰 단추. 단추 밑 설명은 한 줄 따로 */
+.tool-w .hz12-go.two .hz12-run{background:#fff;color:var(--ds-ink,#0b1324);border-color:var(--ds-line-2,#d9dfe8);box-shadow:none}
+.tool-w .hz12-go.two .hz12-run:hover{background:var(--ds-canvas,#f6f8fb)}
+.tool-w .hz12-go.two .hz12-run2{background:var(--brand);color:#fff;border-color:var(--brand)}
+.tool-w .hz12-go.two .hz12-run2:hover{filter:brightness(.95)}
+.hz12-go.two .hz12-note{flex:1 1 100%}

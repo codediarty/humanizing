@@ -116,19 +116,19 @@
   }
 
 
-  /* 토큰 계산기(한국휴머나이징에서 새로 더함): 서버 단가와 같은 셈. 검사 100자당 0.4토큰(최소 2) · 휴머나이징 100자당 0.8토큰(최소 4) */
+  /* 토큰 계산기(한국휴머나이징에서 새로 더함): 서버 단가와 같은 셈. 2026.11.22 AI 작성률 검사는 무료 · 휴머나이징 100자당 0.4토큰(최소 2) */
   var cal = $('#calc');
   if (cal) {
     var CD = null; try { CD = JSON.parse(($('#calcData', cal) || {}).textContent || 'null'); } catch (e) { CD = null; }
     var rng = $('#calcN', cal), outN = $('#calcO', cal), cC = $('#calcC', cal), cH = $('#calcH', cal), cT = $('#calcT', cal);
     var oC = $('#calcCc', cal), oH = $('#calcHc', cal), oS = $('#calcS', cal), oR = $('#calcR', cal), oB = $('#calcB', cal);
     function fmt(n) { return (Math.round(n * 10) / 10).toLocaleString('ko-KR', { maximumFractionDigits: 1 }); }
-    function cost(n, k) { var c = CD && CD.cost && CD.cost[k] || (k === 'check' ? [4, 2] : [8, 4]); var u = Math.ceil(n / 100); return Math.max(c[1], u * c[0] / 10); }
+    function cost(n, k) { var c = CD && CD.cost && CD.cost[k] || (k === 'check' ? [0, 0] : [4, 2]); var u = Math.ceil(n / 100); return Math.max(c[1], u * c[0] / 10); }
     function calcRun() {
       if (!CD) return;
       var n = +rng.value || 0, c = cC.checked ? cost(n, 'check') : 0, h = cH.checked ? cost(n, 'hum') * (cT.checked ? 2 : 1) : 0, t = c + h;
       outN.textContent = n.toLocaleString('ko-KR') + '자';
-      oC.textContent = cC.checked ? fmt(c) + '토큰' : '무료 검사만';
+      oC.textContent = cC.checked ? (c ? fmt(c) + '토큰' : '무료') : '무료 검사만';
       oH.textContent = cH.checked ? fmt(h) + '토큰' + (cT.checked ? '(두 번)' : '') : '하지 않음';
       oS.textContent = fmt(t) + '토큰 · 약 ' + Math.round(t * 100).toLocaleString('ko-KR') + '원';
       var P = (CD.packs || []).filter(function (p) { return p.tok >= t; })[0], big = (CD.packs || [])[CD.packs.length - 1];
