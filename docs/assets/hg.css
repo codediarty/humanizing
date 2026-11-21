@@ -370,7 +370,7 @@ a.card:hover{transform:translateY(-3px);box-shadow:var(--sh-l);border-color:var(
 .gcard p{margin:0;color:var(--ink-2);font-size:14.5px}
 /* 바닥글(밝은 바탕: 남색 로고가 그대로 보이게) */
 .ft{background:#f6f8fc;border-top:1px solid var(--line);color:var(--ink-3);padding:56px 0 34px;font-size:14px}
-.ft-top{display:grid;grid-template-columns:1.35fr repeat(4,1fr);gap:28px}
+.ft-top{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:28px}
 .ft p{margin:14px 0 0;line-height:1.7}
 .ft h4{color:var(--ink);font-size:14px;margin:4px 0 12px}
 .ft ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
@@ -438,3 +438,7 @@ a.card:hover{transform:translateY(-3px);box-shadow:var(--sh-l);border-color:var(
   .metrics .grid4{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media (max-width:360px){.logo .lk-t b{font-size:15px}.logo .lk-t .en{display:none}}
+/* 하나로 통일: 자주 묻는 질문 쪽을 세 묶음(서비스와 사용 · 쓰임별 · 결제와 토큰)으로 */
+.faq-h{font-size:20px;font-weight:800;color:var(--ink);letter-spacing:-.01em;margin:44px 0 14px}.faq-h:first-child{margin-top:0}
+/* 바닥글 링크는 목록 메뉴라 밑줄 없이(도구 쪽 tool.css 의 문장 속 링크 밑줄 규칙이 바닥글까지 닿던 것), 올리면 밑줄 */
+.ft li a{text-decoration:none!important}.ft li a:hover{text-decoration:underline!important;text-underline-offset:3px}

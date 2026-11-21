@@ -29,7 +29,7 @@ HOST = "humanizing.ai.kr"
 BRAND = "한국휴머나이징"
 BRAND_SP = "한국 휴머나이징"          # 로고에 적힌 띄어 쓴 이름
 BRAND_EN = "Korean Humanizing"
-VER = "20261121b"
+VER = "20261121c"
 TODAY = "2026-11-21"
 # 한국휴머나이징 배포(AIMarker 서버 프로젝트 버전 36, 엔진은 AIMarker 와 같음 · 2026.11.21 22:38)
 API = "https://script.google.com/macros/s/AKfycbzLgl7l-cOndrkq5n0SdKLMaSy7_MCcymbFtt590_KCYByazHlQU2G6ynA4lbrUOODOmg/exec"
@@ -76,7 +76,9 @@ LOGO = ('<a class="logo" href="/" aria-label="%s 홈"><img class="lk-k" src="/as
         '<span class="lk-bar" aria-hidden="true"></span><span class="lk-t"><b>%s</b><span class="en" aria-hidden="true"><i>KOREAN HUMANIZING</i></span></span></a>' % (BRAND, BRAND_SP))
 
 # 메뉴: 한국휴머나이저에서 대표가 정한 대로 'AI 휴머나이저(AI 작성률 낮추기)' 하나로(2026.11.21 22:18). 카피킬러 · GPT킬러 이름은 메뉴에 쓰지 않음
-NAV = [("ai-humanizer/", "AI 휴머나이저<small>(AI 작성률 낮추기)</small>"), ("pricing/", "요금"), ("guide/", "가이드"), ("faq/", "자주 묻는 질문")]
+# 2026.11.21 22:20 한국휴머나이저 대표: '1개로 통일해서 만들어줘, 그래야 헷갈리지 않고 결제 유도' 를 레퍼런스대로 따름
+#   -> 키워드별 쪽은 첫 화면으로 바로 넘기고(build_redirects), 메뉴 첫 칸도 첫 화면
+NAV = [("", "AI 휴머나이저<small>(AI 작성률 낮추기)</small>"), ("pricing/", "요금"), ("guide/", "가이드"), ("faq/", "자주 묻는 질문")]
 
 
 def header(path):
@@ -85,14 +87,18 @@ def header(path):
     return ('<header class="hd" id="hd"><div class="wrap hd-in">%s<nav class="nav" aria-label="주요 메뉴">%s</nav>'
             '<div class="hd-r"><a class="btn btn-g btn-s" href="/pricing/">토큰 충전</a><a class="btn btn-p btn-s" href="/#tool" data-tool>%s<span class="hl">무료 AI 작성률 검사</span><span class="hs">무료 검사</span></a>'
             '<button class="menu-btn" id="menuBtn" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mnav">%s</button></div></div></header>'
-            '<nav class="mnav" id="mnav" aria-label="모바일 메뉴">%s<a href="/humanize/">휴머나이징 도구</a><a href="/results/">실제 측정 결과</a><a href="/about/">회사 소개</a></nav>') % (LOGO, nav, ico("search"), ico("menu"), mnav)
+            '<nav class="mnav" id="mnav" aria-label="모바일 메뉴">%s<a href="/#tool" data-tool>무료 AI 작성률 검사</a><a href="/#example">실제 측정 결과</a><a href="/about/">회사 소개</a></nav>') % (LOGO, nav, ico("search"), ico("menu"), mnav)
+
+
+GUIDE_FT = [("ai-rate-meaning", "AI 작성률이란"), ("purple-sentences", "보라색 문장은 왜 생길까"), ("under-20-percent", "AI 작성률 20% 미만 만들기"),
+            ("thesis-checklist", "학위논문 제출 전 점검"), ("resume-ai-tone", "자기소개서 AI 티 지우기")]
 
 
 def footer():
     cols = [
-        ("서비스", [("/humanize/", "휴머나이징 도구"), ("/ai-check/", "AI 작성률 무료 검사"), ("/pricing/", "요금 · 토큰 충전"), ("/results/", "실제 측정 결과"), ("/faq/", "자주 묻는 질문")]),
-        ("많이 찾는 검색", [("/ai-humanizer/", "AI 휴머나이저"), ("/lower-ai-rate/", "AI 작성률 낮추기"), ("/copykiller/", "킬러 AI 작성률 낮추기"), ("/gptkiller/", "GPT 탐지 낮추기"), ("/ai-bypass/", "AI 탐지 우회"), ("/humanizing/", "AI 휴머나이징이란"), ("/free/", "AI 휴머나이저 무료"), ("/best-ai-humanizer/", "휴머나이징 사이트 고르는 법")]),
-        ("용도별", [("/thesis/", "논문 AI 작성률 낮추기"), ("/report/", "과제 · 레포트 AI 작성률"), ("/resume/", "자기소개서 AI 작성률"), ("/natural/", "AI 글 자연스럽게"), ("/ai-converter/", "AI 문장 변환기"), ("/guide/", "휴머나이징 가이드")]),
+        # 22:20 하나로 통일: 바닥글도 첫 화면 중심 세 칸(서비스 · 가이드 · 회사)
+        ("서비스", [("/#tool", "무료 AI 작성률 검사"), ("/#example", "실제 측정 결과"), ("/pricing/", "요금 · 토큰 충전"), ("/faq/", "자주 묻는 질문")]),
+        ("가이드", [("/guide/", "휴머나이징 가이드")] + [("/guide/%s/" % s, t) for s, t in GUIDE_FT]),
         ("회사 · 정책", [("/about/", "회사 소개"), ("/terms/", "이용약관"), ("/privacy/", "개인정보처리방침"), ("mailto:" + BIZ["mail"], "문의 " + BIZ["mail"])]),
     ]
     c = "".join('<div><h4>%s</h4><ul>%s</ul></div>' % (h, "".join('<li><a href="%s">%s</a></li>' % (u, t) for u, t in L)) for h, L in cols)
@@ -153,7 +159,8 @@ def page(path, title, desc, body, *, ld=None, tool=False, og=None, ptype="websit
             '<meta property="og:image" content="%s"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="%s">' % (ogimg, esc(BRAND + " · AI 작성률 검사와 휴머나이징")),
             '<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="%s"><meta name="twitter:description" content="%s"><meta name="twitter:image" content="%s">' % (esc(title), esc(desc), ogimg),
             '<meta name="theme-color" content="#00245a"><meta name="format-detection" content="telephone=no"><meta name="author" content="%s">' % BRAND,
-            '<link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">',
+            # 아이콘 주소에 판(v)을 붙여, 바뀐 K 아이콘을 브라우저가 다시 받게(한국휴머나이저 22:22 와 같게)
+            ('<link rel="icon" href="/favicon.ico?v=%s" sizes="any"><link rel="icon" href="/assets/img/favicon.svg?v=%s" type="image/svg+xml"><link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png?v=%s"><link rel="manifest" href="/site.webmanifest?v=%s">' % (VER, VER, VER, VER)),
             '<link rel="alternate" type="application/rss+xml" title="%s 가이드" href="/rss.xml">' % BRAND]
     if NAVER_VERIFY:
         head.append('<meta name="naver-site-verification" content="%s">' % NAVER_VERIFY)
@@ -327,7 +334,7 @@ def pricing_cards(cta_text="충전하기"):
         tag = '<span class="tg">%s</span>' % p["best"] if p.get("best") else ('<span class="tg top">%s</span>' % p["top"] if p.get("top") else "")
         link, bcls, label = shop(p["id"]), ("btn-p" if p.get("best") else "btn-g"), "%s %s" % (p["name"], cta_text)
         btn = ('<a class="btn %s" href="%s" target="_blank" rel="noopener" data-pack="%s">%s</a>' % (bcls, esc(link), p["id"], label)) if link else \
-              ('<a class="btn %s" href="/humanize/#buy-%s" data-buy-pack="%s">%s</a>' % (bcls, p["id"], p["id"], label))
+              ('<a class="btn %s" href="/#buy-%s" data-buy-pack="%s">%s</a>' % (bcls, p["id"], p["id"], label))
         sv = ('<p class="sv2">%s</p>' % p["save"]) if p.get("save") else ""
         out.append('<div class="%s rv">%s<h3>%s</h3><p class="who">%s</p><p class="tk2"><b>%s</b>토큰</p><p class="pr2"><b>%s</b><span>토큰당 %s</span></p>%s'
                    '<p class="use">%s 검사와 휴머나이징 서비스 <b>%s</b></p>%s</div>' % (
@@ -431,11 +438,25 @@ def build_pricing():
          body, ld=[ld_offers(), ld_faq(P.PRICE_FAQ), ld_crumbs(trail)], priority="0.9")
 
 
+# 하나로 통일하며, 키워드별 쪽에만 있던 질문 가운데 겹치지 않는 것을 자주 묻는 질문 쪽으로 옮김(문구는 그 쪽 것을 그대로, 질문 이름만 일반어로 바꿀 것은 바꿈)
+PICK_Q = [("AI 휴머나이저와 패러프레이징 도구는 뭐가 다른가요?", None), ("해외 휴머나이저로 한국어를 바꾸면 안 되나요?", None), ("직접 고치는 것보다 나은가요?", None),
+          ("결과확인서의 보라색 문장만 고칠 수 있나요?", "검사 결과에서 보라색으로 표시된 문장만 고칠 수 있나요?"), ("검사기와 같은 숫자가 나오나요?", None),
+          ("결과가 매번 다르게 나오나요?", None), ("영어 글도 되나요?", None), ("AI 탐지 우회는 불법인가요?", None), ("보이지 않는 글자를 넣으면 안 되나요?", None),
+          ("학위논문 전체를 한 번에 넣어도 되나요?", None), ("습니다체가 바뀌지 않나요?", None), ("팀 과제도 되나요?", None),
+          ("'100% 사람 글 보장'을 믿어도 되나요?", None), ("넣은 글이 학습에 쓰이나요?", None), ("토큰 최소 금액은 얼마인가요?", None)]
+
+
+def merged_faq():
+    allq = {q: a for L in P.LANDINGS for q, a in L["faq"]}
+    return [(rn or q, allq[q]) for q, rn in PICK_Q]
+
+
 def build_faq():
     trail = [("자주 묻는 질문", "faq/")]
-    allq = P.HOME["faq"] + P.PRICE_FAQ + P.MORE_FAQ
+    groups = [("서비스와 사용", P.HOME["faq"] + P.MORE_FAQ), ("논문 · 과제 · 자기소개서와 AI 탐지기", merged_faq()), ("결제와 토큰", P.PRICE_FAQ)]
+    allq = [x for _, L in groups for x in L]
     body = '<section class="ph"><div class="wrap">%s<h1 class="h1">자주 묻는 질문</h1><p class="lead">AI 휴머나이저, AI 작성률, AI 탐지기, 결제와 토큰에 대해 자주 받는 질문을 모았습니다.</p></div></section>' % crumbs_html(trail)
-    body += '<section class="sec-s"><div class="wrap-n">%s</div></section>' % faq_html(allq)
+    body += '<section class="sec-s"><div class="wrap-n">%s</div></section>' % "".join('<h2 class="faq-h">%s</h2>%s' % (h, faq_html(L)) for h, L in groups)
     body += cta_band()
     page("faq/", "자주 묻는 질문 · AI 휴머나이저 FAQ | " + BRAND, "AI 휴머나이저가 무엇인지, AI 탐지기의 AI 작성률을 낮출 수 있는지, 무료인지, 글이 저장되는지, 결제와 토큰은 어떻게 되는지 답해 드립니다.",
          body, ld=[ld_faq(allq), ld_crumbs(trail)], priority="0.8")
@@ -489,7 +510,7 @@ def build_guides():
         faq = ('<h2 id="faq">자주 묻는 질문</h2>' + faq_html(g["faq"])) if g.get("faq") else ""
         body = ('<article><section class="ph"><div class="wrap-n">%s<p class="kick">%s</p><h1 class="h1">%s</h1><p class="meta"><span>%s 편집팀</span><span>%s</span><span>읽는 데 %d분</span></p></div></section>'
                 '<section class="sec-s"><div class="wrap-n"><div class="answer">%s</div>%s<div class="prose">%s%s</div>'
-                '<div class="cta" style="margin-top:40px;padding:36px 24px"><h2 style="font-size:26px">내 글의 AI 작성률, 지금 바로 확인하세요</h2><p>가입 없이 무료 · 문장마다 AI 검출 여부를 보여 드립니다.</p><div class="btns"><a class="btn btn-p btn-l" href="/humanize/">무료로 AI 작성률 검사</a></div></div>'
+                '<div class="cta" style="margin-top:40px;padding:36px 24px"><h2 style="font-size:26px">내 글의 AI 작성률, 지금 바로 확인하세요</h2><p>가입 없이 무료 · 문장마다 AI 검출 여부를 보여 드립니다.</p><div class="btns"><a class="btn btn-p btn-l" href="/#tool" data-tool>무료로 AI 작성률 검사</a></div></div>'
                 '</div></section></article><section class="sec-s alt"><div class="wrap"><h2 class="h2">함께 읽으면 좋은 글</h2><div class="gcards">%s</div></div></section>') % (
             crumbs_html(trail), g["cat"], esc(g["h1"]), BRAND, g["date"].replace("-", "."), max(2, len(re.sub(r"<[^>]+>", "", g["body"])) // 650), g["answer"], toc_html, g["body"], faq, rel)
         art = {"@type": "Article", "headline": g["h1"], "description": g["desc"], "inLanguage": "ko-KR", "datePublished": g["date"], "dateModified": g["date"],
@@ -506,8 +527,29 @@ def build_static():
         body = '<section class="ph"><div class="wrap-n">%s<h1 class="h1">%s</h1>%s</div></section><section class="sec-s"><div class="wrap-n prose">%s</div></section>' % (
             crumbs_html(trail), S["h1"], ('<p class="lead">%s</p>' % S["lead"]) if S.get("lead") else "", S["body"])
         page(S["path"], S["title"], S["desc"], body, ld=[ld_crumbs(trail)], priority=S.get("prio", "0.4"))
-    body = '<section class="ph"><div class="wrap-n"><h1 class="h1">페이지를 찾을 수 없습니다</h1><p class="lead">주소가 바뀌었거나 없는 페이지입니다.</p><p><a class="btn btn-p" href="/">홈으로</a> <a class="btn btn-g" href="/humanize/">휴머나이징 도구</a></p></div></section>'
+    body = '<section class="ph"><div class="wrap-n"><h1 class="h1">페이지를 찾을 수 없습니다</h1><p class="lead">주소가 바뀌었거나 없는 페이지입니다.</p><p><a class="btn btn-p" href="/">홈으로</a> <a class="btn btn-g" href="/#tool" data-tool>무료 AI 작성률 검사</a></p></div></section>'
     page("404.html", "페이지를 찾을 수 없습니다 | " + BRAND, "요청한 페이지를 찾을 수 없습니다.", body, noindex=True)
+
+
+# ---------------- 하나로 통일(한국휴머나이저 22:20 대표 방침 그대로): 키워드별 쪽은 첫 화면으로 바로 넘김 ----------------
+MERGED = {"ai-humanizer/": "/", "lower-ai-rate/": "/", "ai-check/": "/#tool", "copykiller/": "/", "gptkiller/": "/", "ai-bypass/": "/", "free/": "/#tool",
+          "thesis/": "/", "report/": "/", "resume/": "/", "natural/": "/", "humanizing/": "/", "best-ai-humanizer/": "/", "ai-converter/": "/",
+          "results/": "/#example", "humanize/": "/#tool"}
+
+
+def build_redirects():
+    """예전 주소로 들어와도 첫 화면 한 곳으로(검색 엔진에는 정본 주소 = 첫 화면). 사이트맵에는 넣지 않음.
+    주소 뒤 ?pass= · #buy- 값은 그대로 넘겨, 토큰 메일의 /humanize/?pass= 단추와 충전 링크가 계속 됨"""
+    for path, to in MERGED.items():
+        d = os.path.join(OUT, path)
+        os.makedirs(d, exist_ok=True)
+        base, hsh = to.split("#")[0], (("#" + to.split("#")[1]) if "#" in to else "")
+        html = ('<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>%s · AI 휴머나이저</title><link rel="canonical" href="%s/">'
+                '<meta http-equiv="refresh" content="0; url=%s"><meta name="viewport" content="width=device-width,initial-scale=1">'
+                '<script>location.replace(%s + (location.search || "") + (location.hash || %s));</script></head>'
+                '<body><p><a href="%s">%s 첫 화면으로 이동합니다</a></p></body></html>') % (
+            BRAND, SITE, to, json.dumps(base), json.dumps(hsh), to, BRAND)
+        open(os.path.join(d, "index.html"), "w", encoding="utf-8").write(html)
 
 
 # ---------------- 검색 · AI 검색용 파일 ----------------
@@ -525,7 +567,7 @@ def build_seo():
         esc(g["h1"]), SITE, g["slug"], SITE, g["slug"], datetime.datetime.strptime(g["date"], "%Y-%m-%d").strftime("%a, %d %b %Y 09:00:00 +0900"), esc(g["desc"])) for g in P.GUIDES)
     open(os.path.join(OUT, "rss.xml"), "w", encoding="utf-8").write('<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>%s 가이드</title><link>%s/guide/</link><description>AI 작성률 낮추기와 휴머나이징 가이드</description><language>ko</language>%s</channel></rss>' % (BRAND, SITE, items))
     open(os.path.join(OUT, "site.webmanifest"), "w", encoding="utf-8").write(json.dumps({"name": BRAND + " AI 휴머나이저", "short_name": BRAND, "start_url": "/", "display": "standalone", "background_color": "#ffffff", "theme_color": "#00245a", "lang": "ko",
-                                                                                         "icons": [{"src": "/assets/img/logo-192.png", "sizes": "192x192", "type": "image/png"}, {"src": "/assets/img/logo-512.png", "sizes": "512x512", "type": "image/png"}]}, ensure_ascii=False))
+                                                                                         "icons": [{"src": "/assets/img/logo-192.png?v=" + VER, "sizes": "192x192", "type": "image/png"}, {"src": "/assets/img/logo-512.png?v=" + VER, "sizes": "512x512", "type": "image/png"}]}, ensure_ascii=False))
     open(os.path.join(OUT, INDEXNOW_KEY + ".txt"), "w").write(INDEXNOW_KEY)
     for gf in GOOGLE_FILES:
         open(os.path.join(OUT, gf), "w").write("google-site-verification: %s" % gf)
@@ -557,6 +599,8 @@ def verify():
                 t = os.path.join(OUT, u.lstrip("/"), "index.html") if u.endswith("/") else os.path.join(OUT, u.lstrip("/"))
                 if not os.path.exists(t):
                     bad.append("링크 " + u + " in " + f)
+                if u.lstrip("/") in MERGED:   # 하나로 통일: 사이트 안 링크는 넘김 쪽을 거치지 않고 첫 화면으로 바로
+                    bad.append("합친 쪽 링크 " + u + " in " + os.path.join(dp, f))
             for m in re.finditer(r'<script type="application/ld\+json">(.*?)</script>', s, re.S):
                 try:
                     json.loads(m.group(1))
@@ -567,11 +611,9 @@ def verify():
 
 if __name__ == "__main__":
     build_home()
-    build_humanize()
     build_pricing()
     build_faq()
-    build_results()
-    build_landings()
+    build_redirects()   # 하나로 통일: build_humanize() · build_results() · build_landings() 대신 첫 화면으로 넘기기(함수는 그대로 둠)
     build_guides()
     build_static()
     build_seo()
