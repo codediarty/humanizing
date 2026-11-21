@@ -548,7 +548,7 @@ def verify():
                 bad.append("줄표(—) " + os.path.join(dp, f))
             if re.search(r">\s*None\s*<", s):
                 bad.append("None 글자 " + os.path.join(dp, f))
-            if "한국휴머나이저" in s or "humanizer.co.kr" in s:
+            if "한국휴머나이저" in s or "humanizer.co.kr" in s or "AIMarker" in s or "aimarker" in s.lower():
                 bad.append("다른 브랜드 이름 " + os.path.join(dp, f))
             for m in re.finditer(r'href="(/[^"#?]*)', s):
                 u = m.group(1)

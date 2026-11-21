@@ -13,6 +13,6 @@ for k in ORDER:
                 "after_scores": {str(i): s[0] for i, s in enumerate(o.get("afterSc", []))},
                 "before": {"rate": o["before"]["rate"], "band": o["before"]["band"], "n": o["before"]["n"]},
                 "after": {"rate": o["after"]["rate"], "band": o["after"]["band"], "n": o["after"]["n"]}, "applied": o.get("ch", 0)})
-json.dump({"samples": out, "measured": "2026.11.21 한국휴머나이징 엔진 실측값(AIMarker 엔진 그대로 · 판정 기준 1.6 · 인간화 엔진 HUM 2.5, 한 번의 휴머나이징). 글마다 결과는 다릅니다."},
+json.dump({"samples": out, "measured": "2026.11.21 한국휴머나이징 엔진 실측값(판정 기준 1.6 · 인간화 엔진 HUM 2.5, 한 번의 휴머나이징). 글마다 결과는 다릅니다."},
           open(os.path.join(HERE, "demo.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 print("samples", [(s["k"], s["before"]["rate"], s["after"]["rate"]) for s in out])

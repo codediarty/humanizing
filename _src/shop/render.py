@@ -84,7 +84,7 @@ def thumb_html(p):
             '<div class="big"><b>%s</b><span>토큰</span></div><div class="fit">%s · %s</div>%s'
             '<div class="price"><b>%s</b><small>%s · 부가세 포함</small></div></div>'
             '<div class="feat"><div>%s월 구독 없음</div><div>%s남은 토큰 5년</div><div>%s메일로 바로 코드</div></div>'
-            '<div class="proof"><span class="k">실측 예시</span><span class="v"><s>%d%%</s><i>→</i><b>%d%%</b></span><span class="t">%s · 한 번의 휴머나이징<br>AIMarker 엔진 그대로 · 글마다 다릅니다</span></div>') % (
+            '<div class="proof"><span class="k">실측 예시</span><span class="v"><s>%d%%</s><i>→</i><b>%d%%</b></span><span class="t">%s · 한 번의 휴머나이징<br>실제 엔진으로 잰 값 · 글마다 다릅니다</span></div>') % (
         LOGO, KMARK, badge, p["name"], p["tok"], p["fit"], p["pg"], low, p["price"], p["per"], CHECK, CHECK, CHECK, B_RATE, A_RATE, T_LABEL)
     return BASE % (css, body)
 
