@@ -11,7 +11,7 @@
    - 13.24(2026.11.12 밤): ③ 다듬기 칸 머리 문구를 'AI 작성률에 필터링되는 문장을 인간화(휴머나이징)해 드립니다'로(예전 머리 문구는 설명 첫 문장으로, nextHtml).
      넣은 글이 없을 때 안내는 파일 먼저 + 그 자리 '파일 올리기'(need · data-act pick). 예시 창 'AI 패턴 줄이기'(k.js focusTool)는 #hzCheck 를 누른 것과 같음.
      충전 칸 설명은 '레포트(라이트 · 플러스) · 논문(프로 · 맥스) 검사와 휴머나이징 약 N페이지'(PRODS doc · pg = 대표가 정한 값, 1페이지 약 1,200자로 셈한 값보다 적거나 같게. build.py CREDITS 와 같게)
-   - 13.17 요금(월 구독 없이 한 번 충전): 라이트 100 · 플러스 300 · 프로 750(BEST 추천, 기본) · 맥스 1,500토큰(아임웹 96 · 97 · 98 · 99, 결제하면 서버가 바로 확인해 보통 1분 안에 코드 메일, 13.18).
+   - 13.17 요금(월 구독 없이 한 번 충전): 라이트 100 · 플러스 350 · 프로 1,000(BEST 추천, 기본) · 맥스 2,000토큰(2026.11.22 대표: 토큰 양만 늘림, 값 그대로)(아임웹 96 · 97 · 98 · 99, 결제하면 서버가 바로 확인해 보통 1분 안에 코드 메일, 13.18).
      무료 검사는 글 전체(13.30 부터 20만 자까지, 6,000자 조각마다 같은 기준)를 한 번에 보고, 가장 뚜렷한 문장 2개만 열어 둠(나머지는 결제 뒤).
      결제하러 가는 동안 하던 일(글 · 올린 파일)을 이 브라우저에만 24시간 맡겨 두고(localStorage am_hz_job + IndexedDB), 메일 단추로 연 새 창이나
      이 창에 코드가 들어오면 한 창에서만 이어서 함(am_hz_job_run). 다른 창에서 코드가 들어오면 이 창도 코드를 받음(storage 이벤트)
@@ -57,10 +57,10 @@
     B: { unfit: ['부적합', '부적합 · 개선 필요'], risk: ['고위험', '고위험 · 수정 권고'], safe: ['안전', '안전 · AI 패턴 적음'], short: ['판단 보류', '판단 보류 · 글이 짧음'] } };
   var SHOW_LIST = false;   // 2026.11.21 밤 대표: 사이트(충전 창 포함)에는 정가 · 50% 표시를 하지 않음(아임웹 상품 쪽 표시는 그대로)
   var PRODS = [   // 13.17(10.31) 새 요금(대표): 라이트 · 플러스 · 프로(BEST 추천, 기본) · 맥스(최고 혜택) = 아임웹 96 · 97 · 98 · 99(build.py CREDITS 와 같게. 서버 products 는 결제 페이지 주소만 가져옴)
-    { id: 'lt', name: '라이트', price: 9900, list: 19800, cr: 100, base: 100, per: '99원', who: '간단한 문장 수정', doc: '레포트', pg: 10 },
-    { id: 'pl', name: '플러스', price: 19900, list: 39800, cr: 300, base: 300, per: '약 66원', who: '일반적인 문서 작업', doc: '레포트', pg: 30 },
-    { id: 'pr', name: '프로', price: 39900, list: 79800, cr: 750, base: 750, per: '약 53원', save: 20, badge: 'BEST 추천', best: 1, who: '넉넉한 토큰, 더 높은 가성비', doc: '논문', pg: 80 },
-    { id: 'mx', name: '맥스', price: 69900, list: 139800, cr: 1500, base: 1500, per: '약 47원', save: 30, badge: '최고 혜택', top: 1, who: '최대 토큰 제공', doc: '논문', pg: 200 }
+    { id: 'lt', name: '라이트', price: 9900, list: 19800, cr: 100, base: 100, per: '99원', who: 'AI 작성률 낮추기, 미니멀하게', doc: '레포트', pg: 10 },
+    { id: 'pl', name: '플러스', price: 19900, list: 39800, cr: 350, base: 350, per: '약 57원', who: 'AI 작성률 낮추기, 합리적으로', doc: '레포트', pg: 35 },
+    { id: 'pr', name: '프로', price: 39900, list: 79800, cr: 1000, base: 1000, per: '약 40원', save: 30, badge: 'BEST 추천', best: 1, who: 'AI 작성률 낮추기, 더 효과적으로', doc: '논문', pg: 100 },
+    { id: 'mx', name: '맥스', price: 69900, list: 139800, cr: 2000, base: 2000, per: '약 35원', save: 39, badge: '최고 혜택', top: 1, who: '반복 변환으로 AI 작성률 극한까지 낮추기', doc: '논문', pg: 250 }
   ];   // 13.24 doc · pg = '레포트(라이트 · 플러스) · 논문(프로 · 맥스) 검사와 휴머나이징 약 몇 페이지'(대표가 정한 값. 1페이지 약 1,200자로 셈한 값보다 적거나 같음: build.py CREDITS 와 같게)
   var PG_CHARS = 1200;
   var RPT = 'AI 작성률 결과서';   // 13.30 토큰으로 받는 전체 검사의 이름(왼쪽 단추 · 무료 결과의 안내 단추). 대표: '리포트'보다 '결과서'
@@ -860,7 +860,7 @@
   function nextHtml(M) {
     var k = M.band.key; if (k === 'short') return '';
     var t = M.src || cur(), cost = humCost(chunk(t).parts), pk = packFor(cost), hot = k !== 'safe', n = nAi(M);
-    var li = ['말투는 원문에 맞춰 자동으로, 숫자와 이름, 인용은 그대로', '다듬기 전후 AI 작성률을 같은 기준으로 비교', keepFile() ? '올린 ' + S.src.kindKo + ' 파일 서식 그대로 받기' : outKind(cur()) === 'pdf' ? '다듬은 글을 PDF 파일로 받기' : /^(txt|md)$/.test(outKind(cur())) ? '다듬은 글을 텍스트 파일로 받기' : '다듬은 글을 워드 파일로 받기'];
+    var li = ['말투는 원문에 맞춰 자동으로, 숫자와 이름, 인용은 그대로', '다듬기 전후 AI 작성률을 같은 기준으로 비교', '반복 변환할수록 AI 작성률은 계속 낮아집니다', '여러 번 변환하여 AI 작성률을 극한으로 줄여보세요'];   // 2026.11.22 대표: 셋째 줄(받는 파일 꼴)을 반복 변환 안내로, 한 줄 더
     var sig = !hot && M.sigN > 0;   // 13.2b 안전인데 AI처럼 읽히는 표현이 있을 때
     var title = hot ? 'AI 작성률에 필터링되는 문장을 인간화(휴머나이징)해 드립니다' : sig ? 'AI처럼 읽히는 표현 ' + n2(M.sigN) + '곳을 자연스럽게 다듬어 드려요' : '지금은 손볼 곳이 거의 없어요';
     var sub = hot ? (n ? 'AI로 보이는 문장 ' + n2(n) + '개를 포함해 ' : '') + '글 전체의 AI 말버릇과 번역투를 사람 말투에 가깝게 다듬습니다.' : sig ? '번역투, 빈말, 틀에 박힌 연결어를 사람 말투에 가깝게 바꾸고, 바꾸기 전후를 같은 기준으로 비교합니다. 사람이 쓴 글도 이런 표현 때문에 의심받을 수 있습니다.' : 'AI 작성 패턴도, AI처럼 읽히는 표현도 찾지 못했습니다. 그래도 말투와 흐름을 더 다듬고 싶다면 글 전체 휴머나이징을 할 수 있습니다.';
@@ -870,18 +870,19 @@
     else price = '이 글 전체는 <b>' + tk(cost) + '토큰</b>이에요. ' + esc(pk.name) + ' ' + tk(pk.cr) + '토큰(' + n2(pk.price) + '원)' + (pk.cr >= cost ? '이면 다듬고 <b>' + tk(pk.cr - cost) + '토큰</b>이 남아 다음 글에도 씁니다.' : '에 모자라는 만큼은 같은 코드에 충전해 이어서 다듬습니다.') + ' 결제하면 바로 메일로 토큰 코드가 오고, 이 글은 이어서 다듬어 드립니다.';
     return '<section class="hz12-next ' + bandCls(k) + (hot ? ' hot' : sig ? ' sig' : ' calm') + '" aria-labelledby="hzNextT"><div class="l"><h3 id="hzNextT">' + (hot ? esc(title).replace('인간화(휴머나이징)해 드립니다', '<span class="nb"><em>인간화(휴머나이징)</em>해 드립니다</span>') : esc(title)) + '</h3><p class="sub">' + (hot ? '<b>AI 문장 패턴을 자연스럽게 다듬어 드려요.</b> ' : '') + esc(sub) + '</p>' +
       '<ul>' + li.map(function (x) { return '<li>' + ico('check') + '<span>' + esc(x) + '</span></li>'; }).join('') + '</ul></div>' +
-      '<div class="r"><button class="btn btn-p btn-l" type="button" data-act="humall">' + ico('pen') + '<span>' + (S.pass ? '글 전체 휴머나이징 · ' + tk(cost) + '토큰' : '충전하고 글 전체 휴머나이징') + '</span></button><p class="price">' + price + '</p>' +
+      '<div class="r"><button class="btn btn-p btn-l" type="button" data-act="humall">' + ico('pen') + '<span>' + (S.pass ? '글 전체 휴머나이징 · ' + tk(cost) + '토큰' : '충전하고 글 전체 휴머나이징') + '</span></button><p class="price"><span class="lead">AI 작성률을 줄이고 원문의 의미는 유지합니다.</span>' + price + '</p>' +
       (S.pass ? '' : '<button class="btn btn-g" type="button" data-act="humfree">' + freeTaste(t).part + ' 무료로 먼저 보기</button><button type="button" class="hz7-link" data-code data-intent="hum">토큰 코드가 있어요</button>') + rptHtml(M, t) +
-      '<p class="fine">AI 사용을 밝혀야 하는 글이면 규정대로 밝히세요.</p></div></section>';
+      '</div></section>';   // 2026.11.22 대표: 휴머나이징 단추 밑에 한 줄, '규정대로 밝히세요' 줄은 자리만 차지해 뺌
   }
   /* 2026.11.22 AIMarker 13.30 과 같게: 토큰 코드가 있으면 다듬기 칸 오른쪽 아래에 결과서 단추. 누르면 토큰이 빠지고 결과서(저장 창)가 바로 열림.
      메일로 보내지 않음(글을 서버에 남기지 않는 원칙). 이미 받은 결과서면 토큰 없이 다시 저장 */
   function rptHtml(M, t) {
     if (!S.pass) return '';
-    if (M.full) return '<div class="rpt"><button class="btn btn-g btn-l" type="button" data-act="report">' + ico('file') + '<span>' + RPT + ' 다시 저장</span></button><p class="price">이미 받은 결과서라 토큰이 빠지지 않습니다.</p></div>';
+    /* 2026.11.22 대표: '결과서 받기'는 휴머나이징 뒤에 또 돈을 내라는 것처럼 보여 'AI 작성률 상세 진단'(선택 사항)으로. 빠지는 토큰은 그대로 적음 */
+    if (M.full) return '<div class="rpt"><button class="btn btn-g btn-l" type="button" data-act="report">' + ico('file') + '<span>상세 진단 결과 다시 저장</span></button><p class="price">이미 받은 상세 진단이라 토큰이 빠지지 않습니다.</p></div>';
     var rc = chkCost(chunk(t).parts.filter(function (p) { return p; }));
-    return '<div class="rpt"><button class="btn btn-g btn-l" type="button" data-act="fullcheck" data-pdf>' + ico('file') + '<span>' + RPT + ' 받기' + (isCr() && rc ? ' · ' + tk(rc) + '토큰' : '') + '</span></button>' +
-      '<p class="price">AI 패턴이 걸린 문장을 하나하나 상세히 진단해 바로 저장합니다.' + (isCr() ? (rc ? ' 남은 토큰에서 ' + tk(rc) + '토큰이 빠집니다.' : ' 600자 이하 글이라 토큰이 빠지지 않습니다.') : '') + '</p></div>';
+    return '<div class="rpt"><button class="btn btn-g btn-l" type="button" data-act="fullcheck" data-pdf>' + ico('file') + '<span>AI 작성률 상세 진단' + (isCr() && rc ? ' · ' + tk(rc) + '토큰' : '') + '</span></button>' +
+      '<p class="price"><span class="lead">AI 작성 구간을 상세히 확인하세요. (선택 사항)</span>' + (isCr() ? (rc ? '남은 토큰에서 ' + tk(rc) + '토큰이 빠집니다.' : '600자 이하 글이라 토큰이 빠지지 않습니다.') : '') + '</p></div>';
   }
   function fullHtml(M) {   // 무료: 모든 문장의 위치와 이유 · 구간별 분석 · 결과상세내역서는 토큰으로(전체 검사)
     if (M.full) return '';
