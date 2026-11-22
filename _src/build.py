@@ -36,7 +36,7 @@ API = "https://script.google.com/macros/s/AKfycbzLgl7l-cOndrkq5n0SdKLMaSy7_MCcym
 SHOP = "https://skkc.co.kr/shop_view?idx=%s&kaiec_buy=1"
 # 성균관컨설팅(아임웹) 한국휴머나이징 전용 상품 번호. 서버는 스크립트 속성 HG_IDX 로 같은 번호를 hg1~hg4 로 봄
 SHOP_IDX = {"lt": "162", "pl": "163", "pr": "164", "mx": "165"}   # 2026.11.21 등록(아임웹 상품 162 라이트 · 163 플러스 · 164 프로 · 165 맥스, 카테고리 한국휴머나이징)
-NAVER_VERIFY = ""
+NAVER_VERIFY = "12e8ef5df3fcfe67e1f69a654894a069101c03fa"   # 네이버 서치어드바이저 humanizing.ai.kr HTML 태그(대표, 2026.11.22 16:09)
 GOOGLE_VERIFY = ""
 BING_VERIFY = "6CFE39150A28BBBB4694B507E2E689C0"   # 11.22 Bing 웹마스터 도구(한국휴머나이저 · Humani 와 같은 계정의 메타 태그)
 INDEXNOW_KEY = "b6e1c94d27a84f3e9c05d8a1f2e7b4c6"
