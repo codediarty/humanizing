@@ -114,7 +114,7 @@ def guide_html():
              ("쓴 만큼만", "글을 넣고 검사 · 휴머나이징을 누르면 글자 수만큼만 빠집니다. 남은 토큰은 5년 동안 그대로입니다.")]
     s = "".join('<div class="st"><i>%d</i><div><b>%s</b><p>%s</p></div></div>' % (i + 1, a, b) for i, (a, b) in enumerate(steps))
     body = ('<img class="lg" src="%s" alt=""><h1>결제하고 <em>1분</em>,<br>메일로 받은 코드로 바로</h1><p class="sub">AI 작성률 검사 · AI 휴머나이징 서비스에 쓰는 토큰 이용 안내</p><div class="steps">%s</div>'
-            '<div class="cost"><h2>토큰은 이렇게 빠집니다</h2><ul><li>검사 요약 <b>무료</b></li><li>전체 결과 <b>1,000자 4토큰</b></li><li>휴머나이징 <b>1,000자 8토큰</b></li><li>1토큰 <b>100원</b> · 구독 없음</li></ul></div>') % (LOGO, s)
+            '<div class="cost"><h2>토큰은 이렇게 빠집니다</h2><ul><li>검사 요약 <b>무료</b></li><li>전체 결과 <b>1,000자 2토큰</b></li><li>휴머나이징 <b>1,000자 4토큰</b></li><li>1토큰 <b>100원</b> · 구독 없음</li></ul></div>') % (LOGO, s)
     return BASE % (GUIDE_CSS, body)
 
 
