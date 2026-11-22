@@ -29,7 +29,7 @@ HOST = "humanizing.ai.kr"
 BRAND = "한국휴머나이징"
 BRAND_SP = "한국 휴머나이징"          # 띄어 쓴 이름(검색용 alternateName 에만. 화면 로고는 2026.11.22 부터 붙여 씀)
 BRAND_EN = "Korean Humanizing"
-VER = "20261122e"
+VER = "20261122f"
 TODAY = "2026-11-21"
 # 한국휴머나이징 배포(AIMarker 서버 프로젝트 버전 36, 엔진은 AIMarker 와 같음 · 2026.11.21 22:38)
 API = "https://script.google.com/macros/s/AKfycbzLgl7l-cOndrkq5n0SdKLMaSy7_MCcymbFtt590_KCYByazHlQU2G6ynA4lbrUOODOmg/exec"
@@ -38,9 +38,9 @@ SHOP = "https://skkc.co.kr/shop_view?idx=%s&kaiec_buy=1"
 SHOP_IDX = {"lt": "162", "pl": "163", "pr": "164", "mx": "165"}   # 2026.11.21 등록(아임웹 상품 162 라이트 · 163 플러스 · 164 프로 · 165 맥스, 카테고리 한국휴머나이징)
 NAVER_VERIFY = ""
 GOOGLE_VERIFY = ""
-BING_VERIFY = ""
+BING_VERIFY = "6CFE39150A28BBBB4694B507E2E689C0"   # 11.22 Bing 웹마스터 도구(한국휴머나이저 · Humani 와 같은 계정의 메타 태그)
 INDEXNOW_KEY = "b6e1c94d27a84f3e9c05d8a1f2e7b4c6"
-GOOGLE_FILES = []
+GOOGLE_FILES = ["google67694027f26c117c.html"]   # 11.22 구글 서치 콘솔 https://humanizing.ai.kr/ (moistener22 계정, HTML 파일 확인. 지우지 말 것)
 BIZ = {"name": "성균관컨설팅", "ceo": "이채연", "no": "272-32-01885", "ecom": "제2026-경기송탄-0622",
        "addr": "경기도 수원시 장안구 서부로 2066 성균관대학교 브릿지팩토리(연구실)", "mail": "contact@skkc.co.kr"}
 # 가격 · 토큰은 AIMarker 개인 토큰과 같음(서버 hg1~hg4). 요금 카드는 정가 없이 간단 · 깔끔하게(대표 2026.11.21 밤)
@@ -95,10 +95,20 @@ GUIDE_FT = [("ai-rate-meaning", "AI 작성률이란"), ("purple-sentences", "보
             ("thesis-checklist", "학위논문 제출 전 점검"), ("resume-ai-tone", "자기소개서 AI 티 지우기")]
 
 
+# 11.22 대표 '관련 키워드들도 메인 화면 아니더라도 각 사이트 하단에 적혀 있어서 구글 · 네이버 · 빙에 노출되게':
+# 바닥글에 검색어 링크 두 칸(모든 쪽). 한국휴머나이저와 같이 검사기 이름은 쓰지 않고 일반 검색어로만
+FT_SEARCH = [("humanizing/", "휴머나이징"), ("ai-humanizer/", "AI 휴머나이저"), ("lower-ai-rate/", "AI 작성률 낮추기"), ("copykiller/", "표절 검사 AI 작성률 낮추기"),
+             ("gptkiller/", "GPT 탐지 낮추기"), ("ai-bypass/", "AI 탐지 대비"), ("free/", "AI 휴머나이징 무료"), ("best-ai-humanizer/", "휴머나이징 사이트 추천")]
+FT_USE = [("thesis/", "논문 휴머나이징"), ("report/", "레포트 AI 탐지 대비"), ("resume/", "자기소개서 AI 작성률 낮추기"), ("natural/", "AI 글 자연스럽게"),
+          ("ai-converter/", "AI 문장 변환기"), ("ai-check/", "AI 작성률 무료 검사")]
+
+
 def footer():
     cols = [
-        # 22:20 하나로 통일: 바닥글도 첫 화면 중심 세 칸(서비스 · 가이드 · 회사)
-        ("서비스", [("/#tool", "무료 AI 작성률 검사"), ("/#example", "실제 측정 결과"), ("/pricing/", "요금 · 토큰 충전"), ("/faq/", "자주 묻는 질문")]),
+        # 22:20 하나로 통일 뒤 11.22 오후: 검색어 쪽을 다시 열며 바닥글에 검색어 두 칸
+        ("서비스", [("/#tool", "무료 AI 작성률 검사"), ("/results/", "실제 측정 결과"), ("/pricing/", "요금 · 토큰 충전"), ("/faq/", "자주 묻는 질문")]),
+        ("많이 찾는 검색", [("/" + u, t) for u, t in FT_SEARCH]),
+        ("용도별", [("/" + u, t) for u, t in FT_USE]),
         ("가이드", [("/guide/", "휴머나이징 가이드")] + [("/guide/%s/" % s, t) for s, t in GUIDE_FT]),
         ("회사 · 정책", [("/about/", "회사 소개"), ("/terms/", "이용약관"), ("/privacy/", "개인정보처리방침"), ("mailto:" + BIZ["mail"], "문의 " + BIZ["mail"])]),
     ]
@@ -536,9 +546,12 @@ def build_static():
 
 
 # ---------------- 하나로 통일(한국휴머나이저 22:20 대표 방침 그대로): 키워드별 쪽은 첫 화면으로 바로 넘김 ----------------
-MERGED = {"ai-humanizer/": "/", "lower-ai-rate/": "/", "ai-check/": "/#tool", "copykiller/": "/", "gptkiller/": "/", "ai-bypass/": "/", "free/": "/#tool",
-          "thesis/": "/", "report/": "/", "resume/": "/", "natural/": "/", "humanizing/": "/", "best-ai-humanizer/": "/", "ai-converter/": "/",
-          "results/": "/#example", "humanize/": "/#tool"}
+MERGED_OLD = {"ai-humanizer/": "/", "lower-ai-rate/": "/", "ai-check/": "/#tool", "copykiller/": "/", "gptkiller/": "/", "ai-bypass/": "/", "free/": "/#tool",
+              "thesis/": "/", "report/": "/", "resume/": "/", "natural/": "/", "humanizing/": "/", "best-ai-humanizer/": "/", "ai-converter/": "/",
+              "results/": "/#example", "humanize/": "/#tool"}   # 11.21 ~ 11.22 판(참고로 남김)
+# 11.22 오후 대표 '노출이 잘되어서 많이 유입되는 게 중요 · 어떤 부분에서든 다 노출': 검색어별 쪽을 다시 엶(맨 위에 첫 화면과 같은 도구).
+# 메뉴는 그대로 하나. 도구만 있던 humanize/ 는 첫 화면으로 넘김(토큰 메일의 /humanize/?pass= 단추도 그대로 됨)
+MERGED = {"humanize/": "/#tool"}   # results/ 는 실제 측정 결과 쪽(build_results)으로 다시 엶
 
 
 def build_redirects():
@@ -617,7 +630,9 @@ if __name__ == "__main__":
     build_home()
     build_pricing()
     build_faq()
-    build_redirects()   # 하나로 통일: build_humanize() · build_results() · build_landings() 대신 첫 화면으로 넘기기(함수는 그대로 둠)
+    build_landings()    # 11.22 오후: 검색어별 쪽 다시(도구가 맨 위, 메뉴는 하나 그대로)
+    build_results()     # 실제 측정 결과(검색어 쪽들이 이곳으로 이어짐)
+    build_redirects()   # humanize/ 만 첫 화면으로
     build_guides()
     build_static()
     build_seo()
