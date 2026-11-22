@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """한국휴머나이징 로고(대표가 준 K 표지 + 한국 휴머나이징 / KOREAN HUMANIZING, 2026.11.21 22:25)로 사이트 그림 만들기
+2026.11.22 부터 글자는 붙여서 '한국휴머나이징'(아래 _attach)
 logo-source.png(흰 바탕) -> 흰색을 투명으로 바꿔
   docs/assets/img/logo-k.png      K 표지만(머리글 · 바닥글, 높이 138px)
   docs/assets/img/logo-full.png   로고 전체(공유 그림 · 상품 그림용, 투명)
@@ -14,6 +15,25 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 IMG = os.path.join(ROOT, "docs", "assets", "img")
 os.makedirs(IMG, exist_ok=True)
 src = Image.open(os.path.join(HERE, "logo-source.png")).convert("RGB")
+
+# 2026.11.22 대표: '한국휴머나이징은 붙이는 게 낫지, 한국 휴머나이징보다' -> 대표가 준 그림(logo-source.png)은 그대로 두고,
+# '국'과 '휴' 사이 띄어쓰기(40px)를 다른 글자 사이(약 12px)만큼으로 줄인 판을 만들어 씀(logo-source-attached.png).
+# 아래 영문 줄 ─ KOREAN HUMANIZING ─ 도 한글 끝에 맞게: 왼쪽 · 오른쪽 줄표를 14px씩 줄여 글자는 14px, 오른쪽 끝은 28px 당김.
+def _attach(im):
+    a = np.asarray(im).copy()
+    W = a.shape[1]
+    def cut(y0, y1, c0, k):
+        band = a[y0:y1]
+        band[:, c0:W - k] = band[:, c0 + k:W].copy()
+        band[:, W - k:] = 255
+    cut(232, 436, 1080, 28)     # 한글 줄: 띄어쓰기 칸(1077~1116)에서 28px
+    cut(440, 510, 790, 14)      # 영문 줄: 왼쪽 줄표 안에서 14px
+    cut(440, 510, 1880, 14)     # 영문 줄: 오른쪽 줄표 안에서 14px
+    return Image.fromarray(a, "RGB")
+
+
+src = _attach(src)
+src.save(os.path.join(HERE, "logo-source-attached.png"), optimize=True)
 
 
 def white_to_alpha(im):

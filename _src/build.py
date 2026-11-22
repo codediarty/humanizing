@@ -27,7 +27,7 @@ import pages as P  # noqa: E402
 SITE = "https://humanizing.ai.kr"
 HOST = "humanizing.ai.kr"
 BRAND = "한국휴머나이징"
-BRAND_SP = "한국 휴머나이징"          # 로고에 적힌 띄어 쓴 이름
+BRAND_SP = "한국 휴머나이징"          # 띄어 쓴 이름(검색용 alternateName 에만. 화면 로고는 2026.11.22 부터 붙여 씀)
 BRAND_EN = "Korean Humanizing"
 VER = "20261122e"
 TODAY = "2026-11-21"
@@ -73,7 +73,8 @@ def shop(pid):
 
 # 로고(대표가 준 그림 2026.11.21 22:25): K 표지는 그림(logo-k.png), 세로 줄, 글자 '한국 휴머나이징' / ─ KOREAN HUMANIZING ─ 은 선명하게 HTML
 LOGO = ('<a class="logo" href="/" aria-label="%s 홈"><img class="lk-k" src="/assets/img/logo-k.png" width="67" height="44" alt="" decoding="async">'
-        '<span class="lk-bar" aria-hidden="true"></span><span class="lk-t"><b>%s</b><span class="en" aria-hidden="true"><i>KOREAN HUMANIZING</i></span></span></a>' % (BRAND, BRAND_SP))
+        '<span class="lk-bar" aria-hidden="true"></span><span class="lk-t"><b>%s</b><span class="en" aria-hidden="true"><i>KOREAN HUMANIZING</i></span></span></a>' % (BRAND, BRAND))
+# 2026.11.22 대표: '한국휴머나이징은 붙이는 게 낫지, 한국 휴머나이징보다' -> 로고 글자도 붙여 씀(BRAND_SP 는 검색용 다른 이름으로만 남김)
 
 # 메뉴: 한국휴머나이저에서 대표가 정한 대로 'AI 휴머나이저(AI 작성률 낮추기)' 하나로(2026.11.21 22:18). 카피킬러 · GPT킬러 이름은 메뉴에 쓰지 않음
 # 2026.11.21 22:20 한국휴머나이저 대표: '1개로 통일해서 만들어줘, 그래야 헷갈리지 않고 결제 유도' 를 레퍼런스대로 따름
