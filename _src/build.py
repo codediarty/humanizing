@@ -29,7 +29,7 @@ HOST = "humanizing.ai.kr"
 BRAND = "한국휴머나이징"
 BRAND_SP = "한국 휴머나이징"          # 띄어 쓴 이름(검색용 alternateName 에만. 화면 로고는 2026.11.22 부터 붙여 씀)
 BRAND_EN = "Korean Humanizing"
-VER = "20261122g"
+VER = "20261122h"
 TODAY = "2026-11-21"
 # 한국휴머나이징 배포(AIMarker 서버 프로젝트 버전 36, 엔진은 AIMarker 와 같음 · 2026.11.21 22:38)
 API = "https://script.google.com/macros/s/AKfycbzLgl7l-cOndrkq5n0SdKLMaSy7_MCcymbFtt590_KCYByazHlQU2G6ynA4lbrUOODOmg/exec"
@@ -340,6 +340,23 @@ def faq_html(faq):
 REP_LINE = "반복 변환할수록 AI 작성률은 계속 낮아집니다. 여러 번 변환하여 AI 작성 흔적을 극한까지 줄여보세요."   # 2026.11.22 대표: 요금 칸 아래 반복 변환 안내
 
 
+PLUS_UNIT = 19900 / 350   # 2026.11.22 대표: 카피휴먼처럼 프로 · 맥스는 '플러스 단가로 샀을 때 금액'을 줄 그어 보여 줌(같은 토큰 × 플러스 토큰당 가격)
+PRICE_FN = "절약률은 플러스의 토큰당 가격(약 57원)과 비교한 값이고, 줄 그은 금액은 같은 토큰을 플러스 단가로 샀을 때의 금액입니다."
+
+
+def plus_strike(p):
+    if not p.get("save"):
+        return ""
+    return '<s title="같은 토큰을 플러스 단가로 샀을 때의 금액"><span class="sr">플러스 단가 기준 </span>%s</s>' % won(int(round(p["tok"] * PLUS_UNIT)))
+
+
+def save_badge(p, tag="p", cls="sv2"):
+    if not p.get("save"):
+        return ""
+    m = re.search(r"약 \d+%", p["save"])
+    return '<%s class="%s">플러스 대비 토큰당 <b>%s 절약</b></%s>' % (tag, cls, m.group(0) if m else p["save"], tag)
+
+
 def pricing_cards(cta_text="충전하기"):
     """요금 카드: 이름 · 한 줄 설명 · 토큰 · 가격(토큰당) · 절약 · '검사와 휴머나이징 서비스 약 N페이지' · 충전 단추(정가 표시 없이, AIMarker 처럼 간단하게)"""
     out = []
@@ -349,11 +366,11 @@ def pricing_cards(cta_text="충전하기"):
         link, bcls, label = shop(p["id"]), ("btn-p" if p.get("best") else "btn-g"), "%s %s" % (p["name"], cta_text)
         btn = ('<a class="btn %s" href="%s" target="_blank" rel="noopener" data-pack="%s">%s</a>' % (bcls, esc(link), p["id"], label)) if link else \
               ('<a class="btn %s" href="/#buy-%s" data-buy-pack="%s">%s</a>' % (bcls, p["id"], p["id"], label))
-        sv = ('<p class="sv2">%s</p>' % p["save"]) if p.get("save") else ""
-        out.append('<div class="%s rv">%s<h3>%s</h3><p class="who">%s</p><p class="tk2"><b>%s</b>토큰</p><p class="pr2"><b>%s</b><span>토큰당 %s</span></p>%s'
+        sv = save_badge(p)
+        out.append('<div class="%s rv">%s<h3>%s</h3><p class="who">%s</p><p class="tk2"><b>%s</b>토큰</p><p class="pr2"><b>%s</b>%s<span>토큰당 %s · 부가세 포함</span></p>%s'
                    '<p class="use">%s 검사와 휴머나이징 서비스 <b>%s</b></p>%s</div>' % (
-                       cls, tag, p["name"], p["sub"], "{:,}".format(p["tok"]), won(p["price"]), p["per"], sv, p["doc"], p["pg"], btn))
-    return '<div class="price">' + "".join(out) + "</div>" + '<p class="price-rep">%s</p>' % REP_LINE   # 2026.11.22 대표(AIMarker 13.31 과 같게)
+                       cls, tag, p["name"], p["sub"], "{:,}".format(p["tok"]), won(p["price"]), plus_strike(p), p["per"], sv, p["doc"], p["pg"], btn))
+    return '<div class="price">' + "".join(out) + "</div>" + '<p class="price-rep">%s</p>' % REP_LINE + '<p class="price-fn">%s</p>' % PRICE_FN   # 2026.11.22 대표(AIMarker 13.31 과 같게)
 
 
 def calc_block():
