@@ -479,7 +479,7 @@
   function prog(label, i, n) {
     var pct = n ? Math.round(i / n * 100) : 30;
     var el = $('.hz7-prog', out);
-    if (!el) { out.innerHTML = '<div class="hz7-prog"><b></b><i><em></em></i><p>문장마다 앞뒤 문장과 함께 AI 글 패턴을 살피고, 한국휴머나이징 판정 기준 1.6으로 판정합니다. 표지 · 목차 · 참고문헌 같은 줄은 빼고 본문 문장만 셉니다. 같은 글은 언제나 같은 결과가 나옵니다.</p></div>'; el = $('.hz7-prog', out); stat(label); }
+    if (!el) { out.innerHTML = '<div class="hz7-prog"><b></b><i><em></em></i><p>문장마다 앞뒤 문장과 함께 AI 글 패턴을 살피고, 한국휴머나이징 판정 기준 1.6으로 판정합니다. 표지 · 목차 · 참고문헌 같은 줄은 빼고 본문 문장만 셉니다. 같은 글은 다시 검사해도 같은 결과가 나옵니다.</p></div>'; el = $('.hz7-prog', out); stat(label); }
     $('b', el).textContent = label + (n > 1 ? ' ' + i + ' / ' + n : ''); $('em', el).style.width = Math.max(6, pct) + '%';
     el.classList.toggle('ind', n <= 1 && i < n);   // 한 번에 끝나는 검사는 흐르는 막대로
   }
