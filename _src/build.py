@@ -29,7 +29,7 @@ HOST = "humanizing.ai.kr"
 BRAND = "한국휴머나이징"
 BRAND_SP = "한국 휴머나이징"          # 로고에 적힌 띄어 쓴 이름
 BRAND_EN = "Korean Humanizing"
-VER = "20261122d"
+VER = "20261122e"
 TODAY = "2026-11-21"
 # 한국휴머나이징 배포(AIMarker 서버 프로젝트 버전 36, 엔진은 AIMarker 와 같음 · 2026.11.21 22:38)
 API = "https://script.google.com/macros/s/AKfycbzLgl7l-cOndrkq5n0SdKLMaSy7_MCcymbFtt590_KCYByazHlQU2G6ynA4lbrUOODOmg/exec"

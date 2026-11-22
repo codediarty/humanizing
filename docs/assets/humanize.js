@@ -1380,7 +1380,7 @@
   function prodsHtml(sel, noBest, need) {   // 13.17 칸: 배지 · 이름 · 토큰 · 가격(토큰당) · 절약, 이 글이 있으면 '이 글 N번'
     return prods().map(function (p) {
       var best = p.best && !noBest, k = need > 0 ? Math.floor(r1(p.cr / need) + 1e-9) : 0;
-      var sm = need > 0 ? (k ? '이 글 ' + (k >= 1000 ? '1,000번 넘게' : '약 ' + n2(k) + '번') : '이 글에는 모자라요') : (p.pg || p.save ? p.desc : (p.who ? p.who + ' · ' : '') + p.desc);
+      var sm = need > 0 ? (chkBuy() ? (k ? '이 글 ' + (k >= 1000 ? '1,000번 넘게' : '약 ' + n2(k) + '번') : '이 글에는 모자라요') : !k ? '이 글의 AI 작성률을 낮추기엔 부족해요' : k === 1 ? '내 문서 AI 작성률 낮추기 (1회)' : '내 문서 AI 작성률 극한으로 낮추기 (' + (k >= 1000 ? '1,000회 넘게' : n2(k) + '회') + ' 반복)') : (p.pg || p.save ? p.desc : (p.who ? p.who + ' · ' : '') + p.desc);   // 11.22 대표 문구(다듬기 충전 칸: 모자람 · 1회 · N회 반복, 결과서는 그대로)
       return '<label' + (best ? ' class="best"' : p.top ? ' class="top"' : '') + '><input type="radio" name="product" value="' + esc(p.id) + '"' + (p.id === sel ? ' checked' : '') + '><span>' +
         (best ? '<i class="tg">' + esc(p.badge || '추천') + '</i>' : p.top ? '<i class="tg top">' + esc(p.badge || '최고 혜택') + '</i>' : '') +
         '<b class="nm">' + esc(p.name) + '</b><b class="tk">' + tk(p.cr) + '<small>토큰</small>' + (p.bonus ? '<i class="bn">+' + tk(p.bonus) + '</i>' : '') + '</b>' +
@@ -1417,15 +1417,16 @@
     var am = $('#hzBuyAmt'); if (am) am.textContent = tk(p.cr) + '토큰 ' + n2(p.price) + '원(부가세 포함) · ';
     var n = $('#hzBuyNote'); if (n) n.innerHTML = sh ? '' : payReady() ? (tu ? '카드나 간편결제로 바로 결제합니다. 승인되면 지금 코드에 ' + tk(p.cr) + '토큰이 바로 더해집니다.' : '카드나 간편결제로 바로 결제합니다. 승인되면 이 화면에서 바로 토큰이 열리고, 코드는 메일로도 보내 드립니다.') : stepsHtml() + '<span class="hz19-nt">' + (tu ? '주문하면 성균관컨설팅 결제 안내를 메일로 드리고, 결제가 확인되면 지금 코드에 ' + tk(p.cr) + '토큰을 더해 드립니다.' : '주문하면 성균관컨설팅 결제 안내를 메일로 드리고, 결제가 확인되면 토큰 코드를 메일로 보내 드립니다.') + '</span>';
   }
+  function chkBuy() { return S.intent === 'check' || !!(S.buyNeed && S.buyNeed.what === RPT); }   // 11.22 결과서를 받으려고 연 충전 창(코드가 있어 '충전하기'로 열면 S.intent 가 비어 있음)
   function needLine(p, tu) {   // 13.2 이 글 값(원 · 토큰)과, 고른 충전으로 하고 남는 토큰
     var nd = $('#hzBuyNeed'), N = S.buyNeed; if (!nd) return;
     if (!p || (!N && !oldRate())) { nd.hidden = true; nd.innerHTML = ''; return; }
     if (!N) { nd.innerHTML = '새로 충전한 토큰은 새 코드로 메일로 옵니다. 지금 코드에 남은 <b>' + tkw(crLeft()) + '</b>은 그대로 쓸 수 있습니다.'; nd.hidden = false; return; }   // 13.26 예전 값 코드로 그냥 연 충전 창
-    var chk = S.intent === 'check', doW = chk ? '결과서를 받아' : '다듬어', have = r1((tu ? crLeft() : 0) + p.cr), left = r1(have - N.need);
+    var chk = chkBuy(), doW = chk ? '결과서를 받아' : '다듬어', have = r1((tu ? crLeft() : 0) + p.cr), left = r1(have - N.need);
     nd.innerHTML = '<span class="t">이 글(' + n2(N.len) + '자) ' + esc(N.what) + (N.old ? ' · 새 코드로' : '') + '</span><b class="v">' + tk(N.need) + '토큰</b>' +
       (N.old ? '<span class="r">지금 코드에 남은 토큰 <b>' + tk(N.old.left) + '</b> · 지금 코드로는 이 글에 <b>' + tkw(N.old.need) + '</b>이 듭니다. 새로 충전한 토큰은 새 코드로 메일로 오고, 새 코드로는 이 글에 <b>' + tkw(N.need) + '</b>이 듭니다.</span>' : '') +
       '<span class="r">' + (left >= 0 ? tk(p.cr) + '토큰 충전이면 ' + (chk ? '검사하고' : '다듬고') + ' <b>' + tkw(left) + '</b>이 남아요.' : tk(p.cr) + '토큰 충전으로는 ' + tk(-left) + '토큰이 모자라요. 더 큰 충전을 골라 주세요.') +
-      (!S.intent ? '' : payReady() ? ' 결제하면 이 화면에서 바로 이어서 ' + doW + ' 드립니다.' : ' 메일의 단추를 누르거나 코드를 넣으면 이 글을 바로 이어서 ' + doW + ' 드립니다.') + '</span>';
+      (chk ? (!S.intent ? '' : payReady() ? ' 결제하면 이 화면에서 바로 이어서 ' + doW + ' 드립니다.' : ' 메일의 단추를 누르거나 코드를 넣으면 이 글을 바로 이어서 ' + doW + ' 드립니다.') : S.intent && payReady() ? ' 결제하면 이 화면에서 바로 이어서 ' + doW + ' 드립니다.' : ' 넉넉하게 충전하고 반복 변환할수록 AI 작성률을 더욱 강력하게 낮출 수 있습니다.') + '</span>';
     nd.hidden = false;
   }
   function openBuy(pid, why, opt) {
@@ -1440,7 +1441,7 @@
     buyBody.innerHTML = buyTpl;
     S.buyNeed = needL > 0 ? { need: needL, len: opt.len || 0, what: opt.what || 'AI 휴머나이징', old: old ? { need: r1(opt.need), left: crLeft() } : null } : null;
     var fs = buyBody.querySelector('.hz7-prod'); if (fs) fs.innerHTML = '<legend class="sr">충전할 토큰</legend>' + prodsHtml(pid, false, needL);
-    var bh = $('#hzBuyT', buyBody); if (bh) bh.textContent = opt.need > 0 ? (S.intent === 'check' ? '충전하고 전체 결과를 바로 보세요' : '충전하고 이 글을 바로 다듬으세요') : 'AI 휴머나이징 토큰 충전';
+    var bh = $('#hzBuyT', buyBody); if (bh) bh.innerHTML = opt.need > 0 ? (chkBuy() ? '충전하고 전체 결과를 바로 보세요' : '지금 충전하고 <span style="white-space:nowrap">AI 작성률을 낮추세요</span>') : 'AI 휴머나이징 토큰 충전';   // 11.22 대표 문구(휴대폰에서는 '지금 충전하고 / AI 작성률을 낮추세요' 로 끊김)
     var tw = buyBody.querySelector('.hz7-to');
     if (tw) { if (isCr() && !old) { tw.hidden = false; tw.innerHTML = '<legend class="sr">어디에 충전할까요</legend><label><input type="radio" name="to" value="this"' + (wantTop ? ' checked' : '') + '><span><b>지금 코드에 충전</b><small>' + esc(S.pass.replace(/^(.{4}).*(.{4})$/, '$1-····-····-$2')) + ' · 남은 ' + tk(crLeft()) + '토큰</small></span></label><label><input type="radio" name="to" value="new"' + (wantTop ? '' : ' checked') + '><span><b>새 코드로 받기</b><small>다른 사람에게 줄 때</small></span></label>'; } else { tw.hidden = true; tw.innerHTML = ''; } }
     var m = sget('am_buy_mail'); if (m) { var mi = $('#hzBuyMail'); if (mi) mi.value = m; }

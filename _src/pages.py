@@ -45,7 +45,7 @@ TOOL_TPL = """<div class="hz12" id="hz">
   <div class="hz7-dlg-b" id="hzBuyBody">
     <p class="hz18-k">{ico_spark}{brand} 토큰 충전</p>
     <h2 id="hzBuyT">AI 휴머나이징 토큰 충전</h2>
-    <p class="hz13-unit"><b>월 구독 없이 한 번 충전</b><span>많이 충전할수록 토큰당 가격이 낮아지고, 남은 토큰은 5년 동안 사라지지 않습니다</span></p>
+    <p class="hz13-unit"><b>월 구독 없이 한 번 충전</b><span>반복할수록 AI 작성률은 더 낮아집니다. 남은 토큰은 5년 동안 소멸되지 않습니다.</span></p>
     <p class="hz12-need" id="hzBuyNeed" hidden></p>
     <form id="hzBuyForm" novalidate>
       <fieldset class="hz7-to" hidden></fieldset>

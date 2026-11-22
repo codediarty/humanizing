@@ -452,3 +452,11 @@ a.card:hover{transform:translateY(-3px);box-shadow:var(--sh-l);border-color:var(
 
 /* 2026.11.22: 칸 설명이 두 줄인 칸(맥스)이 있어도 네 칸의 토큰 · 가격 줄이 나란히(넓은 화면) */
 @media (min-width:900px){.pk .who{min-height:2.9em;line-height:1.45}}
+
+/* 11.22 좁은 화면에서 충전 창이 옆으로 넘치지 않게: 칸 너비를 창에 맞추고, 결제 단추 글이 길면 두 줄로 */
+.hz7-dlg-b { grid-template-columns: minmax(0, 1fr); }
+.hz7-dlg-b .hz19-go { height: auto; min-height: 54px; padding-top: 10px; padding-bottom: 10px; white-space: normal; line-height: 1.35; text-align: center; word-break: keep-all; text-wrap: balance; }
+@media (max-width: 420px) { .hz7-dlg-b { padding-left: 18px; padding-right: 18px; } .hz7-dlg-b .hz19-go { padding-left: 16px; padding-right: 16px; font-size: 15.5px; } }
+/* 11.22 두 단추(결과서 · 휴머나이징)는 최소 250px, 글이 넘치면 꼬리표와 겹치지 않게 자름 */
+.hz12-go.two .hz12-run, .hz12-go.two .hz12-run2 { flex: 1 1 250px; }
+.hz12-go.two .k-btn-lg > span { overflow: hidden; }
