@@ -371,3 +371,14 @@ PRICING_MORE = ('<section class="sec-s"><div class="wrap-n prose"><h2>요금, �
     "<li><b>반복할 몫 더하기.</b> 남은 문장이 있으면 바뀐 글로 한 번 더 변환하니, 그 분량도 셈에 넣습니다.</li>"
     "<li><b>상품 고르기.</b> 셈한 토큰보다 조금 넉넉한 상품을 고르면 됩니다. 남은 토큰은 기한 없이 그대로입니다.</li>"
     "</ol></div></section>")
+
+
+# ---- 11.23: 가이드 모음 쪽(/guide/) 고유 구역 ----
+GUIDE_HUB = ('<section class="sec-s"><div class="wrap-n prose"><h2>처음이라면, 다섯 편을 이 순서로</h2><ol>'
+    '<li><a href="/guide/ai-rate-meaning/">AI 작성률이란?</a> 숫자와 판정을 읽는 법부터 익힙니다.</li>'
+    '<li><a href="/guide/purple-sentences/">보라색 문장은 왜 생길까</a> 어떤 문장이 걸리는지 봅니다.</li>'
+    '<li><a href="/guide/why-not-retranslate/">번역기 두 번 돌리기가 위험한 이유</a> 피해야 할 방법을 압니다.</li>'
+    '<li><a href="/guide/under-20-percent/">AI 작성률 20% 미만 만들기</a> 한 번에 안 될 때 할 일을 봅니다.</li>'
+    '<li><a href="/guide/human-text-flagged/">내가 쓴 글이 AI로 나올 때</a> 오해받았을 때 할 일을 챙깁니다.</li>'
+    "</ol><p>논문과 자기소개서, 레포트는 글 종류별 가이드(" + '<a href="/guide/thesis-checklist/">학위논문</a> · <a href="/guide/resume-ai-tone/">자기소개서</a> · <a href="/guide/report-ai-check/">레포트</a>' + ")를 이어서 보세요.</p>"
+    "<h2>가이드를 쓰는 방식</h2><p>한국휴머나이징 가이드는 한국휴머나이징 엔진으로 직접 재고 바꿔 본 내용을 바탕으로, 단계마다 바로 따라 할 수 있게 씁니다. 예문은 설명을 위해 만든 것이고, 고친 글에는 고친 날을 적습니다.</p></div></section>")

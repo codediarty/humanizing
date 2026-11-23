@@ -30,7 +30,7 @@ HOST = "humanizing.ai.kr"
 BRAND = "한국휴머나이징"
 BRAND_SP = "한국 휴머나이징"          # 띄어 쓴 이름(검색용 alternateName 에만. 화면 로고는 2026.11.22 부터 붙여 씀)
 BRAND_EN = "Korean Humanizing"
-VER = "20261123f"
+VER = "20261123g"
 TODAY = "2026-11-23"
 # 한국휴머나이징 배포(AIMarker 서버 프로젝트 버전 36, 엔진은 AIMarker 와 같음 · 2026.11.21 22:38)
 API = "https://script.google.com/macros/s/AKfycbzLgl7l-cOndrkq5n0SdKLMaSy7_MCcymbFtt590_KCYByazHlQU2G6ynA4lbrUOODOmg/exec"
@@ -531,6 +531,7 @@ def build_guides():
     cards = "".join('<a class="gcard rv" href="/guide/%s/"><small>%s</small><h3>%s</h3><p>%s</p></a>' % (g["slug"], g["cat"], esc(g["h1"]), esc(g["desc"])) for g in P.GUIDES)
     body = ('<section class="ph"><div class="wrap">%s<h1 class="h1">휴머나이징 가이드</h1><p class="lead">AI 탐지기가 무엇을 보고 AI 작성률을 매기는지, 어떻게 하면 AI 티가 나지 않는 글이 되는지 정리했습니다.</p></div></section>'
             '<section class="sec-s"><div class="wrap"><div class="gcards">%s</div></div></section>') % (crumbs_html(trail0), cards)
+    body += MK.GUIDE_HUB   # 11.23: 가이드 모음 쪽만의 읽는 순서 · 쓰는 방식
     body += cta_band()
     page("guide/", "휴머나이징 가이드 · AI 작성률 낮추는 법 | " + BRAND, "AI 탐지기가 AI 작성률을 매기는 원리, AI 문장 말버릇, 논문 · 레포트 · 자기소개서별 AI 작성률 낮추는 법을 정리한 휴머나이징 가이드.",
          body, ld=[ld_crumbs(trail0), {"@type": "CollectionPage", "name": BRAND + " 휴머나이징 가이드", "url": SITE + "/guide/"}], priority="0.8")
