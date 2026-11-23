@@ -239,3 +239,12 @@ LANDINGS = [
          ("몇 번 다시 재야 하나요?", "고친 뒤 한 번, 제출 직전에 한 번이면 됩니다. 다시 잴 때는 새로 걸린 문장만 고치세요.")],
         _rel("ai-plagiarism/"), "AI 표절률을 올린 문장, 다듬기 전과 후"),
 ]
+
+
+# 11.23 3차: 검색어 쪽마다 고유 내용 더함(more_kw.py, 다섯 단계). 기존 글은 그대로 두고 뒤에 덧붙임
+from more_kw import MORE as _MORE  # noqa: E402
+for _L in LANDINGS:
+    _m = _MORE.get(_L["path"])
+    if _m:
+        _L["body"] = _L["body"] + "\n" + _m["body"]
+        _L["faq"] = list(_L["faq"]) + list(_m["faq"])
