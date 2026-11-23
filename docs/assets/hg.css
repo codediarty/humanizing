@@ -463,3 +463,6 @@ a.card:hover{transform:translateY(-3px);box-shadow:var(--sh-l);border-color:var(
 
 /* 2026.11.22 대표: 카피휴먼처럼 프로 · 맥스에 플러스 단가 기준 금액(줄 그음) + 절약 배지 */
 .pk .pr2 s{font-size:14.5px;font-weight:600;color:var(--ink-3);text-decoration-thickness:1.5px;font-variant-numeric:tabular-nums}.pk .pr2 span{flex-basis:100%}.pk .sv2 b{font-weight:900}.pk.best .sv2{background:var(--brand);border-color:var(--brand);color:#fff;box-shadow:0 8px 22px -12px var(--brand)}.price-fn{text-align:center;margin:10px auto 0;max-width:760px;font-size:13px;line-height:1.6;color:var(--ink-3)}.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* 11.23 아주 좁은 휴대폰(340px 이하)에서 머리줄이 옆으로 넘치지 않게(320px 에서 21px 넘쳤음) */
+@media (max-width:340px){.hd .hd-in{gap:6px}.hd-r{gap:4px}.hd-r .btn-p{padding:8px 9px;font-size:13px}.menu-btn{padding:5px}.logo{gap:6px}.logo .lk-k{height:26px}.logo .lk-t b{font-size:14px}}
