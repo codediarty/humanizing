@@ -30,7 +30,7 @@ HOST = "humanizing.ai.kr"
 BRAND = "한국휴머나이징"
 BRAND_SP = "한국 휴머나이징"          # 띄어 쓴 이름(검색용 alternateName 에만. 화면 로고는 2026.11.22 부터 붙여 씀)
 BRAND_EN = "Korean Humanizing"
-VER = "20261123k"
+VER = "20261123l"
 TODAY = "2026-11-23"
 # 한국휴머나이징 배포(AIMarker 서버 프로젝트 버전 36, 엔진은 AIMarker 와 같음 · 2026.11.21 22:38)
 API = "https://script.google.com/macros/s/AKfycbzLgl7l-cOndrkq5n0SdKLMaSy7_MCcymbFtt590_KCYByazHlQU2G6ynA4lbrUOODOmg/exec"
@@ -80,7 +80,7 @@ LOGO = ('<a class="logo" href="/" aria-label="%s 홈"><img class="lk-k" src="/as
 # 메뉴: 한국휴머나이저에서 대표가 정한 대로 'AI 휴머나이저(AI 작성률 낮추기)' 하나로(2026.11.21 22:18). 카피킬러 · GPT킬러 이름은 메뉴에 쓰지 않음
 # 2026.11.21 22:20 한국휴머나이저 대표: '1개로 통일해서 만들어줘, 그래야 헷갈리지 않고 결제 유도' 를 레퍼런스대로 따름
 #   -> 키워드별 쪽은 첫 화면으로 바로 넘기고(build_redirects), 메뉴 첫 칸도 첫 화면
-NAV = [("", "AI 휴머나이저<small>(AI 작성률 낮추기)</small>"), ("pricing/", "요금"), ("guide/", "가이드"), ("faq/", "자주 묻는 질문")]
+NAV = [("", "AI 작성률 낮추기"), ("pricing/", "요금"), ("guide/", "가이드"), ("faq/", "자주 묻는 질문")]   # 2026.11.23 21:42 대표(한국휴머나이저 · 카피휴먼과 같게): 'AI 휴머나이저(AI 작성률 낮추기)' → 'AI 작성률 낮추기'
 
 
 def header(path):

@@ -495,3 +495,6 @@ html body .hz7-dlg-b .hz19-auto .ico { margin-top: 2px; padding: 2px; border-rad
   html body .hz7-dlg.hz18-dlg .hz18-packs label.sm span { padding: 9px 12px 8px; }
   html body .hz7-dlg.hz18-dlg .hz18-packs label.sm .tk { font-size: 18px; }
 }
+
+/* 2026.11.23 21:41 대표(한국휴머나이저 메뉴 한 칸만 바탕색이 다름): 지금 보는 쪽 메뉴도 바탕색 없이, 밑줄만 */
+.nav a[aria-current="page"]{background:transparent}
