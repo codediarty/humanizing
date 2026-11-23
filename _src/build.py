@@ -29,8 +29,8 @@ HOST = "humanizing.ai.kr"
 BRAND = "한국휴머나이징"
 BRAND_SP = "한국 휴머나이징"          # 띄어 쓴 이름(검색용 alternateName 에만. 화면 로고는 2026.11.22 부터 붙여 씀)
 BRAND_EN = "Korean Humanizing"
-VER = "20261122m"
-TODAY = "2026-11-21"
+VER = "20261123a"
+TODAY = "2026-11-23"
 # 한국휴머나이징 배포(AIMarker 서버 프로젝트 버전 36, 엔진은 AIMarker 와 같음 · 2026.11.21 22:38)
 API = "https://script.google.com/macros/s/AKfycbzLgl7l-cOndrkq5n0SdKLMaSy7_MCcymbFtt590_KCYByazHlQU2G6ynA4lbrUOODOmg/exec"
 SHOP = "https://skkc.co.kr/shop_view?idx=%s&kaiec_buy=1"
@@ -97,7 +97,7 @@ GUIDE_FT = [("ai-rate-meaning", "AI 작성률이란"), ("purple-sentences", "보
 
 # 11.22 대표 '관련 키워드들도 메인 화면 아니더라도 각 사이트 하단에 적혀 있어서 구글 · 네이버 · 빙에 노출되게':
 # 바닥글에 검색어 링크 두 칸(모든 쪽). 한국휴머나이저와 같이 검사기 이름은 쓰지 않고 일반 검색어로만
-FT_SEARCH = [("humanizing/", "휴머나이징"), ("ai-humanizer/", "AI 휴머나이저"), ("lower-ai-rate/", "AI 작성률 낮추기"), ("copykiller/", "표절 검사 AI 작성률 낮추기"),
+FT_SEARCH = [("humanizing/", "휴머나이징"), ("ai-humanizer/", "AI 휴머나이저"), ("lower-ai-rate/", "AI 작성률 낮추기"), ("ai-plagiarism/", "AI 표절률 낮추기"), ("copykiller/", "표절 검사 AI 작성률 낮추기"),
              ("gptkiller/", "GPT 탐지 낮추기"), ("ai-bypass/", "AI 탐지 대비"), ("free/", "AI 휴머나이징 무료"), ("best-ai-humanizer/", "휴머나이징 사이트 추천")]
 FT_USE = [("thesis/", "논문 휴머나이징"), ("report/", "레포트 AI 탐지 대비"), ("resume/", "자기소개서 AI 작성률 낮추기"), ("natural/", "AI 글 자연스럽게"),
           ("ai-converter/", "AI 문장 변환기"), ("ai-check/", "AI 작성률 무료 검사")]
