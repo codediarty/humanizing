@@ -44,13 +44,12 @@ TOOL_TPL = """<div class="hz12" id="hz">
   <form method="dialog" class="hz7-dlg-x"><button type="submit" aria-label="닫기">{ico_x}</button></form>
   <div class="hz7-dlg-b" id="hzBuyBody">
     <p class="hz18-k">{ico_spark}{brand} 토큰 충전</p>
-    <h2 id="hzBuyT">AI 휴머나이징 토큰 충전</h2>
-    <p class="hz13-unit"><b>월 구독 없이 한 번 충전</b><span>내 문서 AI 작성률 낮추기. 반복할수록 AI 작성률은 더 낮아집니다.</span></p><style>@media (max-width:540px){{body .hz7-dlg .hz18-packs .pr s+small{{display:none}}}}</style>
+    <h2 id="hzBuyT">AI 작성률 낮추기 · 토큰 충전</h2>
+    <p class="hz13-unit"><b>월 구독 없이 한 번 충전</b><span>충전 후 바로 시작하세요. 반복할수록 AI 작성률을 극한으로 낮출 수 있습니다.</span></p><style>@media (max-width:540px){{body .hz7-dlg .hz18-packs .pr s+small{{display:none}}}}</style>
     <p class="hz12-need" id="hzBuyNeed" hidden></p>
     <form id="hzBuyForm" novalidate>
       <fieldset class="hz7-to" hidden></fieldset>
       <fieldset class="hz7-prod hz18-packs"><legend class="sr">충전할 토큰</legend>{packs}<p class="hz20-pg">글자 수는 AI 작성률 검사와 휴머나이징을 한 번씩 했을 때 기준</p></fieldset>
-      <div class="hz19-gate" id="hzBuyPay"></div>
       <div class="hz19-fb" id="hzBuyFb" hidden>
         <div class="field"><label for="hzBuyMail">토큰 코드와 결제 안내를 받을 이메일 <em>필수</em></label><input class="inp" id="hzBuyMail" name="contact" type="email" inputmode="email" autocomplete="email" maxlength="80" placeholder="name@example.com"></div>
         <p class="hz7-dlg-n" id="hzBuyNote"></p>
@@ -58,6 +57,7 @@ TOOL_TPL = """<div class="hz12" id="hz">
       </div>
       <input class="hp" name="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button class="btn btn-p btn-l hz19-go" type="submit"><span>성균관컨설팅에서 결제하기</span>{ico_arrow}</button>
+      <div class="hz19-gate" id="hzBuyPay"></div>
       <p class="msg" role="status"></p>
       <p class="hz7-dlg-n hz19-legal"><span id="hzBuyAmt"></span>운영 성균관컨설팅(사업자등록번호 {biz_no}) · <a href="/terms/#pass" target="_blank" rel="noopener">이용약관</a> · 문의 {mail}</p>
     </form>
