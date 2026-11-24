@@ -30,7 +30,7 @@ HOST = "humanizing.ai.kr"
 BRAND = "한국휴머나이징"
 BRAND_SP = "한국 휴머나이징"          # 띄어 쓴 이름(검색용 alternateName 에만. 화면 로고는 2026.11.22 부터 붙여 씀)
 BRAND_EN = "Korean Humanizing"
-VER = "20261124d"
+VER = "20261124e"
 TODAY = "2026-11-24"
 # 한국휴머나이징 배포(AIMarker 서버 프로젝트 버전 36, 엔진은 AIMarker 와 같음 · 2026.11.21 22:38)
 API = "https://script.google.com/macros/s/AKfycbzLgl7l-cOndrkq5n0SdKLMaSy7_MCcymbFtt590_KCYByazHlQU2G6ynA4lbrUOODOmg/exec"
@@ -38,6 +38,7 @@ SHOP = "https://skkc.co.kr/shop_view?idx=%s&kaiec_buy=1"
 # 성균관컨설팅(아임웹) 한국휴머나이징 전용 상품 번호. 서버는 스크립트 속성 HG_IDX 로 같은 번호를 hg1~hg4 로 봄
 SHOP_IDX = {"lt": "162", "pl": "163", "pr": "164", "mx": "165"}   # 2026.11.21 등록(아임웹 상품 162 라이트 · 163 플러스 · 164 프로 · 165 맥스, 카테고리 한국휴머나이징)
 NAVER_VERIFY = "12e8ef5df3fcfe67e1f69a654894a069101c03fa"   # 네이버 서치어드바이저 humanizing.ai.kr HTML 태그(대표, 2026.11.22 16:09)
+NAVER_VERIFY2 = "99719297b8a1a276f13c004303959af08dc674b2"   # 2026.11.24 22:11 대표 네이버 서치어드바이저 계정에 새로 등록한 소유확인(HTML 태그). 예전 값도 그대로 둠
 GOOGLE_VERIFY = ""
 BING_VERIFY = "6CFE39150A28BBBB4694B507E2E689C0"   # 11.22 Bing 웹마스터 도구(한국휴머나이저 · Humani 와 같은 계정의 메타 태그)
 INDEXNOW_KEY = "b6e1c94d27a84f3e9c05d8a1f2e7b4c6"
@@ -176,6 +177,8 @@ def page(path, title, desc, body, *, ld=None, tool=False, og=None, ptype="websit
             '<link rel="alternate" type="application/rss+xml" title="%s 가이드" href="/rss.xml">' % BRAND]
     if NAVER_VERIFY:
         head.append('<meta name="naver-site-verification" content="%s">' % NAVER_VERIFY)
+    if NAVER_VERIFY2:
+        head.append('<meta name="naver-site-verification" content="%s">' % NAVER_VERIFY2)
     if GOOGLE_VERIFY:
         head.append('<meta name="google-site-verification" content="%s">' % GOOGLE_VERIFY)
     if BING_VERIFY:
