@@ -310,13 +310,35 @@
   var pickB = $('#hzPick'); if (pickB && fileIn) pickB.addEventListener('click', function () { fileIn.click(); });
   /* 2026.11.21 첫 화면 왼쪽 파일 상자: 누르거나 끌어다 놓으면 아래 도구로 가져와(무료면 바로 검사) 도구 칸으로 내려감. '글 붙여 넣기'는 site.js(data-tool) */
   var heroUp = document.querySelector('[data-hero-drop]');
+  var heroTa = document.querySelector('[data-hero-text]');   // 13.39 첫 화면 왼쪽 상자 안 글 칸(있는 사이트만)
   function toTool() { var tw = document.getElementById('tool') || box; try { tw.scrollIntoView({ behavior: RM ? 'auto' : 'smooth', block: 'start' }); } catch (x) { /* 그대로 */ } }
   if (heroUp && fileIn) {
-    heroUp.addEventListener('click', function (e) { if (e.target.closest('[data-tool]')) return; e.preventDefault(); S.heroPick = true; fileIn.click(); });
+    heroUp.addEventListener('click', function (e) { if (e.target.closest('[data-tool]')) return; if (heroTa && !e.target.closest('[data-hero-pick]')) return; e.preventDefault(); S.heroPick = true; fileIn.click(); });   // 13.39 글 칸이 있는 상자는 '파일로 무료 검사' 단추로만 파일 고르기
     ['dragenter', 'dragover'].forEach(function (n) { heroUp.addEventListener(n, function (e) { e.preventDefault(); heroUp.classList.add('over'); }); });
     ['dragleave', 'dragend'].forEach(function (n) { heroUp.addEventListener(n, function (e) { if (!e.relatedTarget || !heroUp.contains(e.relatedTarget)) heroUp.classList.remove('over'); }); });
-    heroUp.addEventListener('drop', function (e) { e.preventDefault(); heroUp.classList.remove('over'); var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (f) { toTool(); takeFile(f); } });
+    heroUp.addEventListener('drop', function (e) { heroUp.classList.remove('over'); var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (f) { e.preventDefault(); toTool(); takeFile(f); } });   // 13.39 파일이 아니면(글을 끌어 온 것) 글 칸에 그대로 들어가게
     fileIn.addEventListener('change', function () { if (S.heroPick) { S.heroPick = false; toTool(); } });
+  }
+  /* 13.39(2026.11.24 대표 20:41 '한 화면에 무료 검사 파일 올리기가 좌측에 … 스크롤 내려서 넣어야 하는 게 아니고' · 20:47 '좌에는 한번에 파일 넣을 수 있도록'):
+     '텍스트로 무료 검사'는 그 자리에서 글 칸을 펼치고, 붙여 넣거나(60자 이상) 단추 · Ctrl+Enter 를 누르면 아래 도구로 넘겨 바로 검사(결과 칸으로 내려감) */
+  function heroGo() {
+    if (!heroTa) return;
+    var t = heroTa.value;
+    if (!t.replace(/\s+/g, '')) { try { heroTa.focus(); } catch (x) { /* 그대로 */ } return; }
+    if (S.busy) return;
+    collapse(false); S.src = null; renderChip(); ta.value = t; count(); toTool();
+    clearTimeout(autoT); autoT = setTimeout(function () { if (!S.busy) check(); }, 60);
+  }
+  if (heroUp && heroTa) {
+    var heroTxB = heroUp.querySelector('[data-hero-tx]'), heroRunB = heroUp.querySelector('[data-hero-run]');
+    if (heroTxB) heroTxB.addEventListener('click', function (e) { e.preventDefault(); var on = !heroUp.classList.contains('tx'); heroUp.classList.toggle('tx', on); heroTxB.setAttribute('aria-expanded', on ? 'true' : 'false'); if (on) { try { heroTa.focus({ preventScroll: true }); } catch (x) { heroTa.focus(); } } });
+    if (heroRunB) heroRunB.addEventListener('click', function (e) { e.preventDefault(); heroGo(); });
+    heroTa.addEventListener('paste', function (e) {
+      var cd = e.clipboardData, f = cd && cd.files && cd.files[0];
+      if (f && !(cd.getData && cd.getData('text/plain'))) { e.preventDefault(); toTool(); takeFile(f); return; }   // 파일을 붙여 넣으면 파일로
+      setTimeout(function () { if (heroTa.value.replace(/\s+/g, '').length >= 60) heroGo(); }, 0);
+    });
+    heroTa.addEventListener('keydown', function (e) { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); heroGo(); } });
   }
   document.addEventListener('click', function (e) {
     var b = e.target.closest('[data-ex]');

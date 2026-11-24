@@ -25,6 +25,7 @@
   /* 예시 데이터 */
   var D = null; try { D = JSON.parse(($('#hzDemoData') || {}).textContent || 'null'); } catch (e) { D = null; }
   function bandCls(b) { return /안전/.test(b) ? 'good' : 'bad'; }
+  function bandS(b) { return String(b || '').replace(/^AI 작성률\s*/, ''); }   // 2026.11.24 판정 이름이 'AI 작성률 높음'이라 한 번만
   function meter(el, rate, band, wait) {
     if (!el) return;
     el.className = 'dm ' + (wait ? 'wait ' : '') + bandCls(band);
@@ -56,21 +57,22 @@
     function play(i) {
       stop(); cur = i; phase = 1; var S = D.samples[i];
       $$('.demo-tabs button', demo).forEach(function (b, j) { b.setAttribute('aria-selected', j === i ? 'true' : 'false'); });
-      if (fn) fn.textContent = S.file;
+      if (fn) fn.textContent = demo.classList.contains('dm5') ? S.label : S.file;   // 2026.11.24 개편안 5절: 머리에 '논문 분석 예시'
+      var cut = $('.dm5-cut', demo); if (cut) { cut.textContent = ''; cut.classList.remove('on'); }
       doc.innerHTML = S.doc; var blk = $('.ai-blk', doc), sents = $$('.s', doc);
       sents.forEach(function (x) { x.classList.add('pre'); });
-      idle(mFrom, '검사 중'); idle(mTo, '대기'); setBtn(false);
+      idle(mFrom, '검사 중'); idle(mTo, '변환 전'); setBtn(false);   // 2026.11.24 개편안 5절(예전: 대기)
       say('<span class="dot"></span>AI 작성률 검사 중');
       demo.classList.remove('scanning'); void demo.offsetWidth; demo.classList.add('scanning');
       sents.forEach(function (x, j) { later(function () { x.classList.remove('pre'); }, RM ? 0 : 260 + j * 230); });
-      later(function () { count(mFrom, 0, S.before.rate, RM ? 1 : 900, S.before.band); say('<b class="bad">AI 작성률 ' + S.before.rate + '% · ' + S.before.band + '</b> · AI 패턴 문장 ' + S.before.n + '개'); }, RM ? 0 : 260 + sents.length * 230);
+      later(function () { count(mFrom, 0, S.before.rate, RM ? 1 : 900, S.before.band); say('<b class="bad">AI 작성률 ' + S.before.rate + '%</b>'); /* 2026.11.24 개편안 5절(예전: AI 작성률 92% · 부적합 · AI 패턴 문장 4개) */ }, RM ? 0 : 260 + sents.length * 230);
       later(function () { if (!hover) humanize(); }, RM ? 400 : 1400 + sents.length * 230 + 1600);
     }
     function humanize() {
       if (phase !== 1) return; phase = 2; stop();
       var S = D.samples[cur], xs = $$('.x', doc), n = xs.length, done = 0, blk = $('.ai-blk', doc);
       setBtn(true);
-      say('<span class="spin"></span>휴머나이징 중 · <b>0</b> / ' + n + '곳');
+      say('<span class="spin"></span>AI 작성 패턴 처리 중 (<b>0</b>/' + n + ')');
       var gap = RM ? 0 : Math.max(55, Math.min(150, 2600 / Math.max(1, n)));
       xs.forEach(function (x, j) {
         later(function () { x.classList.add('del'); }, j * gap);
@@ -85,7 +87,8 @@
         if (S.after.n === 0) $$('.demo-tag:not(.ok)', doc).forEach(function (tg) { tg.classList.add('ok'); tg.textContent = 'AI 미검출'; });
         if (blk) blk.classList.add('done');
         count(mTo, S.before.rate, S.after.rate, RM ? 1 : 1300, S.after.band);
-        say('<b class="good">AI 작성률 ' + S.before.rate + '% → ' + S.after.rate + '% · ' + S.after.band + '</b> · 바꾼 곳 ' + n + '곳 · 뜻 · 숫자 그대로');
+        say('<b class="good">AI 작성률 ' + S.before.rate + '% → ' + S.after.rate + '%</b>');
+        var cut2 = $('.dm5-cut', demo); if (cut2) { cut2.textContent = 'AI 작성률 ' + (S.before.rate - S.after.rate) + '%p 감소'; cut2.classList.add('on'); }   // 2026.11.24 개편안 5절 결과 중심
         phase = 3;
         later(function () { if (!hover) play((cur + 1) % D.samples.length); }, RM ? 8000 : 5600);
       }, n * gap + (RM ? 0 : 500));
@@ -107,8 +110,8 @@
       var S = D.samples[i];
       $$('.cmp-tabs button').forEach(function (b, j) { b.setAttribute('aria-selected', j === i ? 'true' : 'false'); });
       L.innerHTML = S.src; R.innerHTML = S.dst;
-      pl.className = 'pill l ' + bandCls(S.before.band); pl.textContent = 'AI 작성률 ' + S.before.rate + '% · ' + S.before.band;
-      pr.className = 'pill r ' + bandCls(S.after.band); pr.textContent = 'AI 작성률 ' + S.after.rate + '% · ' + S.after.band;
+      pl.className = 'pill l ' + bandCls(S.before.band); pl.textContent = 'AI 작성률 ' + S.before.rate + '% · ' + bandS(S.before.band);
+      pr.className = 'pill r ' + bandCls(S.after.band); pr.textContent = 'AI 작성률 ' + S.after.rate + '% · ' + bandS(S.after.band);
       if (ft) ft.innerHTML = '<span>AI 패턴 문장 <b>' + S.before.n + '개 → ' + S.after.n + '개</b></span><span>바꾼 곳 <b>' + S.changes + '곳</b></span><span>숫자 · 이름 · 인용 <b>그대로</b></span>';
     }
     $$('.cmp-tabs button').forEach(function (b, j) { b.addEventListener('click', function () { pick(j); }); });
@@ -170,4 +173,24 @@
     }
     window.addEventListener('scroll', function () { mc.classList.toggle('on', seen && window.scrollY > 500); }, { passive: true });
   }
+
+  /* 2026.11.24 대표 개편안 7 · 10절(한국휴머나이징만): 검사 도구 · 결과 · 충전/코드 창이 그리는 글을 이 사이트 용어로.
+     엔진 화면(humanize.js)은 다섯 사이트가 같은 파일이라 손대지 않고, 그려진 글자만 바꿔 보임. 지우는 것 없음 */
+  (function () {
+    var TX = [['AI 작성률 무료 검사', '무료 AI 작성률 검사'], ['무료 검사 20만 자까지', '최대 200,000자 무료 검사'], ['가입 없이 무료 · 글과 파일은 저장하지 않습니다', '회원가입 없이 무료 검사'],
+              ['토큰 코드 넣기', '토큰 코드 등록'], ['파일 올리기', '파일 업로드'], ['부적합', 'AI 작성률 높음'], ['글 넣기', '문서 입력'], ['내 글 인간화', '휴머나이징'], ['인간화 엔진', '휴머나이징 엔진']];
+    var RE = new RegExp(TX.map(function (p) { return p[0].replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|'));
+    var MAP = {}; TX.forEach(function (p) { MAP[p[0]] = p[1]; });
+    var RG = new RegExp(RE.source, 'g');
+    function fix(node) {
+      if (!node) return;
+      if (node.nodeType === 3) { var v = node.nodeValue; if (v && RE.test(v)) node.nodeValue = v.replace(RG, function (m) { return MAP[m]; }); return; }
+      if (node.nodeType !== 1 || /^(SCRIPT|STYLE|TEXTAREA)$/.test(node.nodeName)) return;
+      ['placeholder', 'aria-label', 'title'].forEach(function (a) { var v = node.getAttribute && node.getAttribute(a); if (v && RE.test(v)) node.setAttribute(a, v.replace(RG, function (m) { return MAP[m]; })); });
+      var w = document.createTreeWalker(node, NodeFilter.SHOW_TEXT, null), t; while ((t = w.nextNode())) { if (t.parentNode && /^(SCRIPT|STYLE|TEXTAREA)$/.test(t.parentNode.nodeName)) continue; if (RE.test(t.nodeValue)) t.nodeValue = t.nodeValue.replace(RG, function (m) { return MAP[m]; }); }
+    }
+    var roots = ['#hz', '#hzBuy', '#hzCode', '.hz7-dlg'].map(function (q) { return Array.prototype.slice.call(document.querySelectorAll(q)); }).reduce(function (a, b) { return a.concat(b); }, []);
+    if (!roots.length || !window.MutationObserver) return;
+    roots.forEach(function (r) { fix(r); new MutationObserver(function (ms) { ms.forEach(function (m) { if (m.type === 'characterData') fix(m.target); else Array.prototype.forEach.call(m.addedNodes, fix); }); }).observe(r, { childList: true, subtree: true, characterData: true }); });
+  })();
 })();
