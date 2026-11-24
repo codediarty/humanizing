@@ -59,8 +59,8 @@
   var PRODS = [   // 13.17(10.31) 새 요금(대표): 라이트 · 플러스 · 프로(BEST 추천, 기본) · 맥스(최고 혜택) = 아임웹 96 · 97 · 98 · 99(build.py CREDITS 와 같게. 서버 products 는 결제 페이지 주소만 가져옴)
     { id: 'lt', name: '라이트', price: 9900, list: 19800, cr: 100, base: 100, per: '99원', who: '가볍게 AI 작성률 낮추기', doc: '레포트', pg: 10 },
     { id: 'pl', name: '플러스', price: 19900, list: 39800, cr: 350, base: 350, per: '약 57원', who: '합리적으로 AI 작성률 낮추기', doc: '레포트', pg: 35 },
-    { id: 'pr', name: '프로', price: 39900, list: 79800, cr: 1000, base: 1000, per: '약 40원', save: 30, badge: 'BEST 추천', best: 1, who: '더 강력하게 AI 작성률 낮추기', doc: '논문', pg: 100 },
-    { id: 'mx', name: '맥스', price: 69900, list: 139800, cr: 2000, base: 2000, per: '약 34원', save: 40, badge: '최고 혜택', top: 1, who: '넉넉한 토큰으로 반복 낮추기', doc: '논문', pg: 250 }
+    { id: 'pr', name: '프로', price: 39900, list: 79800, cr: 1000, base: 1000, per: '약 40원', save: 30, badge: '추천 요금제', best: 1, who: '더 강력하게 AI 작성률 낮추기', doc: '논문', pg: 100 },
+    { id: 'mx', name: '맥스', price: 69900, list: 139800, cr: 2000, base: 2000, per: '약 34원', save: 39, badge: '최대 할인 혜택', top: 1, who: '넉넉한 토큰으로 반복 낮추기', doc: '논문', pg: 250 }
   ];   // 13.24 doc · pg = '레포트(라이트 · 플러스) · 논문(프로 · 맥스) 검사와 휴머나이징 약 몇 페이지'(대표가 정한 값. 1페이지 약 1,200자로 셈한 값보다 적거나 같음: build.py CREDITS 와 같게)
   var PG_CHARS = 1200;
   var RPT = 'AI 작성률 결과서';   // 13.30 토큰으로 받는 전체 검사의 이름(왼쪽 단추 · 무료 결과의 안내 단추). 대표: '리포트'보다 '결과서'
@@ -1480,6 +1480,7 @@
   function dlgOpen(d) { if (!d) return; if (typeof d.showModal === 'function') { if (!d.open) d.showModal(); } else d.setAttribute('open', ''); }
   function dlgClose(d) { if (d && d.open) { try { d.close(); } catch (e) { d.removeAttribute('open'); } } }
   var buyDlg = $('#hzBuy'), buyBody = $('#hzBuyBody'), buyTpl = buyBody ? buyBody.innerHTML : '', t0 = 0;
+  var STRIKE = false;   // 2026.11.24 23:09 대표 '취소선 가격 삭제': 프로 · 맥스 정가 줄 그은 금액을 보이지 않음
   var BUY_ORD = { lt: 0, pl: 1, pr: 2, mx: 3 };   // 13.39(2026.11.24 22:07 대표 '프로가 먼저 나오면 가격이 높아서 결제 이탈 · 똑같은 박스에 라이트 플러스 프로 맥스 순서로'): 값 순서, 네 칸 같은 크기. 예전(11.23 22:34) 순서 { pr: 0, mx: 1, lt: 2, pl: 3 }   // 13.34(2026.11.23 22:13 대표 '9,900원짜리만 사고 싶게 생겼다 · 밸런스'): 큰 칸(프로 · 맥스)을 위 줄에 크게, 작은 칸(라이트 · 플러스)은 아래 줄에 작게(2 × 2)
   function prodsHtml(sel, noBest, need) {   // 13.17 칸: 배지 · 이름 · 토큰 · 가격(토큰당) · 절약, 이 글이 있으면 '이 글 N번'
     var L = prods().slice().sort(function (a, b) { var x = BUY_ORD[a.id], y = BUY_ORD[b.id]; return (x == null ? 9 : x) - (y == null ? 9 : y); });
@@ -1488,10 +1489,10 @@
       var sm = need > 0 && chkBuy() ? (k ? '이 글 ' + (k >= 1000 ? '1,000번 넘게' : '약 ' + n2(k) + '번') : '이 글에는 모자라요') : need > 0 && !k ? '이 글의 AI 작성률을 낮추기엔 부족해요' : (p.who || p.desc || '');   // 13.34 카피휴먼 21:24 문구(라이트 '가볍게' · 플러스 '합리적으로' · 프로 '더 강력하게' · 맥스 '넉넉한 토큰으로 반복'). 결과서 충전은 그대로
       var cls = (best ? 'best ' : p.top ? 'top ' : '') + 'big';   // 13.39 네 칸 같은 크기(예전: p.save ? 'big' : 'sm')
       return '<label class="' + cls + '"><input type="radio" name="product" value="' + esc(p.id) + '"' + (p.id === sel ? ' checked' : '') + '><span>' +
-        (best ? '<i class="tg">' + esc(p.badge || '추천') + '</i>' : p.top ? '<i class="tg top">' + esc(p.badge || '최고 혜택') + '</i>' : '') +
+        (best ? '<i class="tg">' + esc(p.badge || '추천 요금제') + '</i>' : p.top ? '<i class="tg top">' + esc(p.badge || '최대 할인 혜택') + '</i>' : '') +
         '<b class="nm">' + esc(p.name) + '</b><b class="tk">' + tk(p.cr) + '<small>토큰</small>' + (p.bonus ? '<i class="bn">+' + tk(p.bonus) + '</i>' : '') + '</b>' +
-        (p.list && SHOW_LIST ? '<i class="hz-lp"><s>정가 ' + n2(p.list) + '원</s><b>50%</b></i>' : '') + (p.price ? '<b class="pr">' + n2(p.price) + '원' + (p.save ? (function () { var pl = PRODS.filter(function (x) { return x.id === 'pl'; })[0]; return pl ? ' <s title="정가" style="font-size:.8em;font-weight:600;color:#8A94A6;text-decoration-thickness:1.5px;font-variant-numeric:tabular-nums">' + n2(({ pr: 60000, mx: 120000 })[p.id] || Math.round(p.cr * pl.price / pl.cr)) + '원</s>' : ''; })() : '') + (p.per ? '<small>토큰당 ' + esc(p.per) + '</small>' : '') + '</b>' : '') +   // 11.22 대표: 프로 · 맥스는 요금 칸처럼 줄 그은 금액 · 11.23 22:23 대표: 정가 60,000원 · 120,000원
-        (p.save ? '<i class="hz17-sv">플러스보다 토큰당 약 ' + p.save + '% 절약</i>' : '') +
+        (p.list && SHOW_LIST ? '<i class="hz-lp"><s>정가 ' + n2(p.list) + '원</s><b>50%</b></i>' : '') + (p.price ? '<b class="pr">' + n2(p.price) + '원' + (p.save && STRIKE ? (function () { var pl = PRODS.filter(function (x) { return x.id === 'pl'; })[0]; return pl ? ' <s title="정가" style="font-size:.8em;font-weight:600;color:#8A94A6;text-decoration-thickness:1.5px;font-variant-numeric:tabular-nums">' + n2(({ pr: 60000, mx: 120000 })[p.id] || Math.round(p.cr * pl.price / pl.cr)) + '원</s>' : ''; })() : '') + (p.per ? '<small>토큰당 ' + esc(p.per) + '</small>' : '') + '</b>' : '') +   // 11.22 대표: 프로 · 맥스는 요금 칸처럼 줄 그은 금액 · 11.23 22:23 대표: 정가 60,000원 · 120,000원
+        (p.save ? '<i class="hz17-sv">플러스 대비 이용 단가 ' + p.save + '% 절감</i>' : '') +
         (sm ? '<small class="ds">' + esc(sm) + '</small>' : '') + '</span></label>';
     }).join('') + '<p class="hz20-pg">반복할수록 AI 작성률을 극한까지 낮출 수 있습니다.</p>';   // 13.34 카피휴먼 21:24 문구
   }

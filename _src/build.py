@@ -30,7 +30,7 @@ HOST = "humanizing.ai.kr"
 BRAND = "한국휴머나이징"
 BRAND_SP = "한국 휴머나이징"          # 띄어 쓴 이름(검색용 alternateName 에만. 화면 로고는 2026.11.22 부터 붙여 씀)
 BRAND_EN = "Korean Humanizing"
-VER = "20261124e"
+VER = "20261124f"
 TODAY = "2026-11-24"
 # 한국휴머나이징 배포(AIMarker 서버 프로젝트 버전 36, 엔진은 AIMarker 와 같음 · 2026.11.21 22:38)
 API = "https://script.google.com/macros/s/AKfycbzLgl7l-cOndrkq5n0SdKLMaSy7_MCcymbFtt590_KCYByazHlQU2G6ynA4lbrUOODOmg/exec"
@@ -50,8 +50,8 @@ BIZ = {"name": "성균관컨설팅", "ceo": "이채연", "no": "272-32-01885", "
 PACKS = [
     {"id": "lt", "name": "라이트", "tok": 100, "price": 9900, "per": "99원", "who": "자기소개서 · 짧은 과제", "chars": "약 16,600자", "pg": "약 10페이지", "sub": "AI 작성률 낮추기, 미니멀하게", "doc": "레포트"},
     {"id": "pl", "name": "플러스", "tok": 350, "price": 19900, "per": "약 57원", "who": "레포트 · 과제 여러 편", "chars": "약 58,300자", "pg": "약 35페이지", "sub": "AI 작성률 낮추기, 합리적으로", "doc": "레포트"},
-    {"id": "pr", "name": "프로", "tok": 1000, "price": 39900, "per": "약 40원", "who": "논문 · 학위논문", "chars": "약 166,600자", "pg": "약 100페이지", "best": "BEST 추천", "save": "플러스보다 토큰당 약 30% 절약", "sub": "AI 작성률 낮추기, 더 효과적으로", "doc": "논문"},
-    {"id": "mx", "name": "맥스", "tok": 2000, "price": 69900, "per": "약 34원", "who": "논문 전체 · 여러 편", "chars": "약 333,300자", "pg": "약 250페이지", "top": "최고 혜택", "save": "플러스보다 토큰당 약 40% 절약", "sub": "반복 변환으로 AI 작성률 극한까지 낮추기", "doc": "논문"},
+    {"id": "pr", "name": "프로", "tok": 1000, "price": 39900, "per": "약 40원", "who": "논문 · 학위논문", "chars": "약 166,600자", "pg": "약 100페이지", "best": "추천 요금제", "save": "플러스 대비 이용 단가 30% 절감", "sub": "AI 작성률 낮추기, 더 효과적으로", "doc": "논문"},
+    {"id": "mx", "name": "맥스", "tok": 2000, "price": 69900, "per": "약 34원", "who": "논문 전체 · 여러 편", "chars": "약 333,300자", "pg": "약 250페이지", "top": "최대 할인 혜택", "save": "플러스 대비 이용 단가 39% 절감", "sub": "반복 변환으로 AI 작성률 극한까지 낮추기", "doc": "논문"},
 ]
 COST = {"check": (0, 0), "hum": (6, 3)}   # 2026.11.23 대표 '1.5배는 앞으로 결제분부터': 휴머나이징 100자 0.6토큰(1,000자 6) · 최소 3(서버 AM서버.gs 1.4.0). 예전 메모 → 1,000자당 토큰 · 최소 토큰(서버 AM서버.gs 1.3.1 과 같게: AI 작성률 검사 무료, 휴머나이징 1,000자 6토큰)
 
@@ -357,11 +357,12 @@ REP_LINE = "반복 변환할수록 AI 작성률은 계속 낮아집니다. 여�
 
 PLUS_UNIT = 19900 / 350   # 2026.11.22 대표: 카피휴먼처럼 프로 · 맥스는 '플러스 단가로 샀을 때 금액'을 줄 그어 보여 줌(같은 토큰 × 플러스 토큰당 가격)
 LIST_PRICE = {"pr": 60000, "mx": 120000}   # 2026.11.23 22:23 대표: 프로 · 맥스 정가 60,000원 · 120,000원(아임웹 정가와 같게, 줄 그어 보여 줌)
-PRICE_FN = "절약률은 플러스의 토큰당 가격(약 57원)과 비교한 값이고, 줄 그은 금액은 정가입니다."
+STRIKE = False   # 2026.11.24 23:09 대표: 프로 · 맥스 정가 줄 그은 금액을 보이지 않음
+PRICE_FN = "절감률은 플러스의 이용 단가(토큰당 약 57원)와 비교한 값입니다."   # 2026.11.24 23:09 대표(배지 · 혜택 문구, 취소선 가격 삭제). 예전: 절약률은 … 줄 그은 금액은 정가입니다.
 
 
 def plus_strike(p):
-    if not p.get("save"):
+    if not p.get("save") or not STRIKE:   # 2026.11.24 23:09 대표 '취소선 가격 삭제'
         return ""
     return '<s title="정가"><span class="sr">정가 </span>%s</s>' % won(LIST_PRICE.get(p["id"]) or int(round(p["tok"] * PLUS_UNIT)))
 
@@ -369,8 +370,8 @@ def plus_strike(p):
 def save_badge(p, tag="p", cls="sv2"):
     if not p.get("save"):
         return ""
-    m = re.search(r"약 \d+%", p["save"])
-    return '<%s class="%s">플러스 대비 토큰당 <b>%s 절약</b></%s>' % (tag, cls, m.group(0) if m else p["save"], tag)
+    m = re.search(r"\d+%", p["save"])
+    return '<%s class="%s">플러스 대비 이용 단가 <b>%s 절감</b></%s>' % (tag, cls, m.group(0) if m else p["save"], tag)   # 2026.11.24 23:09 대표 문구(예전 '플러스 대비 토큰당 약 N% 절약')
 
 
 def pricing_cards(cta_text="충전하기"):
