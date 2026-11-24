@@ -194,3 +194,17 @@
     roots.forEach(function (r) { fix(r); new MutationObserver(function (ms) { ms.forEach(function (m) { if (m.type === 'characterData') fix(m.target); else Array.prototype.forEach.call(m.addedNodes, fix); }); }).observe(r, { childList: true, subtree: true, characterData: true }); });
   })();
 })();
+
+/* 2026.11.25 대표 '충전하기 단추를 누르지 않아도 큰 칸 안 아무 데나 눌러도 들어가지게': 요금 칸(.pk)은 칸 안 어디를 눌러도
+   그 칸의 충전 단추를 누른 것과 같게. 충전 창 안의 고르기 칸은 지금처럼 고르기만(창 · 폼 · label 안은 건드리지 않음) */
+(function () {
+  document.addEventListener('click', function (e) {
+    var t = e.target; if (!t || !t.closest) return;
+    var card = t.closest('.pk'); if (!card) return;
+    if (t.closest('a[href], button, input, label, select, textarea, summary, [role=button]')) return;   // 단추 · 링크는 원래대로
+    if (card.closest('dialog, [role=dialog], form')) return;
+    try { if (String(window.getSelection ? window.getSelection() : '').length) return; } catch (x) {}   // 글자를 끌어 고르는 중이면 그대로
+    var go = card.querySelector('a.btn[data-pack], button[data-pack], a.btn[href]'); if (!go) return;
+    e.preventDefault(); go.click();
+  });
+})();

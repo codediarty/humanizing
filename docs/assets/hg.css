@@ -682,3 +682,6 @@ body{color:#334155;font-size:16.5px}
 .dm5 .demo-bar .fn{gap:2px}
 .dm5 .demo-bar .fn::before{display:none}
 .dm5 .demo-bar .fn.dm5-t{align-items:flex-start;margin-left:0}
+
+/* 2026.11.25 대표: 요금 칸은 칸 어디를 눌러도 충전으로(site.js) */
+.pk:has(a.btn[data-pack]){cursor:pointer}
