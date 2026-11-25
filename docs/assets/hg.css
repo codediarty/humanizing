@@ -968,3 +968,8 @@ a.card:hover{border-color:#b8c6dc;box-shadow:var(--sh-2)}
 .ph.ph-price{padding:34px 0 26px}
 .ph.ph-price .h1{margin:4px 0 8px}
 .sec-s.sec-price{padding-top:40px}
+
+/* 13.43(2026.11.25 밤) 토큰 코드가 있는 손님(html.am-tok-on): 머리의 남은 토큰 칸 때문에 좁은 화면에서 메뉴 단추가 화면 밖으로 밀리던 것을 고침.
+   960px 아래는 토큰 칸의 '남은' 을 줄이고, 520px 아래는 머리의 '무료 검사' 단추를 접음(같은 단추는 아래 고정 줄 · 도구 칸에 그대로). 코드가 없는 손님 화면은 그대로 */
+@media (max-width: 960px) { html.am-tok-on .am-tok .am-tok-p { display: none; } }
+@media (max-width: 520px) { html.am-tok-on .hd-r > a.btn-p[data-tool] { display: none; } }
