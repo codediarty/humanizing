@@ -30,7 +30,7 @@ HOST = "humanizing.ai.kr"
 BRAND = "한국휴머나이징"
 BRAND_SP = "한국 휴머나이징"          # 띄어 쓴 이름(검색용 alternateName 에만. 화면 로고는 2026.11.22 부터 붙여 씀)
 BRAND_EN = "Korean Humanizing"
-VER = "20261125d"
+VER = "20261125e"
 TODAY = "2026-11-24"
 # 한국휴머나이징 배포(AIMarker 서버 프로젝트 버전 36, 엔진은 AIMarker 와 같음 · 2026.11.21 22:38)
 API = "https://script.google.com/macros/s/AKfycbzLgl7l-cOndrkq5n0SdKLMaSy7_MCcymbFtt590_KCYByazHlQU2G6ynA4lbrUOODOmg/exec"
@@ -102,15 +102,15 @@ def topbar():
     if not SHOW_TOPBAR:
         return ""
     return ('<div class="tb"><div class="wrap tb-in"><p class="tb-l"><b>한국어 특화 AI 휴머나이징</b><span>운영 %s</span></p>'
-            '<ul class="tb-r"><li>%s넣은 글은 저장하지 않습니다</li><li>%s회원가입 없이 무료 검사</li><li>%s결제 후 토큰 코드 자동 발급</li></ul></div></div>') % (
+            '<ul class="tb-r"><li>%s넣은 글은 저장하지 않습니다</li><li>%s회원가입 없이 AI 작성률 무료 검사</li><li>%s결제 후 토큰 코드 자동 발급</li></ul></div></div>') % (
         BIZ["name"], ico("lock"), ico("check"), ico("mail"))
 
 
 def trust_strip():
     """2.0 신뢰 디자인: 첫 화면 바로 아래 '믿고 쓰는 이유' 띠(사이트에 이미 있는 사실만)"""
     items = [("shield", "운영사 정보 공개", "%s · 사업자등록번호 %s" % (BIZ["name"], BIZ["no"])),
-             ("lock", "넣은 글은 저장하지 않습니다", "검사와 휴머나이징에만 쓰고 남기지 않습니다"),
-             ("gauge", "같은 기준으로 다시 측정", "같은 글은 언제 넣어도 같은 AI 작성률"),
+             ("lock", "넣은 글은 저장하지 않습니다", "검사와 변환에만 사용하고 남기지 않습니다"),
+             ("gauge", "변환 전후 같은 기준으로 측정", "같은 글은 언제 넣어도 같은 AI 작성률"),
              ("card", "결제 후 토큰 자동 발급", "운영사 결제 페이지 · 가입 없이 카드 · 간편결제")]
     li = "".join('<li><span class="tr-ic">%s</span><p><b>%s</b><span>%s</span></p></li>' % (ico(i), t, d) for i, t, d in items)
     return '<section class="trust" aria-label="믿고 쓰는 이유"><div class="wrap"><ul class="tr-g">%s</ul></div></section>' % li
@@ -300,7 +300,7 @@ def _sent_ops(src, dst):
 
 
 BAND_LABEL = {"부적합": "AI 작성률 높음"}   # 2026.11.24 대표 개편안 5 · 10절(엔진 원값 demo.json 은 그대로, 화면에만)
-DEMO_NOTE = "자체 엔진 측정 사례이며 문서에 따라 결과는 달라질 수 있습니다."   # 2026.11.24 대표 개편안 5 · 6절(예전 문구는 demo.json measured)
+DEMO_NOTE = "자체 분석 엔진 측정 결과이며, 문서에 따라 감소 폭은 달라질 수 있습니다."   # 2026.11.25 18:05 대표 18번(예전: 자체 엔진 측정 사례이며 문서에 따라 결과는 달라질 수 있습니다.) · 2026.11.24 대표 개편안 5 · 6절(예전 문구는 demo.json measured)
 
 
 def _band(b):
@@ -347,17 +347,17 @@ def demo_card():
     S = SAMPLES
     tabs = "".join('<button type="button" role="tab" aria-selected="%s">%s</button>' % ("true" if i == 0 else "false", s["label"]) for i, s in enumerate(S))
     first = S[0]
-    return ('<div class="demo dm5" id="demo" aria-label="AI 작성률 검사와 휴머나이징 예시(자체 엔진 측정 사례)">'
-            '<div class="demo-bar"><span class="fn dm5-t"><small><span>%s</span> 분석 예시</small><b>휴머나이징 전후 비교</b></span><div class="demo-tabs" role="tablist" aria-label="예시 글 종류">%s</div></div>'
+    return ('<div class="demo dm5" id="demo" aria-label="AI 작성률 감소 효과 예시(자체 분석 엔진 측정 결과)">'
+            '<div class="demo-bar"><span class="fn dm5-t"><small><span>%s</span> 변환 사례</small><b>AI 작성률 감소 효과</b></span><div class="demo-tabs" role="tablist" aria-label="예시 글 종류">%s</div></div>'
             '<div class="demo-scan" aria-hidden="true"></div>'
-            '<div class="demo-meter"><div class="dm from bad"><small>변환 전 AI 작성률</small><b>%s<small style="font-size:18px">%%</small> <em>%s</em></b><div class="dm-bar"><i style="width:%s%%"></i></div></div>'
+            '<div class="demo-meter"><div class="dm from bad"><small>기존 AI 작성률</small><b>%s<small style="font-size:18px">%%</small> <em>%s</em></b><div class="dm-bar"><i style="width:%s%%"></i></div></div>'
             '<span class="dm-arr" aria-hidden="true">%s</span>'
-            '<div class="dm to good wait"><small>변환 후 AI 작성률</small><b>– <em>변환 전</em></b><div class="dm-bar"><i style="width:0"></i></div></div></div>'
+            '<div class="dm to good wait"><small>개선된 AI 작성률</small><b>– <em>변환 전</em></b><div class="dm-bar"><i style="width:0"></i></div></div></div>'
             '<p class="dm5-cut" aria-live="polite"></p>'
-            '<div class="demo-legend"><span class="a"><i></i>AI 패턴 감지 문장</span><span class="h"><i></i>AI 패턴 개선 문장</span><span class="demo-state" aria-live="polite"></span></div>'
+            '<div class="demo-legend"><span class="a"><i></i>AI 작성 의심 문장</span><span class="h"><i></i>개선된 문장</span><span class="demo-state" aria-live="polite"></span></div>'
             '<div class="demo-doc">%s</div>'
-            '<div class="demo-ft"><a class="btn btn-p btn-s demo-go" href="#tool" data-hum-go>%s<span>AI 작성률 낮추기</span></a>'
-            '<a class="btn btn-g btn-s" href="#tool" data-tool>무료 AI 작성률 검사</a><p class="note">%s</p></div></div>') % (
+            '<div class="demo-ft"><a class="btn btn-p btn-s demo-go" href="#tool" data-hum-go>%s<span>내 문서 AI 작성률 낮추기</span></a>'
+            '<a class="btn btn-g btn-s" href="#tool" data-tool>무료로 검사하기</a><p class="note">%s</p></div></div>') % (
         esc(first["label"]), tabs, first["before"]["rate"], first["before"]["band"], first["before"]["rate"], ico("arrow"),
         first["doc"], ico("trend_down"), esc(DEMO_NOTE))
 
@@ -427,8 +427,8 @@ def calc_block():
             '<script type="application/json" id="calcData">%s</script></div>') % (btns, data)
 
 
-def cta_band(h="내기 전에 30초, AI 작성률부터 확인하세요", p="가입도 카드 등록도 없이 무료로 검사합니다. 걸리는 문장이 있을 때만 휴머나이징하면 됩니다."):
-    return ('<section class="sec-s cta-sec"><div class="wrap"><div class="cta rv"><h2>%s</h2><p>%s</p><div class="btns"><a class="btn btn-p btn-l" href="/#tool" data-tool>%s무료로 AI 작성률 검사</a>'
+def cta_band(h="내기 전에 30초, AI 작성률부터 확인하세요", p="회원가입도 카드 등록도 없이 바로 결과를 확인하세요. AI 작성 의심 문장이 있을 때만 변환하면 됩니다."):   # 2026.11.25 대표 문구 결(예전: 가입도 카드 등록도 없이 무료로 검사합니다. 걸리는 문장이 있을 때만 휴머나이징하면 됩니다.)
+    return ('<section class="sec-s cta-sec"><div class="wrap"><div class="cta rv"><h2>%s</h2><p>%s</p><div class="btns"><a class="btn btn-p btn-l" href="/#tool" data-tool>%sAI 작성률 무료로 확인하기</a>'
             '<a class="btn btn-g btn-l" href="/pricing/">요금 보기</a></div></div></div></section>') % (h, p, ico("search"))
 
 
@@ -441,8 +441,8 @@ def proof_line():
     (예전: '논문 예시, 한 번의 휴머나이징 · 실제 엔진으로 잰 값입니다. 글마다 결과는 다릅니다.') 숫자는 첫 예시(demo.json) 그대로, 차이는 빼서 셈"""
     S = SAMPLES[0]
     a, b = S["before"]["rate"], S["after"]["rate"]
-    return ('<p class="hero-proof hp6"><span class="hp-n"><s>%d%%</s><i>→</i><em>%d%%</em></span><span class="hp-t"><b>한 번의 휴머나이징으로 AI 작성률 %d%%p 감소</b>'
-            '<small><span class="hp-k">자체 엔진 측정 사례</span>문서의 특성에 따라 변환 결과는 달라질 수 있습니다.</small></span></p>' % (a, b, a - b))
+    return ('<p class="hero-proof hp6"><span class="hp-n"><s>%d%%</s><i>→</i><em>%d%%</em></span><span class="hp-t"><b>단 한 번의 변환으로 AI 작성률 %d%%p 감소</b>'
+            '<small>자체 엔진 측정 사례이며, 문서에 따라 결과는 달라질 수 있습니다.</small></span></p>' % (a, b, a - b))
 
 
 SHOW_EB2 = False   # 2026.11.24 대표 개편안 3절: 첫 화면 'AI 작성률 낮추기' 배지(빨간 아이콘)는 뺌. True 면 다시 보임
@@ -455,14 +455,14 @@ def eb2_html():
 def hero_with_tool(eyebrow, h1, lead, pts=None, cls="hero"):
     """첫 화면: 왼쪽 글(알약 · 제목 · 설명 · 파일 상자 · 장점 · 실측 한 줄) + 오른쪽 실제 엔진 예시, 검사 도구는 바로 아래 넓은 줄.
     모바일은 글 → 도구 → 예시(id="tool" 그대로라 '무료 검사' 단추 · 모바일 고정 단추가 그대로 씀)"""
-    pts = pts or ["한국어 특화 분석 엔진", "문장 단위 AI 패턴 분석", "다양한 문서 형식 지원"]   # 2026.11.24 대표 개편안 4절(예전: 한국어 전용 엔진 · 문장 단위 AI 작성률 · 한글 · 워드 · PDF 그대로)
+    pts = pts or ["한국어 특화 분석 엔진", "원문의 의미 유지", "변환 전후 결과 비교"]   # 2026.11.25 18:05 대표 12번(예전: 한국어 특화 분석 엔진 · 문장 단위 AI 패턴 분석 · 다양한 문서 형식 지원) · 2026.11.24 대표 개편안 4절(예전: 한국어 전용 엔진 · 문장 단위 AI 작성률 · 한글 · 워드 · PDF 그대로)
     return ('<section class="%s hero-dk" id="top"><div class="wrap"><div class="hero-grid hg2"><div class="hero-bg" aria-hidden="true"></div>'
             '<div class="hero-copy"><div class="eb-row"><p class="eyebrow">%s</p>%s</div><h1 class="h1">%s</h1><p class="lead">%s</p>'
             # 2026.11.24 대표 21:02 '한국휴머나이징도 마찬가지야 좌측에 그렇게' · 20:59 '박스 안에 파일 올리기 같이': 상자 하나(글 칸 + 칸 안 파일 업로드 + 검사 단추)
-            '<div class="hero-up hu3" data-hero-drop><div class="hu-h"><span class="hu-ic">%s</span><p><b>내 문서의 AI 작성률을 확인하세요</b><span>HWP, HWPX, DOCX, PDF, TXT 지원</span></p></div>'
-            '<div class="hu-in"><label class="sr" for="heroText">검사할 글</label><textarea id="heroText" data-hero-text rows="5" spellcheck="false" placeholder="AI 작성률을 검사할 텍스트를 입력해 주세요."></textarea>'
-            '<div class="hu-cta"><button class="hu-up" type="button" data-hero-pick>%s<span>파일 업로드</span></button><span class="hu-or">파일을 끌어다 놓거나 직접 입력하세요.</span></div></div>'
-            '<button class="btn btn-p hu-run" type="button" data-hero-run>%s무료 AI 작성률 검사</button><p class="hu-note">회원가입 없이 무료로 검사할 수 있습니다.</p></div>'
+            '<div class="hero-up hu3" data-hero-drop><div class="hu-h"><span class="hu-ic">%s</span><p><b>내 문서의 AI 작성률은 몇 %%일까요?</b><span>HWP, HWPX, DOCX, PDF, TXT 지원</span></p></div>'
+            '<div class="hu-in"><label class="sr" for="heroText">검사할 글</label><textarea id="heroText" data-hero-text rows="5" spellcheck="false" placeholder="검사할 문서를 첨부하거나 텍스트를 입력해 주세요."></textarea>'
+            '<div class="hu-cta"><button class="hu-up" type="button" data-hero-pick>%s<span>파일 첨부하기</span></button><span class="hu-or">파일을 이곳에 끌어다 놓아도 됩니다.</span></div></div>'
+            '<button class="btn btn-p hu-run" type="button" data-hero-run>%sAI 작성률 무료로 확인하기</button><p class="hu-note">회원가입 없이 바로 결과를 확인하세요.</p></div>'
             '<ul class="hero-pts">%s</ul></div>'
             '<div id="tool" class="tool-w hero-tool">%s</div>'
             '<div class="hero-demo">%s%s</div>'   # 2026.11.24 성능 강조(6절)는 좌우 높이를 맞추려고 예시 창 아래로(예전: 왼쪽 장점 아래)
@@ -472,7 +472,7 @@ def hero_with_tool(eyebrow, h1, lead, pts=None, cls="hero"):
 
 def example_section(h2="감지된 AI 패턴만 선별 제거하고,<br>원문의 의미는 그대로", alt=False):   # 2026.11.24 개편안 10절(예전: 보라색 문장이 사라질 때까지, 뜻은 그대로 두고 말투만 사람처럼)
     return ('<section class="sec%s" id="example"><div class="wrap"><div class="center"><p class="kick">%s엔진 측정 결과</p><h2 class="h2">%s</h2>'
-            '<p class="sub">아래 예시는 %s 엔진의 자체 측정 결과입니다. 연한 파란 바탕은 AI 패턴이 감지된 문장, 초록색은 AI 패턴을 개선한 문장입니다.</p></div>%s</div></section>') % (
+            '<p class="sub">아래 예시는 %s 자체 분석 엔진의 측정 결과입니다. 연한 파란 바탕은 AI 작성 의심 문장, 초록색은 개선된 문장입니다.</p></div>%s</div></section>') % (
         " alt" if alt else "", ico("eye"), h2, BRAND, compare_block())
 
 

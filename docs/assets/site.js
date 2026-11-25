@@ -112,7 +112,7 @@
       L.innerHTML = S.src; R.innerHTML = S.dst;
       pl.className = 'pill l ' + bandCls(S.before.band); pl.textContent = 'AI 작성률 ' + S.before.rate + '% · ' + bandS(S.before.band);
       pr.className = 'pill r ' + bandCls(S.after.band); pr.textContent = 'AI 작성률 ' + S.after.rate + '% · ' + bandS(S.after.band);
-      if (ft) ft.innerHTML = '<span>AI 패턴 문장 <b>' + S.before.n + '개 → ' + S.after.n + '개</b></span><span>바꾼 곳 <b>' + S.changes + '곳</b></span><span>숫자 · 이름 · 인용 <b>그대로</b></span>';
+      if (ft) ft.innerHTML = '<span>AI 작성 의심 문장 <b>' + S.before.n + '개 → ' + S.after.n + '개</b></span><span>바꾼 곳 <b>' + S.changes + '곳</b></span><span>숫자 · 이름 · 인용 <b>그대로</b></span>';
     }
     $$('.cmp-tabs button').forEach(function (b, j) { b.addEventListener('click', function () { pick(j); }); });
     pick(0);
@@ -177,8 +177,8 @@
   /* 2026.11.24 대표 개편안 7 · 10절(한국휴머나이징만): 검사 도구 · 결과 · 충전/코드 창이 그리는 글을 이 사이트 용어로.
      엔진 화면(humanize.js)은 다섯 사이트가 같은 파일이라 손대지 않고, 그려진 글자만 바꿔 보임. 지우는 것 없음 */
   (function () {
-    var TX = [['AI 작성률 무료 검사', '무료 AI 작성률 검사'], ['무료 검사 20만 자까지', '최대 200,000자 무료 검사'], ['가입 없이 무료 · 글과 파일은 저장하지 않습니다', '회원가입 없이 무료 검사'],
-              ['토큰 코드 넣기', '토큰 코드 등록'], ['파일 올리기', '파일 업로드'], ['부적합', 'AI 작성률 높음'], ['글 넣기', '문서 입력'], ['내 글 인간화', '휴머나이징'], ['인간화 엔진', '휴머나이징 엔진']];
+    var TX = [['AI 작성률 무료 검사 중', 'AI 작성률 확인 중'], ['AI 작성률 무료 검사', 'AI 작성률 무료로 확인하기'], ['무료 검사 20만 자까지', '최대 200,000자 무료 검사'], ['가입 없이 무료 · 글과 파일은 저장하지 않습니다', '회원가입 없이 바로 결과를 확인하세요.'],   /* 2026.11.25 18:05 대표 문구(예전: 무료 AI 작성률 검사 · 회원가입 없이 무료 검사 · 파일 업로드) */
+              ['토큰 코드 넣기', '토큰 코드 등록'], ['파일 올리기', '파일 첨부하기'], ['부적합', 'AI 작성률 높음'], ['글 넣기', '문서 입력'], ['내 글 인간화', '휴머나이징'], ['인간화 엔진', '휴머나이징 엔진']];
     var RE = new RegExp(TX.map(function (p) { return p[0].replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|'));
     var MAP = {}; TX.forEach(function (p) { MAP[p[0]] = p[1]; });
     var RG = new RegExp(RE.source, 'g');

@@ -13,10 +13,10 @@ TOOL_TPL = """<div class="hz12" id="hz">
     <div class="hz12-in" id="hzIn">
       <div class="hz12-drop" id="hzDrop">
         <label class="k-sr" for="hzText">검사할 글</label>
-        <textarea id="hzText" maxlength="200000" spellcheck="false" placeholder="AI 작성률을 검사할 텍스트를 입력해 주세요."></textarea>
+        <textarea id="hzText" maxlength="200000" spellcheck="false" placeholder="검사할 문서를 첨부하거나 텍스트를 입력해 주세요."></textarea>
         <div class="hz12-empty" id="hzEmpty">
-          <button type="button" class="hz12-up" id="hzPick">{ico_upload}<span>파일 업로드</span></button>
-          <p class="dnd">파일을 끌어다 놓거나 직접 입력하세요.</p>
+          <button type="button" class="hz12-up" id="hzPick">{ico_upload}<span>파일 첨부하기</span></button>
+          <p class="dnd">파일을 이곳에 끌어다 놓아도 됩니다.</p>
           <p class="fmt">HWP, HWPX, DOCX, PDF, TXT 지원</p>
         </div>
         <div class="hz12-over" aria-hidden="true">{ico_upload}<span>놓으면 글을 꺼내 옵니다</span></div>
@@ -31,9 +31,9 @@ TOOL_TPL = """<div class="hz12" id="hz">
     </div>
     <div class="hz12-sum" id="hzSum" hidden></div>
     <div class="hz12-go" id="hzGo">
-      <button class="k-btn k-btn-p k-btn-lg hz12-run" type="button" id="hzCheck">{ico_search}<span id="hzChkL">무료 AI 작성률 검사</span><em class="hz7-pill" id="hzChkTag" hidden></em></button>
+      <button class="k-btn k-btn-p k-btn-lg hz12-run" type="button" id="hzCheck">{ico_search}<span id="hzChkL">AI 작성률 무료로 확인하기</span><em class="hz7-pill" id="hzChkTag" hidden></em></button>
       <button class="k-btn k-btn-l k-btn-lg hz12-run2" type="button" id="hzPro" hidden>{ico_pen}<span>휴머나이징<small>AI 작성률 낮추기</small></span><em class="hz7-pill" id="hzProTag"></em></button>
-      <p class="hz12-note" id="hzNote">{ico_lock}<span>회원가입 없이 무료 검사</span></p>
+      <p class="hz12-note" id="hzNote">{ico_lock}<span>회원가입 없이 바로 결과를 확인하세요.</span></p>
       <div class="hz7-pass hz12-pass" id="hzPass" aria-live="polite"></div>
     </div>
   </div>
@@ -80,9 +80,9 @@ TOOL_TPL = """<div class="hz12" id="hz">
 HOME = {
     "title": "한국휴머나이징 · AI 휴머나이저 · AI 작성률 낮추기 | 한국어 전용 AI 휴머나이징",
     "desc": "한국어 전용 AI 휴머나이징. AI 탐지기가 보라색으로 표시하는 문장만 골라 사람이 쓴 한국어로 바꾸고, AI 작성률을 같은 기준으로 다시 재서 보여 드립니다. 가입 없이 무료 검사, 한글 · 워드 · PDF 그대로.",
-    "eyebrow": "<b class=\"eb-ok\">{check}</b>회원가입 없이 무료 검사",   # 2026.11.24 대표 개편안 3절(예전: <b>무료</b> 가입 없이 AI 작성률 바로 검사)
-    "h1": '<span class="kw">한국어 특화 AI 휴머나이징 솔루션</span><span class="h1-a">원문의 의미는 살리고,</span><br><em class="h1-b">AI 작성률은 낮추고.</em>',   # 2026.11.24 대표 개편안 1절(예전: AI 티는 지우고, 내 글의 뜻은 그대로.)
-    "lead": "한국휴머나이징은 AI 작성률 감소에 특화된 한국어 전문 휴머나이징 솔루션입니다. AI 특유의 문장 패턴을 정밀하게 분석하여 원문의 의미는 최대한 보존하고, AI 작성 패턴을 선별적으로 제거합니다. 변환 전후의 AI 작성률을 직접 비교할 수 있습니다.",   # 2026.11.24 대표 개편안 2절
+    "eyebrow": "<b class=\"eb-ok\">{check}</b>회원가입 없이 AI 작성률 무료 검사",   # 2026.11.25 18:05 대표 1번(예전: 회원가입 없이 무료 검사)   # 2026.11.24 대표 개편안 3절(예전: <b>무료</b> 가입 없이 AI 작성률 바로 검사)
+    "h1": '<span class="kw">한국어 특화 AI 작성률 감소 솔루션</span><span class="h1-a">원문의 의미는 그대로,</span><br><em class="h1-b">AI 작성률을 대폭&nbsp;낮추세요.</em>',   # 2026.11.25 18:05 대표 2 · 3번(예전: 한국어 특화 AI 휴머나이징 솔루션 / 원문의 의미는 살리고, AI 작성률은 낮추고.)   # 2026.11.24 대표 개편안 1절(예전: AI 티는 지우고, 내 글의 뜻은 그대로.)
+    "lead": "논문부터 보고서, 자기소개서까지. 한국어에 특화된 분석 엔진으로 AI 특유의 문장 패턴을 정밀하게 분석하고 개선합니다. 원문의 의미와 내용을 유지하면서 AI 작성률을 낮추고, 변환 전후의 차이를 직접 확인해 보세요.",   # 2026.11.25 18:05 대표 4번(예전: 한국휴머나이징은 AI 작성률 감소에 특화된 한국어 전문 휴머나이징 솔루션입니다. …)   # 2026.11.24 대표 개편안 2절
     "faq": [
         ("한국휴머나이징은 어떤 서비스인가요?", "AI가 쓴 한국어 글에 남는 말버릇(번역투, 틀에 박힌 연결어, 내용 없는 꾸밈말, 똑같은 문장 리듬)을 찾아 사람이 쓴 문장처럼 바꾸는 AI 휴머나이징 서비스입니다. 먼저 AI 작성률을 무료로 재고, 걸리는 문장만 고친 뒤 같은 기준으로 다시 잽니다."),
         ("정말 무료로 검사할 수 있나요?", "네. 가입 없이 한 번에 20만 자까지 무료로 검사합니다. 글 전체 AI 작성률, 판정(안전 · 고위험 · AI 작성률 높음), 가장 뚜렷하게 걸린 문장을 바로 보여 드립니다. 모든 문장 표시와 휴머나이징은 토큰으로 이용합니다."),
@@ -179,7 +179,7 @@ def usecases_section(ico):
          ("file", "과제 · 레포트", "AI 검사로 과제를 거르는 수업이 늘었습니다. 레포트 한 편은 1분이면 검사와 휴머나이징이 끝납니다.", "/#tool"),
          ("users", "자기소개서", "채용 서류의 AI 작성 의심 비율은 60%를 넘습니다. 습니다체는 그대로, 내 경험이 드러나는 문장으로 다듬습니다.", "/#tool"),
          ("chat", "블로그 · 마케팅 글", "AI 작성 패턴이 남은 글은 독자도 검색도 알아챕니다. 사람이 쓴 듯 자연스러운 문장으로 바꿉니다.", "/#tool")]
-    cards = "".join('<a class="card rv" href="%s" data-tool><span class="ic">%s</span><h3>%s</h3><p>%s</p><p class="more">내 글로 무료 검사 →</p></a>' % (u, ico(i), a, b) for i, a, b, u in U)
+    cards = "".join('<a class="card rv" href="%s" data-tool><span class="ic">%s</span><h3>%s</h3><p>%s</p><p class="more">내 문서로 무료 검사하기 →</p></a>' % (u, ico(i), a, b) for i, a, b, u in U)
     return '<section class="sec"><div class="wrap"><div class="center"><p class="kick">%s이런 글에 씁니다</p><h2 class="h2">제출하는 모든 한국어 글을 위해</h2></div><div class="grid4">%s</div></div></section>' % (ico("layers"), cards)
 
 
