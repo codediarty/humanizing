@@ -755,3 +755,202 @@ html.hz42-on,html.hz42-on body{overflow:hidden}
 @media (prefers-reduced-motion: reduce) { .am-tok .am-tok-d { animation: none; } }
 @media (max-width: 640px) { .am-tok { height: 36px; padding: 0 11px; gap: 5px; } .am-tok .am-tok-p { display: none; } }
 @media (max-width: 400px) { .am-tok .am-tok-l { display: none; } .am-tok b { font-size: 15px; } }
+
+
+/* ===== 2.0 신뢰 디자인(2026.11.25 대표 17:08 'https://humanizing.ai.kr/ 디자인좀 대폭 개선해봐 지금은 좀 가벼워보여 신뢰감있게').
+   예전 규칙은 지우지 않고 뒤에서 덮어씀(되돌리기: 이 블록을 지우고 build.py 의 SHOW_TOPBAR · trust_strip · hero-bg 줄을 되돌림).
+   방향: 맨 위 운영 정보 띠 · 남색 첫 화면 · '믿고 쓰는 이유' 띠 · 굵고 짙은 제목 · 남색 아이콘 · 단단한 테두리 · 어두운 바닥글.
+   색: 남색 #082657(개편안 그대로) · 짙은 남색 #061a40 · 포인트 파랑 #145ce0 · 로고 빨강 #c8102e(작은 선에만).
+   검사 도구(tool.css) · 진행 화면 · 결과 화면의 동작과 색은 그대로 ===== */
+:root{--navy-4:#061a40;--navy-5:#04122e;--logo-red:#c8102e;--bg-2:#f3f5f9;--line-3:#d9e0ea;--h:#0b1f44;
+  --sh-2:0 1px 2px rgba(15,23,42,.05),0 18px 40px -30px rgba(6,26,64,.45);--sh-3:0 40px 90px -44px rgba(2,10,30,.75)}
+
+/* 맨 위 운영 정보 띠 */
+.tb{background:var(--navy-4);color:rgba(226,234,250,.78);font-size:13px;line-height:1;position:relative;z-index:51}
+.tb-in{display:flex;align-items:center;justify-content:space-between;gap:16px;height:38px}
+.tb-l{margin:0;display:flex;align-items:center;gap:10px;white-space:nowrap}
+.tb-l b{display:inline-flex;align-items:center;gap:8px;color:#fff;font-weight:700;letter-spacing:-.01em}
+.tb-l b::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--logo-red);box-shadow:0 0 0 3px rgba(200,16,46,.25)}
+.tb-l span{padding-left:10px;border-left:1px solid rgba(255,255,255,.22)}
+.tb-r{display:flex;align-items:center;gap:20px;margin:0;padding:0;list-style:none;white-space:nowrap}
+.tb-r li{display:flex;align-items:center;gap:6px}
+.tb-r .ico{width:14px;height:14px;color:#8fb3ff;stroke-width:2.2}
+
+/* 머리글: 흰 바탕 · 짙은 글자 · 선택 메뉴 굵은 밑줄 */
+.hd{background:rgba(255,255,255,.97);border-bottom:1px solid #e3e8f0}
+.hd.on{border-bottom-color:#e3e8f0;box-shadow:0 12px 30px -24px rgba(6,26,64,.6)}
+.nav a{font-weight:700;color:#1e293b}
+.nav a:hover{color:var(--navy)}
+.nav a[aria-current="page"]{color:var(--navy);box-shadow:inset 0 -3px 0 var(--brand)}
+.hd-r .btn-g{border-color:#c9d3e1;color:var(--navy);font-weight:750}
+.hd-r .btn-g:hover{border-color:var(--navy);background:#fff}
+.hd-r .btn-p{background:var(--navy)}
+.hd-r .btn-p:hover{background:var(--brand)}
+
+/* 첫 화면: 남색 띠(위 글 · 예시 줄) + 아래 검사 도구는 밝은 바탕 */
+.hero.hero-dk{background:var(--bg-2);padding:56px 0 64px;overflow:hidden}
+.hero-dk .hero-grid.hg2{position:relative;row-gap:56px}
+.hero-dk .hero-bg{grid-column:1/-1;grid-row:1;align-self:stretch;position:relative;z-index:0;pointer-events:none;overflow:hidden;
+  margin:-56px calc(50% - 50vw) -30px;
+  background:radial-gradient(900px 440px at 86% -12%,rgba(20,92,224,.42),transparent 62%),radial-gradient(720px 380px at -4% 112%,rgba(200,16,46,.2),transparent 60%),linear-gradient(180deg,#061a40 0%,#082657 100%)}
+.hero-dk .hero-bg::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:56px 56px;
+  -webkit-mask-image:radial-gradient(ellipse 60% 75% at 72% 35%,#000 20%,transparent 72%);mask-image:radial-gradient(ellipse 60% 75% at 72% 35%,#000 20%,transparent 72%)}
+.hero-dk .hero-bg::after{content:"";position:absolute;width:1200px;height:440px;right:-300px;top:56px;border-radius:50%;border:2px solid transparent;opacity:.55;transform:rotate(-11deg);
+  background:linear-gradient(100deg,rgba(200,16,46,0) 8%,rgba(200,16,46,.85) 30%,rgba(20,92,224,.85) 62%,rgba(20,92,224,0) 92%) border-box;
+  -webkit-mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) padding-box exclude,linear-gradient(#000 0 0)}
+.hero-dk .hero-copy,.hero-dk .hero-demo,.hero-dk .hero-tool{position:relative;z-index:1}
+.hero-dk .eyebrow{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2);color:#e8eeff!important}   /* tool.css 의 .eyebrow 글자색 !important 를 이김 */
+.hero-dk .eyebrow b.eb-ok{background:var(--brand)}
+.hero-dk .h1 .kw{color:#9cc0ff}
+.hero-dk .h1,.hero-dk .h1 .h1-a{color:#fff}
+.hero-dk .h1 em.h1-b{color:#7fb2ff}
+.hero-dk .lead{color:rgba(226,234,250,.84)}
+.hero-dk .hero-pts{color:#e2e9f7}
+.hero-dk .hero-pts .ico{color:#7fb2ff}
+.hero-dk .hero-up.hu3,.hero-dk .hero-up.hu3:hover{border-color:transparent;box-shadow:var(--sh-3),0 0 0 1px rgba(255,255,255,.08)}
+.hero-dk .demo.dm5{border-color:transparent;box-shadow:var(--sh-3),0 0 0 1px rgba(255,255,255,.08)}
+.hero-dk .hero-proof.hp6{border-color:transparent;box-shadow:0 24px 50px -34px rgba(2,10,30,.8),0 0 0 1px rgba(255,255,255,.08)}
+.hero-dk .hg2 .hero-tool .hz12-card,.hero-dk .tool-w .hz12-card{border-color:var(--line-3);box-shadow:var(--sh-2)}
+
+/* 믿고 쓰는 이유 띠 */
+.trust{background:#fff;border-bottom:1px solid #e3e8f0}
+.trust .tr-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:0;padding:0;list-style:none}
+.trust .tr-g li{display:flex;align-items:center;gap:14px;padding:28px 22px;min-width:0}
+.trust .tr-g li+li{border-left:1px solid #e3e8f0}
+.tr-ic{flex:none;width:46px;height:46px;border-radius:11px;display:grid;place-items:center;background:var(--navy);color:#fff;box-shadow:inset 0 -3px 0 rgba(20,92,224,.55)}
+.tr-ic .ico{width:22px;height:22px;stroke-width:1.9}
+.trust p{margin:0;display:flex;flex-direction:column;gap:3px;min-width:0}
+.trust p b{font-size:15.5px;font-weight:800;color:var(--h);letter-spacing:-.02em;line-height:1.35}
+.trust p span{font-size:12.5px;color:#5b6778;line-height:1.5}
+
+/* 구역 · 제목 */
+.sec{padding:104px 0}
+.sec.alt{background:var(--bg-2)}
+.h2{font-size:clamp(28px,3vw,40px);font-weight:800;letter-spacing:-.035em;line-height:1.25;color:var(--h)}
+.sub{font-size:17px;color:#475569}
+.kick{gap:10px;font-size:13.5px;font-weight:800;letter-spacing:.01em;color:var(--brand)}
+.kick .ico{display:none}
+.kick::before{content:"";flex:none;width:22px;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--logo-red) 0 36%,var(--brand) 36%)}
+.dark .kick{color:#9cc0ff}
+.dark .kick::before{background:linear-gradient(90deg,#ff5a6e 0 36%,#7fb2ff 36%)}
+
+/* 기술 지표: 하나의 판 + 세로 줄 */
+.metrics.mt2{padding:80px 0;background:#fff;border-bottom:0}
+.mt2 .mt-h{margin:0 0 30px;font-size:clamp(24px,2.6vw,34px);font-weight:800;letter-spacing:-.035em;color:var(--h)}
+.metrics.mt2 .grid4{gap:0;border:1px solid var(--line-3);border-radius:16px;background:#fff;overflow:hidden;box-shadow:var(--sh-2)}
+.mt2 .mt{position:relative;border:0;border-radius:0;padding:34px 28px 30px;background:#fff}
+.mt2 .mt+.mt{border-left:1px solid var(--line-3)}
+.mt2 .mt::before{content:"";position:absolute;left:28px;top:0;width:30px;height:3px;background:linear-gradient(90deg,var(--logo-red) 0 36%,var(--brand) 36%)}
+.mt2 .mt b{font-size:clamp(30px,3.1vw,42px);font-weight:850;letter-spacing:-.04em;color:var(--h)}
+.mt2 .mt span{font-size:14.5px;color:#5b6778}
+
+/* 경고 구역(남색): 더 깊게 */
+.sec.dark{background:radial-gradient(900px 420px at 88% -12%,rgba(20,92,224,.34),transparent 62%),radial-gradient(700px 380px at -4% 112%,rgba(200,16,46,.16),transparent 60%),linear-gradient(180deg,#061a40,#082657)}
+.stat{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14);border-radius:14px}
+
+/* 카드: 단단한 테두리 · 남색 아이콘 */
+.card{border:1px solid var(--line-3);border-radius:14px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+.card h3{color:var(--h);font-weight:800}
+.card .ic{background:var(--navy);color:#fff;border-radius:11px;box-shadow:inset 0 -3px 0 rgba(20,92,224,.55)}
+a.card:hover{border-color:#b8c6dc;box-shadow:var(--sh-2)}
+.step{border-color:var(--line-3);border-radius:14px}
+.step h3{color:var(--h);font-weight:800}
+.step::before{background:var(--navy);box-shadow:0 0 0 4px #fff}
+.flow span{border-color:var(--line-3);border-radius:10px}
+.scale{border-color:var(--line-3);box-shadow:var(--sh-2)}
+.cmp{border:1px solid var(--line-3)}
+
+/* 비교 표: 머리 줄 짙게 · 한국휴머나이징 열 강조 */
+.tbl-w{border-radius:16px;box-shadow:var(--sh-2)}
+.tbl{border-color:var(--line-3);border-radius:16px}
+.tbl thead th{background:#eef2f8;color:var(--h);font-weight:800}
+.tbl thead .me{background:var(--navy);color:#fff}
+.tbl td.me,.tbl .me{background:#eef4fe;color:#0c49b8}
+.tbl th:first-child,.tbl td:first-child{color:var(--h)}
+
+/* 요금 */
+.pk{border:1px solid var(--line-3);border-radius:16px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+.pk:hover{box-shadow:var(--sh-2)}
+.pk.best{border:2px solid var(--brand);box-shadow:0 26px 54px -30px rgba(20,92,224,.7)}
+.pk.top{border:2px solid var(--navy)}
+.pk h3{color:var(--h);font-weight:800}
+.pk .tk2 b{color:var(--h)}
+
+/* 자주 묻는 질문 */
+.faq details{border-color:var(--line-3);border-radius:12px}
+.faq details[open]{border-color:#b8c6dc;box-shadow:var(--sh-2)}
+.faq summary{color:var(--h)}
+
+/* 마지막 권유 */
+.cta{border-radius:18px;padding:64px 40px;background:radial-gradient(640px 300px at 12% -10%,rgba(20,92,224,.5),transparent 62%),radial-gradient(560px 280px at 96% 112%,rgba(200,16,46,.28),transparent 60%),linear-gradient(135deg,#061a40,#0b2f6e)}
+.cta h2{font-weight:800}
+
+/* 하위 쪽 머리: 남색 띠 */
+.ph{padding:52px 0 40px;border-bottom:0;color:#fff;background:radial-gradient(820px 380px at 88% -20%,rgba(20,92,224,.38),transparent 60%),radial-gradient(620px 320px at -6% 120%,rgba(200,16,46,.16),transparent 60%),linear-gradient(180deg,#061a40,#082657)}
+.ph .h1,.ph h1{color:#fff}
+.ph .crumb,.ph .crumb a,.ph .crumb span{color:rgba(226,234,250,.72)}
+.ph .crumb a:hover{color:#fff}
+.ph .lead,.ph p,.ph .meta{color:rgba(226,234,250,.86)}
+.ph .kick{color:#9cc0ff}
+.ph .kick::before{background:linear-gradient(90deg,#ff5a6e 0 36%,#7fb2ff 36%)}
+.ph a:not(.btn){color:#cfe0ff}
+
+/* 바닥글: 짙은 남색 · 흰 로고 */
+.ft{position:relative;background:var(--navy-5);border-top:0;color:#9fb0cc}
+.ft::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--logo-red) 0 16%,var(--brand) 16%)}
+.ft h4{color:#fff}
+.ft p{color:#9fb0cc}
+.ft a{color:#c8d4ea}
+.ft a:hover{color:#fff}
+.ft-biz{border-top-color:rgba(255,255,255,.12);color:#8597b6}
+.ft-biz b{color:#dbe4f5}
+.ft .logo{color:#fff}
+.ft .logo .lk-k{filter:brightness(0) invert(1)}
+.ft .logo .lk-bar{background:rgba(255,255,255,.4)}
+.ft .logo .lk-t b{color:#fff}
+.ft .logo .lk-t .en{color:#9fb0cc}
+.ft .logo .lk-t .en::before,.ft .logo .lk-t .en::after{background:rgba(255,255,255,.35)}
+
+/* 좁은 화면 */
+@media (max-width:1080px){
+  .tb{display:none}
+  .hero.hero-dk{padding:36px 0 48px}
+  .hero-dk .hero-grid.hg2{row-gap:40px}
+  .hero-dk .hero-bg{margin:-36px calc(50% - 50vw) -22px}
+  .trust .tr-g{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .trust .tr-g li:nth-child(3){border-left:0}
+  .trust .tr-g li:nth-child(n+3){border-top:1px solid #e3e8f0}
+  .metrics.mt2 .grid4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mt2 .mt:nth-child(3){border-left:0}
+  .mt2 .mt:nth-child(n+3){border-top:1px solid var(--line-3)}
+}
+@media (max-width:760px){
+  .sec{padding:72px 0}
+  .hero.hero-dk{padding:28px 0 40px}
+  .hero-dk .hero-bg{margin:-28px calc(50% - 50vw) -20px}
+  .trust .tr-g li{padding:18px 14px;gap:12px}
+  .tr-ic{width:40px;height:40px}
+  .tr-ic .ico{width:19px;height:19px}
+  .trust p b{font-size:14.5px}
+  .ph{padding:36px 0 28px}
+  .cta{padding:44px 22px}
+}
+@media (max-width:560px){
+  .trust .tr-g{grid-template-columns:1fr}
+  .trust .tr-g li{padding:15px 2px;border-left:0!important}
+  .trust .tr-g li+li{border-top:1px solid #e3e8f0}
+  .metrics.mt2{padding:56px 0}
+  .mt2 .mt{padding:24px 16px 20px}
+  .mt2 .mt::before{left:16px}
+  .mt2 .mt b{font-size:26px}
+  .mt2 .mt span{font-size:13px}
+  /* 예시 창 두 숫자 칸이 좁은 화면에서 잘리지 않게(예전: 오른쪽 '변환 후' 칸이 잘려 보임) */
+  .dm5 .dm{padding:10px 11px}
+  .dm5 .dm b{font-size:30px;flex-wrap:wrap;row-gap:4px}
+}
+.dm5 .demo-meter{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)}
+
+
+/* 2026.11.25 문의 주소가 사이트 주소(token@…)로 길어져 320px 휴대폰에서 소개 · 약관 표가 옆으로 넘치지 않게: 긴 주소는 칸 안에서 줄바꿈 */
+.prose th,.prose td{overflow-wrap:anywhere}
+.ft li,.ft-biz{overflow-wrap:anywhere}

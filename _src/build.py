@@ -30,7 +30,7 @@ HOST = "humanizing.ai.kr"
 BRAND = "한국휴머나이징"
 BRAND_SP = "한국 휴머나이징"          # 띄어 쓴 이름(검색용 alternateName 에만. 화면 로고는 2026.11.22 부터 붙여 씀)
 BRAND_EN = "Korean Humanizing"
-VER = "20261125c"
+VER = "20261125d"
 TODAY = "2026-11-24"
 # 한국휴머나이징 배포(AIMarker 서버 프로젝트 버전 36, 엔진은 AIMarker 와 같음 · 2026.11.21 22:38)
 API = "https://script.google.com/macros/s/AKfycbzLgl7l-cOndrkq5n0SdKLMaSy7_MCcymbFtt590_KCYByazHlQU2G6ynA4lbrUOODOmg/exec"
@@ -87,10 +87,33 @@ NAV = [("", "AI 작성률 낮추기"), ("pricing/", "이용 요금"), ("guide/",
 def header(path):
     nav = "".join('<a href="/%s"%s>%s</a>' % (p, ' aria-current="page"' if path == p else "", t) for p, t in NAV)
     mnav = "".join('<a href="/%s">%s</a>' % (p, t) for p, t in NAV)
-    return ('<header class="hd" id="hd"><div class="wrap hd-in">%s<nav class="nav" aria-label="주요 메뉴">%s</nav>'
+    return (topbar() + '<header class="hd" id="hd"><div class="wrap hd-in">%s<nav class="nav" aria-label="주요 메뉴">%s</nav>'
             '<div class="hd-r"><a class="btn btn-g btn-s" href="/pricing/">토큰 충전</a><a class="btn btn-p btn-s" href="/#tool" data-tool>%s<span class="hl">무료 AI 작성률 검사</span><span class="hs">무료 검사</span></a>'
             '<button class="menu-btn" id="menuBtn" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mnav">%s</button></div></div></header>'
             '<nav class="mnav" id="mnav" aria-label="모바일 메뉴">%s<a href="/#tool" data-tool>무료 AI 작성률 검사</a><a href="/#example">실제 측정 결과</a><a href="/about/">회사 소개</a></nav>') % (LOGO, nav, ico("search"), ico("menu"), mnav)
+
+
+# 2.0 신뢰 디자인(2026.11.25 대표 17:08 '디자인좀 대폭 개선해봐 지금은 좀 가벼워보여 신뢰감있게'): 머리글 위 운영 정보 띠.
+# 사이트에 이미 적힌 사실만(운영사 · 글 저장 안 함 · 가입 없이 무료 검사 · 결제 후 자동 발급). 1080px 이하는 숨김(hg.css)
+SHOW_TOPBAR = True
+
+
+def topbar():
+    if not SHOW_TOPBAR:
+        return ""
+    return ('<div class="tb"><div class="wrap tb-in"><p class="tb-l"><b>한국어 특화 AI 휴머나이징</b><span>운영 %s</span></p>'
+            '<ul class="tb-r"><li>%s넣은 글은 저장하지 않습니다</li><li>%s회원가입 없이 무료 검사</li><li>%s결제 후 토큰 코드 자동 발급</li></ul></div></div>') % (
+        BIZ["name"], ico("lock"), ico("check"), ico("mail"))
+
+
+def trust_strip():
+    """2.0 신뢰 디자인: 첫 화면 바로 아래 '믿고 쓰는 이유' 띠(사이트에 이미 있는 사실만)"""
+    items = [("shield", "운영사 정보 공개", "%s · 사업자등록번호 %s" % (BIZ["name"], BIZ["no"])),
+             ("lock", "넣은 글은 저장하지 않습니다", "검사와 휴머나이징에만 쓰고 남기지 않습니다"),
+             ("gauge", "같은 기준으로 다시 측정", "같은 글은 언제 넣어도 같은 AI 작성률"),
+             ("card", "결제 후 토큰 자동 발급", "운영사 결제 페이지 · 가입 없이 카드 · 간편결제")]
+    li = "".join('<li><span class="tr-ic">%s</span><p><b>%s</b><span>%s</span></p></li>' % (ico(i), t, d) for i, t, d in items)
+    return '<section class="trust" aria-label="믿고 쓰는 이유"><div class="wrap"><ul class="tr-g">%s</ul></div></section>' % li
 
 
 GUIDE_FT = [("ai-rate-meaning", "AI 작성률이란"), ("purple-sentences", "보라색 문장은 왜 생길까"), ("under-20-percent", "AI 작성률 20% 미만 만들기"),
@@ -433,7 +456,7 @@ def hero_with_tool(eyebrow, h1, lead, pts=None, cls="hero"):
     """첫 화면: 왼쪽 글(알약 · 제목 · 설명 · 파일 상자 · 장점 · 실측 한 줄) + 오른쪽 실제 엔진 예시, 검사 도구는 바로 아래 넓은 줄.
     모바일은 글 → 도구 → 예시(id="tool" 그대로라 '무료 검사' 단추 · 모바일 고정 단추가 그대로 씀)"""
     pts = pts or ["한국어 특화 분석 엔진", "문장 단위 AI 패턴 분석", "다양한 문서 형식 지원"]   # 2026.11.24 대표 개편안 4절(예전: 한국어 전용 엔진 · 문장 단위 AI 작성률 · 한글 · 워드 · PDF 그대로)
-    return ('<section class="%s" id="top"><div class="wrap"><div class="hero-grid hg2">'
+    return ('<section class="%s hero-dk" id="top"><div class="wrap"><div class="hero-grid hg2"><div class="hero-bg" aria-hidden="true"></div>'
             '<div class="hero-copy"><div class="eb-row"><p class="eyebrow">%s</p>%s</div><h1 class="h1">%s</h1><p class="lead">%s</p>'
             # 2026.11.24 대표 21:02 '한국휴머나이징도 마찬가지야 좌측에 그렇게' · 20:59 '박스 안에 파일 올리기 같이': 상자 하나(글 칸 + 칸 안 파일 업로드 + 검사 단추)
             '<div class="hero-up hu3" data-hero-drop><div class="hu-h"><span class="hu-ic">%s</span><p><b>내 문서의 AI 작성률을 확인하세요</b><span>HWP, HWPX, DOCX, PDF, TXT 지원</span></p></div>'
@@ -463,6 +486,7 @@ def price_section(alt=True):
 def build_home():
     H = P.HOME
     body = hero_with_tool(H["eyebrow"].replace("{check}", ico("check")), H["h1"], H["lead"])
+    body += trust_strip()   # 2.0 신뢰 디자인
     body += demo_json()
     body += P.metrics_strip(ico)
     body += P.alarm_section(ico)
