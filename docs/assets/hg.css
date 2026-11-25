@@ -969,7 +969,14 @@ a.card:hover{border-color:#b8c6dc;box-shadow:var(--sh-2)}
 .ph.ph-price .h1{margin:4px 0 8px}
 .sec-s.sec-price{padding-top:40px}
 
-/* 13.43(2026.11.25 밤) 토큰 코드가 있는 손님(html.am-tok-on): 머리의 남은 토큰 칸 때문에 좁은 화면에서 메뉴 단추가 화면 밖으로 밀리던 것을 고침.
-   960px 아래는 토큰 칸의 '남은' 을 줄이고, 520px 아래는 머리의 '무료 검사' 단추를 접음(같은 단추는 아래 고정 줄 · 도구 칸에 그대로). 코드가 없는 손님 화면은 그대로 */
+/* 13.43(2026.11.25 밤) 토큰 코드가 있는 손님(html.am-tok-on)의 머리: 기존 단추(무료 검사 · 메뉴)는 그대로 두고 남은 토큰 칸만 줄임.
+   960px 아래는 토큰 칸의 '남은' 글자를 줄이고, 520px 아래(휴대폰)는 메뉴 단추 오른쪽 위에 작은 표로 살짝 붙임(메뉴 단추가 화면 밖으로 밀리지 않게).
+   코드가 없는 손님 화면은 그대로 */
 @media (max-width: 960px) { html.am-tok-on .am-tok .am-tok-p { display: none; } }
-@media (max-width: 520px) { html.am-tok-on .hd-r > a.btn-p[data-tool] { display: none; } }
+@media (max-width: 520px) {
+  html.am-tok-on .hd-r { position: relative; }
+  html.am-tok-on .hd-r > .am-tok { position: absolute; top: -9px; right: -6px; z-index: 2; height: 18px; padding: 0 6px; gap: 3px; font-size: 10.5px; box-shadow: 0 1px 3px rgba(0, 0, 0, .12); }
+  html.am-tok-on .hd-r > .am-tok .am-tok-l { display: none; }
+  html.am-tok-on .hd-r > .am-tok svg { width: 10px; height: 10px; }
+  html.am-tok-on .hd-r > .am-tok b { font-size: 11px; }
+}
