@@ -139,13 +139,11 @@
       oB.removeAttribute('data-tool');
       if (P) {
         oR.innerHTML = '<b>' + P.name + ' ' + P.tok.toLocaleString('ko-KR') + '토큰(' + P.price.toLocaleString('ko-KR') + '원)</b>이면 됩니다. 쓰고 남는 ' + fmt(P.tok - t) + '토큰은 기한 없이 그대로입니다.';
-        oB.textContent = P.name + ' 충전하기'; oB.href = P.link || '/pricing/';
-        if (P.link) { oB.target = '_blank'; oB.rel = 'noopener'; } else { oB.removeAttribute('target'); }
+        oB.textContent = P.name + ' 충전하기'; oB.href = '/#buy-' + P.id; oB.setAttribute('data-buy', P.id); oB.removeAttribute('target');   /* 2026.11.25 대표: 충전 창 먼저(예전: oB.href = P.link || '/pricing/' · 새 창) */
       } else {
         var k = Math.ceil(t / big.tok);
         oR.innerHTML = '긴 글이네요. <b>' + big.name + ' ' + k + '개</b>(' + (k * big.tok).toLocaleString('ko-KR') + '토큰)를 같은 코드에 충전하거나, 걸린 장만 휴머나이징하면 토큰을 아낄 수 있습니다.';
-        oB.textContent = big.name + ' 충전하기'; oB.href = big.link || '/pricing/';
-        if (big.link) { oB.target = '_blank'; oB.rel = 'noopener'; } else { oB.removeAttribute('target'); }
+        oB.textContent = big.name + ' 충전하기'; oB.href = '/#buy-' + big.id; oB.setAttribute('data-buy', big.id); oB.removeAttribute('target');   /* 2026.11.25 대표: 충전 창 먼저 */
       }
     }
     $$('.calc-docs button', cal).forEach(function (b) {

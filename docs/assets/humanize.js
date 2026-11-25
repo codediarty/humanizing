@@ -1603,7 +1603,7 @@
         (p.list && SHOW_LIST ? '<i class="hz-lp"><s>정가 ' + n2(p.list) + '원</s><b>50%</b></i>' : '') + (p.price ? '<b class="pr">' + n2(p.price) + '원' + (p.save && STRIKE ? (function () { var pl = PRODS.filter(function (x) { return x.id === 'pl'; })[0]; return pl ? ' <s title="정가" style="font-size:.8em;font-weight:600;color:#8A94A6;text-decoration-thickness:1.5px;font-variant-numeric:tabular-nums">' + n2(({ pr: 60000, mx: 120000 })[p.id] || Math.round(p.cr * pl.price / pl.cr)) + '원</s>' : ''; })() : '') + (p.per ? '<small>토큰당 ' + esc(p.per) + '</small>' : '') + '</b>' : '') +   // 11.22 대표: 프로 · 맥스는 요금 칸처럼 줄 그은 금액 · 11.23 22:23 대표: 정가 60,000원 · 120,000원
         (p.save ? '<i class="hz17-sv">플러스 대비 이용 단가 ' + p.save + '% 절감</i>' : '') +
         (sm ? '<small class="ds">' + esc(sm) + '</small>' : '') + '</span></label>';
-    }).join('') + '<p class="hz20-pg">반복할수록 AI 작성률을 극한까지 낮출 수 있습니다.</p>';   // 13.34 카피휴먼 21:24 문구
+    }).join('') + '<p class="hz20-pg">한 번의 변환으로 부족하다면 다시 변환해 보세요. 여러 문서의 AI 작성률을 낮추거나 추가 변환을 원하시는 분께는 프로와 맥스 요금제를 추천합니다.</p>';   // 2026.11.25 대표 'AIMarker 처럼'(AIMarker 13.40 문구). 예전: 반복할수록 AI 작성률을 극한까지 낮출 수 있습니다.   // 13.34 카피휴먼 21:24 문구
   }
   function stepsHtml() {   // 바로 결제도, 결제 페이지도 없을 때(주문 → 결제 안내 메일): 결제 순서를 미리
     return '<ol class="hz13-steps" aria-label="결제 순서"><li><b>1</b><span>지금 주문<small>이메일만 적으면 됩니다</small></span></li><li><b>2</b><span>메일로 온 안내대로 카드 · 계좌이체 결제<small>결제 안내 메일은 영업일 하루 안에</small></span></li><li><b>3</b><span>메일로 받은 코드를 넣으면 바로 이어서<small>코드는 결제 확인 뒤 영업일 하루 안에</small></span></li></ol>';
@@ -1611,7 +1611,7 @@
   function shopName(p) { return '한국휴머나이징 ' + p.name + ' · AI 글 인간화 작업 ' + tk(p.cr) + '토큰'; }   // 13.6 성균관컨설팅 결제 페이지의 상품 이름(아임웹 상품 34~37)
   function gateHtml(p, tu, sh) {   // 13.34(2026.11.23, 카피휴먼 21:24 대표 문구와 같게): 긴 설명 대신 결제 단추 아래 두 줄(안전결제 · 결제하면 자동 충전)
     return '<p class="hz19-safe">' + ico('lock') + '<b>성균관컨설팅 안전결제</b><span>회원가입 없이 · 카드 · 토스페이 · 계좌이체</span></p>' +
-      '<p class="hz19-auto">' + ico('check') + '<span>' + (tu ? '결제 완료 후 지금 코드에 ' + tk(p.cr) + '토큰이 자동 충전됩니다. 코드를 받았던 이메일로 결제해 주세요.' : '결제 완료 후 토큰이 자동 충전되어 바로 이용할 수 있습니다.') + '</span></p>';
+      '<p class="hz19-auto">' + ico('check') + '<span>' + (tu ? '결제 완료 후 지금 코드에 ' + tk(p.cr) + '토큰이 자동 충전됩니다. 코드를 받았던 이메일로 결제해 주세요.' : '결제 완료 후 입력하신 이메일로 16자리 토큰 코드가 자동 발송됩니다. 발급받은 코드를 등록하면 바로 AI 작성률 낮추기 서비스를 이용할 수 있습니다.') + '</span></p>';   // 2026.11.25 AIMarker 와 같게(예전: 결제 완료 후 토큰이 자동 충전되어 바로 이용할 수 있습니다.)
   }
   function shopLink(pid) {   // 12.1 공식 결제처 성균관컨설팅 결제 페이지(서버 AM_BUY_LINKS 또는 사이트 SHOP_IDX 에 상품 번호가 있을 때)
     var p = prod(pid); if (p && p.link) return p.link;
@@ -1627,7 +1627,7 @@
     needLine(p, tu);
     if (gate) { gate.innerHTML = sh ? gateHtml(p, tu, sh) : ''; gate.hidden = !sh; }
     if (fb) { fb.hidden = !!sh; var ml = fb.querySelector('label[for="hzBuyMail"]'); if (ml) ml.innerHTML = (payReady() ? '영수증을 받을 이메일' : tu ? '결제 안내를 받을 이메일' : '토큰 코드와 결제 안내를 받을 이메일') + ' <em>필수</em>'; }
-    if (b) b.innerHTML = payReady() ? ico('card') + '<span>' + n2(p.price) + '원 결제하기</span>' : sh ? '<span>' + esc(p.name) + ' ' + tk(p.cr) + '토큰 · ' + n2(p.price) + '원 결제하기</span>' + ico('arrow') : '<span>' + n2(p.price) + '원 주문하기</span>';
+    if (b) b.innerHTML = payReady() ? ico('card') + '<span>' + n2(p.price) + '원 결제하기</span>' : sh ? '<span>토큰 충전하기 · ' + esc(p.name) + ' ' + n2(p.price) + '원</span>' + ico('arrow') : '<span>' + n2(p.price) + '원 주문하기</span>';
     var am = $('#hzBuyAmt'); if (am) am.textContent = tk(p.cr) + '토큰 ' + n2(p.price) + '원(부가세 포함) · ';
     var n = $('#hzBuyNote'); if (n) n.innerHTML = sh ? '' : payReady() ? (tu ? '카드나 간편결제로 바로 결제합니다. 승인되면 지금 코드에 ' + tk(p.cr) + '토큰이 바로 더해집니다.' : '카드나 간편결제로 바로 결제합니다. 승인되면 이 화면에서 바로 토큰이 열리고, 코드는 메일로도 보내 드립니다.') : stepsHtml() + '<span class="hz19-nt">' + (tu ? '주문하면 성균관컨설팅 결제 안내를 메일로 드리고, 결제가 확인되면 지금 코드에 ' + tk(p.cr) + '토큰을 더해 드립니다.' : '주문하면 성균관컨설팅 결제 안내를 메일로 드리고, 결제가 확인되면 토큰 코드를 메일로 보내 드립니다.') + '</span>';
   }
@@ -1710,7 +1710,7 @@
           '<p class="sum"><b>' + esc(pk.name) + ' · ' + tk(pk.cr) + '토큰' + (pk.bonus ? ' <i>+' + tk(pk.bonus) + ' 포함</i>' : '') + '</b><span>' + n2(pk.price) + '원 · 부가세 포함' + (to ? ' · 지금 코드(끝 ' + esc(tail) + ')에 충전' : '') + '</span></p>' +
           '<p class="hz7-dlg-n">' + (to ? '코드를 받았던 이메일로 결제해 주세요. 결제가 확인되면 지금 코드에 ' + tk(pk.cr) + '토큰이 더해집니다.' : '회원가입 없이 결제하면 바로(보통 1분 안), 결제할 때 적은 이메일로 보내는 사람 ‘한국휴머나이징’ 메일에 16자리 토큰 코드가 담겨 갑니다. ' + (S.job ? '메일의 ‘AI 휴머나이징 바로 쓰기’를 누르거나 이 창에 코드를 넣으면 하던 일을 이어서 합니다(글은 이 브라우저에만 잠시 보관). ' : '') + '메일이 안 보이면 스팸함을 확인하고, 그래도 없으면 token@humanizing.ai.kr 로 주문 번호를 보내 주세요.') + '</p>' +
           '<a class="btn btn-p btn-l" href="' + esc(shop) + '" target="_blank" rel="noopener">' + ico('open') + '<span>' + (win ? '결제 페이지가 안 보이면 다시 열기' : '결제 페이지 열기') + '</span></a>' +
-          (to ? '' : '<button class="btn btn-g" type="button" data-code>코드를 받았어요 · 코드 넣기</button>') + '</div>';
+          (to ? '' : '<button class="btn btn-g" type="button" data-code>코드를 받았어요 · 토큰 코드 등록</button>') + '</div>';
         var hL = $('#hzBuyT'); if (hL) { try { hL.focus({ preventScroll: true }); } catch (eF2) { hL.focus(); } }
         if (window.gtag) try { window.gtag('event', 'begin_checkout', { items: [{ item_id: pid, item_name: pk.name, price: pk.price }] }); } catch (eG2) { /* 무시 */ }
         return;

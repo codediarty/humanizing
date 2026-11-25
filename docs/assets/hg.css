@@ -964,3 +964,7 @@ a.card:hover{border-color:#b8c6dc;box-shadow:var(--sh-2)}
 }
 /* 같은 때: 예시 창 아래 단추 두 개('내 문서 AI 작성률 낮추기' · '무료로 검사하기')가 휴대폰에서 줄이 갈리면 한 줄씩 꽉 차게 */
 @media (max-width:520px){.dm5 .demo-ft .btn{flex:1 1 100%;justify-content:center}}
+/* 2026.11.25 18:21 대표(Humani 요금 화면 '아래가 잘려서 밸런스'와 같은 일): 요금 쪽 첫 화면에 네 칸이 단추 · 테두리까지 들어오게 머리 · 여백만 줄임 */
+.ph.ph-price{padding:34px 0 26px}
+.ph.ph-price .h1{margin:4px 0 8px}
+.sec-s.sec-price{padding-top:40px}
