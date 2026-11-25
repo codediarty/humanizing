@@ -1708,7 +1708,7 @@
         var tail = to ? String(S.pass).replace(/[^0-9A-Za-z]/g, '').slice(-4) : '';
         buyBody.innerHTML = '<h2 id="hzBuyT" tabindex="-1">' + (win ? '성균관컨설팅 결제 페이지를 새 창으로 열었습니다' : '성균관컨설팅 결제 페이지에서 결제해 주세요') + '</h2><div class="hz7-done hz18-go">' +
           '<p class="sum"><b>' + esc(pk.name) + ' · ' + tk(pk.cr) + '토큰' + (pk.bonus ? ' <i>+' + tk(pk.bonus) + ' 포함</i>' : '') + '</b><span>' + n2(pk.price) + '원 · 부가세 포함' + (to ? ' · 지금 코드(끝 ' + esc(tail) + ')에 충전' : '') + '</span></p>' +
-          '<p class="hz7-dlg-n">' + (to ? '코드를 받았던 이메일로 결제해 주세요. 결제가 확인되면 지금 코드에 ' + tk(pk.cr) + '토큰이 더해집니다.' : '회원가입 없이 결제하면 바로(보통 1분 안), 결제할 때 적은 이메일로 보내는 사람 ‘한국휴머나이징’ 메일에 16자리 토큰 코드가 담겨 갑니다. ' + (S.job ? '메일의 ‘AI 휴머나이징 바로 쓰기’를 누르거나 이 창에 코드를 넣으면 하던 일을 이어서 합니다(글은 이 브라우저에만 잠시 보관). ' : '') + '메일이 안 보이면 스팸함을 확인하고, 그래도 없으면 contact@skkc.co.kr 로 주문 번호를 보내 주세요.') + '</p>' +
+          '<p class="hz7-dlg-n">' + (to ? '코드를 받았던 이메일로 결제해 주세요. 결제가 확인되면 지금 코드에 ' + tk(pk.cr) + '토큰이 더해집니다.' : '회원가입 없이 결제하면 바로(보통 1분 안), 결제할 때 적은 이메일로 보내는 사람 ‘한국휴머나이징’ 메일에 16자리 토큰 코드가 담겨 갑니다. ' + (S.job ? '메일의 ‘AI 휴머나이징 바로 쓰기’를 누르거나 이 창에 코드를 넣으면 하던 일을 이어서 합니다(글은 이 브라우저에만 잠시 보관). ' : '') + '메일이 안 보이면 스팸함을 확인하고, 그래도 없으면 token@humanizing.ai.kr 로 주문 번호를 보내 주세요.') + '</p>' +
           '<a class="btn btn-p btn-l" href="' + esc(shop) + '" target="_blank" rel="noopener">' + ico('open') + '<span>' + (win ? '결제 페이지가 안 보이면 다시 열기' : '결제 페이지 열기') + '</span></a>' +
           (to ? '' : '<button class="btn btn-g" type="button" data-code>코드를 받았어요 · 코드 넣기</button>') + '</div>';
         var hL = $('#hzBuyT'); if (hL) { try { hL.focus({ preventScroll: true }); } catch (eF2) { hL.focus(); } }
@@ -1723,7 +1723,7 @@
         if (r.pay && payReady()) return startPay(r, mail, msg, btn);
         sset('am_buy_mail', mail);
         var link = r.link || shopLink(pid), when = r.topup ? '지금 코드에 토큰을 더해 드립니다.' : '적어 주신 메일(' + mail + ')로 토큰 코드를 보내 드립니다.';
-        var guide = link ? '아래 단추를 누르면 공식 결제처 성균관컨설팅 결제 페이지가 새 창으로 열립니다. 회원가입 없이 결제하고, 주문자 이메일은 적어 주신 메일(' + mail + ')로 해 주세요. 결제가 확인되면 영업일 하루 안에 ' + (r.topup ? when : '같은 메일로 토큰 코드를 보내 드립니다.') : (r.payGuide || ('담당자가 주문을 확인하고 영업일 하루 안에 적어 주신 메일(' + mail + ')로 성균관컨설팅 결제 방법(카드 · 계좌이체)을 안내해 드립니다. 결제가 확인되면 영업일 하루 안에 ' + (r.topup ? when : '같은 메일로 토큰 코드를 보내 드립니다.') + ' 메일이 오지 않으면 스팸함을 확인하거나 contact@skkc.co.kr로 주문 번호를 보내 주세요.'));
+        var guide = link ? '아래 단추를 누르면 공식 결제처 성균관컨설팅 결제 페이지가 새 창으로 열립니다. 회원가입 없이 결제하고, 주문자 이메일은 적어 주신 메일(' + mail + ')로 해 주세요. 결제가 확인되면 영업일 하루 안에 ' + (r.topup ? when : '같은 메일로 토큰 코드를 보내 드립니다.') : (r.payGuide || ('담당자가 주문을 확인하고 영업일 하루 안에 적어 주신 메일(' + mail + ')로 성균관컨설팅 결제 방법(카드 · 계좌이체)을 안내해 드립니다. 결제가 확인되면 영업일 하루 안에 ' + (r.topup ? when : '같은 메일로 토큰 코드를 보내 드립니다.') + ' 메일이 오지 않으면 스팸함을 확인하거나 token@humanizing.ai.kr로 주문 번호를 보내 주세요.'));
         var pk2 = prod(pid), crOld = !!(S.info && S.info.credit && S.info.credit.crWon && S.info.credit.crWon !== TW && !/^1\.[3-9]|^[2-9]/.test(String(S.info.v || '')));
         buyBody.innerHTML = '<h2 id="hzBuyT" tabindex="-1">주문이 접수되었습니다</h2><div class="hz7-done"><p class="no">주문 번호<b>' + esc(r.id) + '</b></p><p>' + (r.name ? esc(r.name) : pk2 ? tk(pk2.cr) + '토큰' : '토큰') + (r.topup ? ' 충전' : '') + ' · ' + n2(r.price) + '원(부가세 포함)</p><div class="guide">' + esc(guide) + '</div>' +
           (crOld && pk2 ? '<p class="hz7-dlg-n">메일에는 예전 단위(크레딧)로 ' + n2(Math.round(pk2.cr * TW / S.info.credit.crWon)) + '크레딧이라고 적혀 갈 수 있어요. ' + n2(Math.round(TW / S.info.credit.crWon)) + '크레딧이 1토큰이라 ' + tk(pk2.cr) + '토큰과 같습니다.</p>' : '') +
@@ -1779,7 +1779,7 @@
       });
     }).catch(function (e) {
       cleanUrl();
-      out.innerHTML = '<div class="hz7-err"><b>결제를 확인하지 못했어요</b><span>' + esc((e && e.message) || '잠시 뒤 다시 시도해 주세요.') + ' 결제가 되었는데 토큰이 열리지 않으면 주문 번호(' + esc(String(Q.orderId || '').slice(0, 11)) + ')와 함께 contact@skkc.co.kr로 알려 주세요.</span><div class="row"><button class="btn btn-p btn-s" type="button" data-buy="' + esc((d && d.topup) ? 'topup' : (d && d.prod) || 't40') + '">다시 결제하기</button><button class="btn btn-g btn-s" type="button" data-code>코드가 있어요</button></div></div>';
+      out.innerHTML = '<div class="hz7-err"><b>결제를 확인하지 못했어요</b><span>' + esc((e && e.message) || '잠시 뒤 다시 시도해 주세요.') + ' 결제가 되었는데 토큰이 열리지 않으면 주문 번호(' + esc(String(Q.orderId || '').slice(0, 11)) + ')와 함께 token@humanizing.ai.kr로 알려 주세요.</span><div class="row"><button class="btn btn-p btn-s" type="button" data-buy="' + esc((d && d.topup) ? 'topup' : (d && d.prod) || 't40') + '">다시 결제하기</button><button class="btn btn-g btn-s" type="button" data-code>코드가 있어요</button></div></div>';
     });
   }
   function payFail() {

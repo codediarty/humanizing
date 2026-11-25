@@ -30,7 +30,7 @@ HOST = "humanizing.ai.kr"
 BRAND = "한국휴머나이징"
 BRAND_SP = "한국 휴머나이징"          # 띄어 쓴 이름(검색용 alternateName 에만. 화면 로고는 2026.11.22 부터 붙여 씀)
 BRAND_EN = "Korean Humanizing"
-VER = "20261125b"
+VER = "20261125c"
 TODAY = "2026-11-24"
 # 한국휴머나이징 배포(AIMarker 서버 프로젝트 버전 36, 엔진은 AIMarker 와 같음 · 2026.11.21 22:38)
 API = "https://script.google.com/macros/s/AKfycbzLgl7l-cOndrkq5n0SdKLMaSy7_MCcymbFtt590_KCYByazHlQU2G6ynA4lbrUOODOmg/exec"
@@ -44,7 +44,7 @@ BING_VERIFY = "6CFE39150A28BBBB4694B507E2E689C0"   # 11.22 Bing 웹마스터 도
 INDEXNOW_KEY = "b6e1c94d27a84f3e9c05d8a1f2e7b4c6"
 GOOGLE_FILES = ["google67694027f26c117c.html"]   # 11.22 구글 서치 콘솔 https://humanizing.ai.kr/ (moistener22 계정, HTML 파일 확인. 지우지 말 것)
 BIZ = {"name": "성균관컨설팅", "ceo": "이채연", "no": "272-32-01885", "ecom": "제2026-경기송탄-0622",
-       "addr": "경기도 수원시 장안구 서부로 2066 성균관대학교 브릿지팩토리(연구실)", "mail": "contact@skkc.co.kr"}
+       "addr": "경기도 수원시 장안구 서부로 2066 성균관대학교 브릿지팩토리(연구실)", "mail": "token@humanizing.ai.kr"}
 # 가격 · 토큰은 AIMarker 개인 토큰과 같음(서버 hg1~hg4). 요금 카드는 정가 없이 간단 · 깔끔하게(대표 2026.11.21 밤)
 # pg = 검사와 휴머나이징 약 몇 페이지(도구 충전 창 humanize.js PRODS 와 같게)
 PACKS = [
