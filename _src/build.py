@@ -125,7 +125,7 @@ GUIDE_FT = [("ai-rate-meaning", "AI 작성률이란"), ("purple-sentences", "보
 FT_SEARCH = [("humanizing/", "휴머나이징"), ("ai-humanizer/", "AI 휴머나이저"), ("lower-ai-rate/", "AI 작성률 낮추기"), ("ai-plagiarism/", "AI 표절률 낮추기"), ("copykiller/", "표절 검사 AI 작성률 낮추기"),
              ("gptkiller/", "GPT 탐지 낮추기"), ("ai-bypass/", "AI 탐지 대비"), ("free/", "AI 휴머나이징 무료"), ("best-ai-humanizer/", "휴머나이징 사이트 추천")]
 FT_USE = [("thesis/", "논문 휴머나이징"), ("report/", "레포트 AI 탐지 대비"), ("resume/", "자기소개서 AI 작성률 낮추기"), ("natural/", "AI 글 자연스럽게"),
-          ("ai-converter/", "AI 문장 변환기"), ("ai-check/", "AI 작성률 무료 검사")]
+          ("ai-converter/", "AI 문장 변환기"), ("ai-check/", "AI 작성률 무료 검사"), ("paraphrasing/", "한국어 패러프레이징"), ("translationese/", "번역투 고치기")]   # 2026.11.25 새 검색 쪽
 
 
 def footer():

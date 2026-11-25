@@ -248,3 +248,7 @@ for _L in LANDINGS:
     if _m:
         _L["body"] = _L["body"] + "\n" + _m["body"]
         _L["faq"] = list(_L["faq"]) + list(_m["faq"])
+
+# 2026.11.25 대표 '기존 쪽과 겹치지 않으면서 노출될 만한 키워드 … 각각 형제들에게'(kw1125.py). 기존 쪽은 그대로, 뒤에 더함
+import kw1125 as _K  # noqa: E402
+LANDINGS.extend(_K.NEW)
