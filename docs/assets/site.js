@@ -311,6 +311,7 @@
 (function () {
   try {
     if (window.__lvOn) return; window.__lvOn = 1;
+    if (Date.now() < Date.UTC(2026, 11, 2, 15, 0)) return;   // 개인정보처리방침 '바뀌면 7일 전 알림'에 따라 2026.12.03 00:00(한국)부터 셈(11.26 알림)
     var U = "https://script.google.com/macros/s/AKfycbynqa4gSpMjYlnOHPH6xaM3d2vys7aVMJHLuxQL_9osna0026p-Z6uywH2d4d0fzUbK_w/exec";
     var d = document, l = location, nav = navigator, S = null;
     if (nav.webdriver || /bot|crawl|spider|slurp|lighthouse|headless|facebookexternalhit|yeti|daumoa/i.test(nav.userAgent || "")) return;
